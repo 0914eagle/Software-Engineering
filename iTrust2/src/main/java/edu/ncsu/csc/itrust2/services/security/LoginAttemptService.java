@@ -1,24 +1,20 @@
 package edu.ncsu.csc.itrust2.services.security;
 
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
-
 import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.security.LoginAttemptRepository;
 import edu.ncsu.csc.itrust2.services.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class LoginAttemptService extends Service {
 
     private final LoginAttemptRepository repository;
-
-    public LoginAttemptService(LoginAttemptRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     protected JpaRepository getRepository () {

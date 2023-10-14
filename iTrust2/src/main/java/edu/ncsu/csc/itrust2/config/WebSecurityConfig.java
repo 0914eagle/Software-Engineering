@@ -1,9 +1,5 @@
 package edu.ncsu.csc.itrust2.config;
 
-import javax.servlet.Filter;
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
@@ -11,17 +7,16 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -56,7 +51,11 @@ public class WebSecurityConfig {
      * override other automatic functionality as desired.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            IPFilter ipBlockFilter,
+            FailureHandler failureHandler,
+            HttpSecurity http
+    ) throws Exception {
         final String[] patterns = new String[] { "/login*", "/DrJenkins" };
         // Add filter for banned/locked IP
         /*
@@ -67,10 +66,10 @@ public class WebSecurityConfig {
          * first filter processed, so this means the IP block will be the
          * absolute first Filter.
          */
-        http.addFilterBefore( ipBlockFilter(), ChannelProcessingFilter.class );
+        http.addFilterBefore( ipBlockFilter, ChannelProcessingFilter.class );
 
         http.authorizeRequests().antMatchers( patterns ).anonymous().anyRequest().authenticated().and().formLogin()
-                .loginPage( "/login" ).failureHandler( failureHandler() ).defaultSuccessUrl( "/" ).and().csrf()
+                .loginPage( "/login" ).failureHandler( failureHandler ).defaultSuccessUrl( "/" ).and().csrf()
 
                 /*
                  * * Credit to https://medium.com/spektrakel
@@ -117,27 +116,5 @@ public class WebSecurityConfig {
     @Bean
     public DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher () {
         return new DefaultAuthenticationEventPublisher();
-    }
-
-    /**
-     * Failure Handler used to track failed attempts to determine if a user or
-     * IP needs to be banned.
-     *
-     * @return The AuthenticationFailureHandler
-     */
-    @Bean
-    public SimpleUrlAuthenticationFailureHandler failureHandler () {
-        return new FailureHandler();
-    }
-
-    /**
-     * Servlet Filter used to redirect all requests from banned/locked IPs to
-     * the appropriate pages.
-     *
-     * @return The IP FIlter
-     */
-    @Bean
-    public Filter ipBlockFilter () {
-        return new IPFilter();
     }
 }

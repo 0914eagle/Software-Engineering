@@ -1,23 +1,19 @@
 package edu.ncsu.csc.itrust2.services;
 
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.models.ICDCode;
+import edu.ncsu.csc.itrust2.repositories.ICDCodeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.itrust2.models.ICDCode;
-import edu.ncsu.csc.itrust2.repositories.ICDCodeRepository;
+import javax.transaction.Transactional;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class ICDCodeService extends Service {
 
     private final ICDCodeRepository repository;
-
-    public ICDCodeService(ICDCodeRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     protected JpaRepository getRepository () {

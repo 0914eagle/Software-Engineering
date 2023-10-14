@@ -1,8 +1,11 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.forms.ICDCodeForm;
+import edu.ncsu.csc.itrust2.models.ICDCode;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.ICDCodeService;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,11 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.ICDCodeForm;
-import edu.ncsu.csc.itrust2.models.ICDCode;
-import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.services.ICDCodeService;
-import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import java.util.List;
 
 /**
  * Class that provides the REST endpoints for handling ICD Codes. They can be
@@ -30,17 +29,13 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  *
  */
 @RestController
+@RequiredArgsConstructor
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
 public class APIICDCodeController extends APIController {
 
     private final LoggerUtil     loggerUtil;
 
     private final ICDCodeService service;
-
-    public APIICDCodeController(LoggerUtil loggerUtil, ICDCodeService service) {
-        this.loggerUtil = loggerUtil;
-        this.service = service;
-    }
 
     /**
      * Returns a list of Codes in the system

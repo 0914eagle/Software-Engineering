@@ -1,8 +1,11 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.forms.DrugForm;
+import edu.ncsu.csc.itrust2.models.Drug;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.DrugService;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,11 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.DrugForm;
-import edu.ncsu.csc.itrust2.models.Drug;
-import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.services.DrugService;
-import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import java.util.List;
 
 /**
  * Provides REST endpoints that deal with drugs. Exposes functionality to add,
@@ -29,16 +28,12 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
 @RestController
+@RequiredArgsConstructor
 public class APIDrugController extends APIController {
 
     private final DrugService service;
 
     private final LoggerUtil  loggerUtil;
-
-    public APIDrugController(DrugService service, LoggerUtil loggerUtil) {
-        this.service = service;
-        this.loggerUtil = loggerUtil;
-    }
 
     /**
      * Adds a new drug to the system. Requires admin permissions. Returns an

@@ -1,27 +1,21 @@
 package edu.ncsu.csc.itrust2.services.security;
 
-import java.time.ZonedDateTime;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
-
 import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.security.LoginLockoutRepository;
 import edu.ncsu.csc.itrust2.services.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class LoginLockoutService extends Service {
 
     private final LoginLockoutRepository repository;
-
-    public LoginLockoutService(LoginLockoutRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     protected JpaRepository getRepository () {

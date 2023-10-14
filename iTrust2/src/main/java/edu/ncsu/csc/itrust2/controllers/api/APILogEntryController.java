@@ -1,21 +1,5 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import edu.ncsu.csc.itrust2.controllers.api.comm.LogEntryRequestBody;
 import edu.ncsu.csc.itrust2.controllers.api.comm.LogEntryTableRow;
 import edu.ncsu.csc.itrust2.models.User;
@@ -25,6 +9,21 @@ import edu.ncsu.csc.itrust2.models.security.LogEntry;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.services.security.LogEntryService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * REST controller for interacting with Log Entry-related endpoints This will
@@ -36,6 +35,7 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  *
  */
 @RestController
+@RequiredArgsConstructor
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
 public class APILogEntryController extends APIController {
 
@@ -44,12 +44,6 @@ public class APILogEntryController extends APIController {
     private final UserService     userService;
 
     private final LoggerUtil      loggerUtil;
-
-    public APILogEntryController(LogEntryService leservice, UserService userService, LoggerUtil loggerUtil) {
-        this.leservice = leservice;
-        this.userService = userService;
-        this.loggerUtil = loggerUtil;
-    }
 
     /**
      * Handles GET requests for the current user's log entries when searching by

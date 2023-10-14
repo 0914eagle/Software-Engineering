@@ -1,23 +1,19 @@
 package edu.ncsu.csc.itrust2.services;
 
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.models.Drug;
+import edu.ncsu.csc.itrust2.repositories.DrugRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.itrust2.models.Drug;
-import edu.ncsu.csc.itrust2.repositories.DrugRepository;
+import javax.transaction.Transactional;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class DrugService extends Service {
 
     private final DrugRepository repository;
-
-    public DrugService(DrugRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     protected JpaRepository getRepository () {
