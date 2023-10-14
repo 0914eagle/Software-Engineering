@@ -1,8 +1,13 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.forms.PatientForm;
+import edu.ncsu.csc.itrust2.models.Patient;
+import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.PatientService;
+import edu.ncsu.csc.itrust2.services.UserService;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,13 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.PatientForm;
-import edu.ncsu.csc.itrust2.models.Patient;
-import edu.ncsu.csc.itrust2.models.User;
-import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.services.PatientService;
-import edu.ncsu.csc.itrust2.services.UserService;
-import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import java.util.List;
 
 /**
  * Controller responsible for providing various REST API endpoints for the
@@ -31,6 +30,7 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  *
  */
 @RestController
+@RequiredArgsConstructor
 @SuppressWarnings ( { "rawtypes", "unchecked" } )
 public class APIPatientController extends APIController {
 
@@ -39,12 +39,6 @@ public class APIPatientController extends APIController {
     private final UserService    userService;
 
     private final LoggerUtil     loggerUtil;
-
-    public APIPatientController(PatientService patientService, UserService userService, LoggerUtil loggerUtil) {
-        this.patientService = patientService;
-        this.userService = userService;
-        this.loggerUtil = loggerUtil;
-    }
 
     /**
      * Retrieves and returns a list of all Patients stored in the system

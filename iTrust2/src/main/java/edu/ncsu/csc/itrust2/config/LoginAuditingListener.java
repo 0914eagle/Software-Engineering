@@ -1,6 +1,13 @@
 package edu.ncsu.csc.itrust2.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.UserService;
+import edu.ncsu.csc.itrust2.services.security.LoginAttemptService;
+import edu.ncsu.csc.itrust2.services.security.LoginBanService;
+import edu.ncsu.csc.itrust2.services.security.LoginLockoutService;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,13 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.services.UserService;
-import edu.ncsu.csc.itrust2.services.security.LoginAttemptService;
-import edu.ncsu.csc.itrust2.services.security.LoginBanService;
-import edu.ncsu.csc.itrust2.services.security.LoginLockoutService;
-import edu.ncsu.csc.itrust2.utils.LoggerUtil;
-
 /**
  * Listens for AuthenticationEvents to Log them and to clear FaieldAttempts on
  * successful authentication.
@@ -26,6 +26,7 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  *
  */
 @Component
+@RequiredArgsConstructor
 public class LoginAuditingListener implements ApplicationListener<ApplicationEvent> {
 
     private final LoggerUtil          util;
@@ -38,21 +39,8 @@ public class LoginAuditingListener implements ApplicationListener<ApplicationEve
 
     private final LoginLockoutService loginLockoutService;
 
-    public LoginAuditingListener(
-            LoggerUtil util,
-            LoginAttemptService loginAttemptService,
-            LoginBanService loginBanService,
-            UserService userService,
-            LoginLockoutService loginLockoutService) {
-        this.util = util;
-        this.loginAttemptService = loginAttemptService;
-        this.loginBanService = loginBanService;
-        this.userService = userService;
-        this.loginLockoutService = loginLockoutService;
-    }
-
     @Override
-    public void onApplicationEvent ( final ApplicationEvent event ) {
+    public void onApplicationEvent (@NotNull final ApplicationEvent event ) {
         if ( event instanceof InteractiveAuthenticationSuccessEvent ) {
             final InteractiveAuthenticationSuccessEvent authEvent = (InteractiveAuthenticationSuccessEvent) event;
             final Authentication authentication = authEvent.getAuthentication();

@@ -1,15 +1,5 @@
 package edu.ncsu.csc.itrust2.services;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
-
 import edu.ncsu.csc.itrust2.forms.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.PrescriptionForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
@@ -19,9 +9,19 @@ import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class OfficeVisitService extends Service {
 
     private final OfficeVisitRepository officeVisitRepository;
@@ -37,24 +37,6 @@ public class OfficeVisitService extends Service {
     private final PrescriptionService       prescriptionService;
 
     private final DiagnosisService          diagnosisService;
-
-    public OfficeVisitService(
-            DiagnosisService diagnosisService,
-            PrescriptionService prescriptionService,
-            BasicHealthMetricsService bhmService,
-            HospitalService hospitalService,
-            AppointmentRequestService appointmentRequestService,
-            UserService userService,
-            OfficeVisitRepository officeVisitRepository
-    ) {
-        this.officeVisitRepository = officeVisitRepository;
-        this.userService = userService;
-        this.appointmentRequestService = appointmentRequestService;
-        this.hospitalService = hospitalService;
-        this.bhmService = bhmService;
-        this.prescriptionService = prescriptionService;
-        this.diagnosisService = diagnosisService;
-    }
 
     @Override
     protected JpaRepository getRepository () {

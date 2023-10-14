@@ -1,8 +1,13 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.ncsu.csc.itrust2.forms.PrescriptionForm;
+import edu.ncsu.csc.itrust2.models.Prescription;
+import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.PrescriptionService;
+import edu.ncsu.csc.itrust2.services.UserService;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.itrust2.forms.PrescriptionForm;
-import edu.ncsu.csc.itrust2.models.Prescription;
-import edu.ncsu.csc.itrust2.models.User;
-import edu.ncsu.csc.itrust2.models.enums.TransactionType;
-import edu.ncsu.csc.itrust2.services.PrescriptionService;
-import edu.ncsu.csc.itrust2.services.UserService;
-import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import java.util.List;
 
 /**
  * Provides REST endpoints that deal with prescriptions. Exposes functionality
@@ -30,6 +29,7 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  * @author Kai Presler-Marshall
  */
 @RestController
+@RequiredArgsConstructor
 @SuppressWarnings ( { "rawtypes", "unchecked" } )
 public class APIPrescriptionController extends APIController {
 
@@ -38,12 +38,6 @@ public class APIPrescriptionController extends APIController {
     private final PrescriptionService prescriptionService;
 
     private final UserService         userService;
-
-    public APIPrescriptionController(LoggerUtil loggerUtil, PrescriptionService prescriptionService, UserService userService) {
-        this.loggerUtil = loggerUtil;
-        this.prescriptionService = prescriptionService;
-        this.userService = userService;
-    }
 
     /**
      * Adds a new prescription to the system. Requires HCP permissions.
