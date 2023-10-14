@@ -1,28 +1,23 @@
 package edu.ncsu.csc.itrust2.services.security;
 
+import edu.ncsu.csc.itrust2.models.security.LogEntry;
+import edu.ncsu.csc.itrust2.repositories.security.LogEntryRepository;
+import edu.ncsu.csc.itrust2.services.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
-
-import edu.ncsu.csc.itrust2.models.security.LogEntry;
-import edu.ncsu.csc.itrust2.repositories.security.LogEntryRepository;
-import edu.ncsu.csc.itrust2.services.Service;
-
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class LogEntryService extends Service {
 
     private final LogEntryRepository repository;
-
-    public LogEntryService(LogEntryRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     protected JpaRepository getRepository () {

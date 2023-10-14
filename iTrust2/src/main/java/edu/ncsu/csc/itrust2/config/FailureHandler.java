@@ -1,19 +1,5 @@
 package edu.ncsu.csc.itrust2.config;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LoginAttempt;
@@ -25,6 +11,18 @@ import edu.ncsu.csc.itrust2.services.security.LoginBanService;
 import edu.ncsu.csc.itrust2.services.security.LoginLockoutService;
 import edu.ncsu.csc.itrust2.utils.EmailUtil;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.ZonedDateTime;
 
 /**
  * Custom AuthenticationFailureHandler to record Failed attempts, and lockout or
@@ -34,25 +32,21 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
  * @author Kai Presler-Marshall
  *
  */
+@Component
+@RequiredArgsConstructor
 public class FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Autowired
-    private LoggerUtil          loggerUtil;
+    private final LoggerUtil          loggerUtil;
 
-    @Autowired
-    private EmailUtil           emailUtil;
+    private final EmailUtil           emailUtil;
 
-    @Autowired
-    private LoginBanService     loginBanService;
+    private final LoginBanService     loginBanService;
 
-    @Autowired
-    private LoginLockoutService loginLockoutService;
+    private final LoginLockoutService loginLockoutService;
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
-    @Autowired
-    private UserService         userService;
+    private final UserService         userService;
 
     @Override
     public void onAuthenticationFailure ( final HttpServletRequest request, final HttpServletResponse response,

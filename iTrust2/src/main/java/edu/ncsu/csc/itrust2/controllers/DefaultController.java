@@ -1,7 +1,7 @@
 package edu.ncsu.csc.itrust2.controllers;
 
-import java.util.List;
-
+import edu.ncsu.csc.itrust2.models.enums.Role;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
-import edu.ncsu.csc.itrust2.models.enums.Role;
+import java.util.List;
 
 /**
  * Default controller that handles redirecting the logged-in user to one of the
@@ -27,6 +27,7 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
  */
 
 @Controller
+@RequiredArgsConstructor
 public class DefaultController {
 
     @GetMapping ( { "login", "login.html" } )
