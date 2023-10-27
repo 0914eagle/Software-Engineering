@@ -19,7 +19,7 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 | 박민지 | 2019147538 | 2019147538      | [Email](0225minji@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/minji-park-187696291/)                   |
 | 박정양 | 2020147580 | JungyangPark    |                                  |                                                                                 |
 | 성현준 | 2019147593 | sunghj1118      | [Email](sunghj1118@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/hyunjoon-sung/)                          |
-| 윤장한 | 2019147574 | 2019147574      |                                  |                                                                                 |
+| 윤장한 | 2019147574 | 2019147574      |  [Email](jeffrobot99@gmail.com)  |           [LinkedIn](https://www.linkedin.com/in/janghan-yoon-336199198/)                |
 | 윤정현 | 2019147516 | 2019147516      |                                  |                                                                                 |
 | 이상헌 | 2019147549 | SangHeonLee     |                                  |                                                                                 |
 | 전희재 | 2020147512 | 2020147512      | [Email](0914eagle@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/%ED%9D%AC%EC%9E%AC-%EC%A0%84-3391b7273/) |
@@ -55,6 +55,8 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 최근에는 쿠버네티스에 관심이 생겨서 개별적으로 공부하고 있습니다.
 
 #### 윤장한
+안녕하세요, 
+해당 팀에서 프론트엔드를 맡은 윤장한 입니다. 스타트업에서 Flutter를 활용한 앱 개발 및 depth map estimation에 대한 research 및 apply를 한 경력이 있으며 AI-powered App을 만드는 것에 관심이 있습니다. 다양한 프로젝트를 해보는 것을 즐기며 최근엔 인공지능에 관심이 있어 개인공부와 동아리 활동을 병행하며 다양하게 공부중입니다. 
 
 #### 윤정현
 
