@@ -14,8 +14,8 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 
 | 성함   | 학번       | GitLab username | Contact #1                       | Contact #2                                                                      |
 | ------ | ---------- | --------------- | -------------------------------- | ------------------------------------------------------------------------------- |
-| 김지안 | 2021147532 | 2021147532      | [Email](kimhajin@yonsei.ac.kr)   | [LinkedIn](https://www.linkedin.com/in/kim-hajin)                               |
-| 김하진 | 2019147580 | 2019147580      |                                  |                                                                                 |
+| 김지안 | 2021147532 | 2021147532      |                                  |                                                                                 |
+| 김하진 | 2019147580 | 2019147580      | [Email](kimhajin@yonsei.ac.kr)   | [LinkedIn](https://www.linkedin.com/in/kim-hajin)                               |
 | 박민지 | 2019147538 | 2019147538      | [Email](0225minji@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/minji-park-187696291/)                   |
 | 박정양 | 2020147580 | JungyangPark    |                                  |                                                                                 |
 | 성현준 | 2019147593 | sunghj1118      | [Email](sunghj1118@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/hyunjoon-sung/)                          |
