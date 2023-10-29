@@ -23,7 +23,7 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 | 윤정현 | 2019147516 | 2019147516      | [Email](grant9390@naver.com)     | [LinkedIn](https://www.linkedin.com/in/dev-qb)                                  |
 | 이상헌 | 2019147549 | SangHeonLee     |                                  |                                                                                 |
 | 전희재 | 2020147512 | 2020147512      | [Email](0914eagle@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/%ED%9D%AC%EC%9E%AC-%EC%A0%84-3391b7273/) |
-| 홍세아 | 2020147020 | 2020147020      |                                  |                                                                                 |
+| 홍세아 | 2020147020 | 2020147020      | [Email](hongkayla@yonsei.ac.kr)  |                                                                                 |
 
 ### 팀원 소개
 
@@ -73,6 +73,8 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 AI 공부를 하고 있어 웹 개발에 많은 역할을 맡지 못하지만 노력하겠습니다. 현재 이동하 교수님 랩실 인턴으로 활동하고 있습니다.(팀장님 강조....)
 
 #### 홍세아
+백엔드 팀과 Cell A에 속해있습니다.
+데이터베이스를 다루는 것에 관심을 가지고 있습니다.
 
 ## 조직 구성
 
