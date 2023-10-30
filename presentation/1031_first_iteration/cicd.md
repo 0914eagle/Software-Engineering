@@ -131,5 +131,77 @@ Runner를 설치/등록하려 했으나, command로 하는 방식은 deprecated.
 <br />
 <br />
 
+### CD 태스크: Elastic Beanstalk 배포
 
-## 향후계획
+### *배포 옵션 조사*
+
+- AWS EC2, ECS, EB, EKS 서비스의 특성 및 장단점을 조사하였다.(10.16회의록 참고)
+
+  → 비용 및 편리성 측면에서 EB를 사용해 배포하기로 결정.
+
+
+### *Elastic Beanstalk 배포*
+
+- 배포 방법을 확인하고자, 일단 팀 내 스터디에서 빌드한 jar 파일을 사용하였다.
+- 비용 관리를 위해 AWS 계정을 새로 만들어 프리티어를 적용받고, AWS budgets를 사용한다.
+
+![Untitled](../../resources/cicd_first_iter/cd1.png)
+
+- EB에서 domain name, platform(java), Create and use new service role 등의 옵션을 선택하고 배포를 완료한다.
+- 해당 service role이 존재하지 않는다는 오류가 떴었는데, 사용했던 role 이름으로 하나를 만들어주면 된다.
+
+### *502 Bad Gateway*
+
+![Untitled](../../resources/cicd_first_iter/cd2.png)
+
+- 그런데 문제가 발생했다. 502 Bad Gateway. nginx.
+- ALB는 5000 port를 연다. 즉 Nginx가 바라보는 port number가 5000인데, 이 서버는 8080포트에서 열리기 때문에, 불일치로 생긴 문제이다.
+
+→ 해결 방법은 yml에서 코드를 직접 수정해주거나, 환경 변수로 yml의 8080 무시하기, 환경변수로 ALB 뒤에 열리는 port number 바꾸기가 있다.
+
+- 환경변수에 SERVER_PORT 5000을 추가하여 배포한 링크는 아래와 같다.(향후 삭제 예정)
+
+[http://practice-env.eba-a6u63vsc.ap-northeast-2.elasticbeanstalk.com/](http://practice-env.eba-a6u63vsc.ap-northeast-2.elasticbeanstalk.com/)
+
+### *DB와 연결*
+
+- 기존에 사용하던 h2를 MySQL로 변경하기 위해 AWS RDS에서 MySQL 프리티어 인스턴스를 생성한다.
+- yml, build.gradle을 수정하여 다시 빌드한다.
+
+`url: jdbc:mysql://(rds 인스턴스 end-point):3306/cheap9?serverTimezone=UTC`
+
+`driver-class-name: com.mysql.cj.jdbc.Driver`
+
++) username, password 등
+
+`implementation 'com.mysql:mysql-connector-j'`
+
+- 이때 test 폴더에도 yml을 생성해야 하는데, 이는 H2와 MySQL의 차이 때문이다.
+- H2(인메모리 데이터베이스): 별도의 설정 없이도 쉽게 사용할 수 있으며, 별도의 데이터베이스 서버를 구동할 필요가 없음
+- MySQL(외부 데이터베이스): 테스트 환경에서 사용할 데이터 베이스의 연결 정보 명시가 필요함.
+
+### C*onnect timed out*
+
+- 연이은 빌드 실패로, dbeaver에서는 연결이 잘 되나 보았는데, timed out이 떴다.
+
+![Untitled](../../resources/cicd_first_iter/cd3.png)
+
+- ping을 보낸 결과 100%손실이었고 **Security Groups에서 문제를 발견했다.**
+
+![Untitled](../../resources/cicd_first_iter/cd4.png)
+
+- Security Groups의 Inbound rules에서 source를 수정해준 결과 dbeaver에서 제대로 연결된 것을 확인할 수 있다.
+
+![Untitled](../../resources/cicd_first_iter/cd5.png)
+
+- 당분간 Security Groups 관련 설정, Secrets Manager 등에 관하여 시행착오를 이어나갈 계획이다.
+
+### *Health check*
+
+```java
+@GetMapping("/healthCheck")
+    public String healthCheck() {
+        return "200 OK";
+    }
+```
+
