@@ -21,7 +21,7 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 | 성현준 | 2019147593 | sunghj1118      | [Email](sunghj1118@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/hyunjoon-sung/)                          |
 | 윤장한 | 2019147574 | 2019147574      |                                  |                                                                                 |
 | 윤정현 | 2019147516 | 2019147516      | [Email](grant9390@naver.com)     | [LinkedIn](https://www.linkedin.com/in/dev-qb)                                  |
-| 이상헌 | 2019147549 | SangHeonLee     |                                  |                                                                                 |
+| 이상헌 | 2019147549 | SangHeonLee     | [Email](hunny7434@naver.com)     | [LinkedIn](https://www.linkedin.com/in/sangheon-lee-a997b2298/)                 |
 | 전희재 | 2020147512 | 2020147512      | [Email](0914eagle@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/%ED%9D%AC%EC%9E%AC-%EC%A0%84-3391b7273/) |
 | 홍세아 | 2020147020 | 2020147020      | [Email](hongkayla@yonsei.ac.kr)  |                                                                                 |
 
@@ -66,6 +66,10 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 현재의 목표는 게임 개발자이며, 이 외에도 최대한 다양한 분야의 개발 프로세스에 참여하는 것을 목표로 하고 있습니다.
 
 #### 이상헌
+
+백엔드 팀에서 활동하고 있습니다. 백엔드 개발 경험이 없어 이번 학기 백엔드 스터디와 함께 소공 프로젝트를 진행중입니다.
+이외에 이번 학기 소종 프로젝트와 게임 개발 프로젝트를 진행하고 있습니다.
+열심히 하겠습니다!
 
 #### 전희재
 
