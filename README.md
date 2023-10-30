@@ -12,12 +12,12 @@
 
 Contact information 기재는 10월 말까지 하기로 했습니다.
 
-| 성함   | 학번       | GitLab username | Contact #1                       | Contact #2                                                                      |
-| ------ | ---------- | --------------- |----------------------------------|---------------------------------------------------------------------------------|
-| 김지안 | 2021147532 | 2021147532      |                                  |                                                                                 |
-| 김하진 | 2019147580 | 2019147580      | [Email](kimhajin@yonsei.ac.kr)   | [LinkedIn](https://www.linkedin.com/in/kim-hajin)                               |
-| 박민지 | 2019147538 | 2019147538      | [Email](0225minji@yonsei.ac.kr)  | [LinkedIn](https://www.linkedin.com/in/minji-park-187696291/)                   |
-| 박정양 | 2020147580 | JungyangPark    | [Email](wjddid000624@gmail.com)  | [LinkedIn](www.linkedin.com/in/jungyang-park-661109290)                         |
+| 성함   | 학번       | GitLab username | Contact #1                     | Contact #2                                                                      |
+| ------ | ---------- | --------------- |--------------------------------|---------------------------------------------------------------------------------|
+| 김지안 | 2021147532 | 2021147532      | [Email](judy01@yonsei.ac.kr)   |                                                                                 |
+| 김하진 | 2019147580 | 2019147580      | [Email](kimhajin@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/kim-hajin)                               |
+| 박민지 | 2019147538 | 2019147538      | [Email](0225minji@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/minji-park-187696291/)                   |
+| 박정양 | 2020147580 | JungyangPark    | [Email](wjddid000624@gmail.com) | [LinkedIn](www.linkedin.com/in/jungyang-park-661109290)                         |
 | 성현준 | 2019147593 | sunghj1118      | [Email](sunghj1118@yonsei.ac.kr) | [LinkedIn](https://www.linkedin.com/in/hyunjoon-sung/)                          |
 | 윤장한 | 2019147574 | 2019147574      |  [Email](jeffrobot99@gmail.com)  |           [LinkedIn](https://www.linkedin.com/in/janghan-yoon-336199198/)                |
 | 윤정현 | 2019147516 | 2019147516      | [Email](grant9390@naver.com)     | [LinkedIn](https://www.linkedin.com/in/dev-qb)                                  |
@@ -39,6 +39,9 @@ Contact information 기재는 10월 말까지 하기로 했습니다.
 팀 및 프로젝트 운영, 세미나 개설, 코드 리팩토링 등을 맡습니다.
 
 #### 김지안
+
+인프라 팀에서 활동하고 있습니다. 동아리에서 백엔드 기초를 경험해보았고, 방학에 서비스를 운영하며 Devops에 흥미가 생겼습니다.
+팀 내 스터디를 병행 중이며, 부족한 만큼 열심히 발전해나가도록 노력하겠습니다.
 
 #### 박민지
 
