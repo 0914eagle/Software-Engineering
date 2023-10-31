@@ -13,19 +13,24 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/foodDiaries")
+@RequestMapping("/api/v1")
 public class ApiFoodDiaryController {
     private final FoodDiaryService foodDiaryService;
 
-    @GetMapping
+    @GetMapping("/foodDiaries")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    public List<FoodDiary> listFoodDiariesByPatient() {
-        final String patient_name = LoggerUtil.currentUser();
-        return foodDiaryService.listByPatient(patient_name);
+    public List<FoodDiary> listFoodDiariesByCurrentPatient() {
+        final String patientName = LoggerUtil.currentUser();
+        return foodDiaryService.listByPatient(patientName);
     }
-    @PostMapping
+    @PostMapping("/foodDiaries")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public FoodDiary addFoodDiary(@RequestBody final FoodDiaryForm foodDiary) {
         return foodDiaryService.addFoodDiary(foodDiary);
+    }
+    @GetMapping("/patients/{patientName}/foodDiaries")
+    @PreAuthorize("hasRole('ROLE_HCP')")
+    public List<FoodDiary> listFoodDiariesByPatientId(@PathVariable final String patientName) {
+        return foodDiaryService.listByPatient(patientName);
     }
 }
