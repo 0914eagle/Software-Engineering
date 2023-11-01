@@ -16,16 +16,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/foodDiaries")
 public class ApiFoodDiaryController {
     private final FoodDiaryService foodDiaryService;
+    private final String patient_name = LoggerUtil.currentUser();
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<FoodDiary> listFoodDiariesByPatient() {
-        final String patient_name = LoggerUtil.currentUser();
         return foodDiaryService.listByPatient(patient_name);
     }
+
     @PostMapping
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public FoodDiary addFoodDiary(@RequestBody final FoodDiaryForm foodDiary) {
-        return foodDiaryService.addFoodDiary(foodDiary);
+        return foodDiaryService.addFoodDiary(foodDiary, patient_name);
     }
 }

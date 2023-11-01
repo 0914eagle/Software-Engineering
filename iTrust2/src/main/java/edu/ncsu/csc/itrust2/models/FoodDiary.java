@@ -1,8 +1,10 @@
 package edu.ncsu.csc.itrust2.models;
 
+import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
+
+import java.time.ZonedDateTime;
 import javax.persistence.*;
 
-import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,26 +24,26 @@ public class FoodDiary {
     @JoinColumn(name = "username", columnDefinition = "varchar(20)")
     private Patient patient;
 
-    String date;
+    ZonedDateTime date;
     String mealType;
     String foodName;
-    String servingsNum;
-    String caloriesPerServing;
-    String fatGramsPerServing;
-    String sodiumMilligramsPerServing;
-    String carbsGramsPerServing;
-    String sugarsGramsPerServing;
-    String fiberGramsPerServing;
-    String proteinGramsPerServing;
-    String fatGramsTotal;
-    String sodiumMilligramsTotal;
-    String carbsGramsTotal;
-    String sugarsGramsTotal;
-    String fiberGramsTotal;
-    String proteinGramsTotal;
+    Integer servingsNum;
+    Integer caloriesPerServing;
+    Integer fatGramsPerServing;
+    Integer sodiumMilligramsPerServing;
+    Integer carbsGramsPerServing;
+    Integer sugarsGramsPerServing;
+    Integer fiberGramsPerServing;
+    Integer proteinGramsPerServing;
+    Integer fatGramsTotal;
+    Integer sodiumMilligramsTotal;
+    Integer carbsGramsTotal;
+    Integer sugarsGramsTotal;
+    Integer fiberGramsTotal;
+    Integer proteinGramsTotal;
 
     public FoodDiary(final FoodDiaryForm form) {
-        id = form.getId();
+        setId(form.getId());
         setDate(form.getDate());
         setMealType(form.getMealType());
         setFoodName(form.getFoodName());
