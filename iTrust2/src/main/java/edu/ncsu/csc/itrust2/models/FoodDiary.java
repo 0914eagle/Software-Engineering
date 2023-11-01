@@ -1,8 +1,9 @@
 package edu.ncsu.csc.itrust2.models;
 
+import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
+
 import javax.persistence.*;
 
-import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

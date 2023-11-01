@@ -23,11 +23,13 @@ public class ApiFoodDiaryController {
         final String patientName = LoggerUtil.currentUser();
         return foodDiaryService.listByPatient(patientName);
     }
+
     @PostMapping("/foodDiaries")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public FoodDiary addFoodDiary(@RequestBody final FoodDiaryForm foodDiary) {
         return foodDiaryService.addFoodDiary(foodDiary);
     }
+
     @GetMapping("/patients/{patientName}/foodDiaries")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public List<FoodDiary> listFoodDiariesByPatientId(@PathVariable final String patientName) {

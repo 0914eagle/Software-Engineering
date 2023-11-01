@@ -22,11 +22,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-    /**
-     * Login configuration for iTrust2.
-     *
-     * @param auth AuthenticationManagerBuilder to use to configure the Authentication.
-     */
+    /** Login configuration for iTrust2. */
     @Bean
     public UserDetailsManager configureGlobal(DataSource dataSource) {
         // User query enabled flag also checks for locked or banned users. The
@@ -67,6 +63,8 @@ public class WebSecurityConfig {
         http.addFilterBefore(ipBlockFilter, ChannelProcessingFilter.class);
 
         http.authorizeRequests()
+                .antMatchers(new String[] {"/swagger-ui/**", "/v3/api-docs/**"})
+                .permitAll()
                 .antMatchers(patterns)
                 .anonymous()
                 .anyRequest()
