@@ -33,9 +33,11 @@ public class FoodDiaryService {
         return foodDiaryRepository.existsById(id);
     }
 
-    public FoodDiary addFoodDiary(final FoodDiaryForm form) {
+    public FoodDiary addFoodDiary(final FoodDiaryForm form, final String patient_name) {
         try {
             final FoodDiary foodDiary = new FoodDiary(form);
+            final Patient patient = (Patient) patientService.findByName(patient_name);
+            foodDiary.setPatient(patient);
 
             // Make sure code does not conflict with existing drugs
             if (existsByCode(foodDiary.getId())) {

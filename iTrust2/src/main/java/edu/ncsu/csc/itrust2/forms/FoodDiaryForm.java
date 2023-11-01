@@ -8,29 +8,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
+
 /** A form for REST API communication. Contains fields for constructing FoodDiary objects. */
 @Getter
 @Setter
 @NoArgsConstructor
 public class FoodDiaryForm {
     private Long id;
-    private String date;
+    private ZonedDateTime date;
     private String mealType;
     private String foodName;
-    private String servingsNum;
-    private String caloriesPerServing;
-    private String fatGramsPerServing;
-    private String sodiumMilligramsPerServing;
-    private String carbsGramsPerServing;
-    private String sugarsGramsPerServing;
-    private String fiberGramsPerServing;
-    private String proteinGramsPerServing;
-    private String fatGramsTotal;
-    private String sodiumMilligramsTotal;
-    private String carbsGramsTotal;
-    private String sugarsGramsTotal;
-    private String fiberGramsTotal;
-    private String proteinGramsTotal;
+    private Integer servingsNum;
+    private Integer caloriesPerServing;
+    private Integer fatGramsPerServing;
+    private Integer sodiumMilligramsPerServing;
+    private Integer carbsGramsPerServing;
+    private Integer sugarsGramsPerServing;
+    private Integer fiberGramsPerServing;
+    private Integer proteinGramsPerServing;
+    private Integer fatGramsTotal;
+    private Integer sodiumMilligramsTotal;
+    private Integer carbsGramsTotal;
+    private Integer sugarsGramsTotal;
+    private Integer fiberGramsTotal;
+    private Integer proteinGramsTotal;
 
     /**
      * Constructs a new form with information from the given food diary.
