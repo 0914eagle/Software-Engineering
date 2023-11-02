@@ -4,7 +4,6 @@ import edu.ncsu.csc.itrust2.models.*;
 import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
 import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -12,7 +11,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-@Component
 @RequiredArgsConstructor
 @Service
 public class EmergencyPatientService {

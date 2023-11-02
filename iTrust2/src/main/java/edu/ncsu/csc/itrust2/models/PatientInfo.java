@@ -2,9 +2,10 @@ package edu.ncsu.csc.itrust2.models;
 
 import edu.ncsu.csc.itrust2.models.enums.BloodType;
 import edu.ncsu.csc.itrust2.models.enums.Gender;
-import lombok.Getter;
 
 import java.time.LocalDate;
+
+import lombok.Getter;
 
 @Getter
 public class PatientInfo extends Patient {

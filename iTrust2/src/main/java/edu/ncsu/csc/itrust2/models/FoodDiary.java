@@ -1,18 +1,17 @@
 package edu.ncsu.csc.itrust2.models;
 
-import com.google.gson.annotations.JsonAdapter;
 import edu.ncsu.csc.itrust2.adapters.ZonedDateTimeAdapter;
 import edu.ncsu.csc.itrust2.adapters.ZonedDateTimeAttributeConverter;
 import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
 
+import java.time.ZonedDateTime;
 import javax.persistence.*;
 
+import com.google.gson.annotations.JsonAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.ZonedDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -32,38 +31,22 @@ public class FoodDiary {
     @JsonAdapter(ZonedDateTimeAdapter.class)
     ZonedDateTime date;
 
-    @Setter
-    String mealType;
-    @Setter
-    String foodName;
-    @Setter
-    Integer servingsNum;
-    @Setter
-    Integer caloriesPerServing;
-    @Setter
-    Integer fatGramsPerServing;
-    @Setter
-    Integer sodiumMilligramsPerServing;
-    @Setter
-    Integer carbsGramsPerServing;
-    @Setter
-    Integer sugarsGramsPerServing;
-    @Setter
-    Integer fiberGramsPerServing;
-    @Setter
-    Integer proteinGramsPerServing;
-    @Setter
-    Integer fatGramsTotal;
-    @Setter
-    Integer sodiumMilligramsTotal;
-    @Setter
-    Integer carbsGramsTotal;
-    @Setter
-    Integer sugarsGramsTotal;
-    @Setter
-    Integer fiberGramsTotal;
-    @Setter
-    Integer proteinGramsTotal;
+    @Setter String mealType;
+    @Setter String foodName;
+    @Setter Integer servingsNum;
+    @Setter Integer caloriesPerServing;
+    @Setter Integer fatGramsPerServing;
+    @Setter Integer sodiumMilligramsPerServing;
+    @Setter Integer carbsGramsPerServing;
+    @Setter Integer sugarsGramsPerServing;
+    @Setter Integer fiberGramsPerServing;
+    @Setter Integer proteinGramsPerServing;
+    @Setter Integer fatGramsTotal;
+    @Setter Integer sodiumMilligramsTotal;
+    @Setter Integer carbsGramsTotal;
+    @Setter Integer sugarsGramsTotal;
+    @Setter Integer fiberGramsTotal;
+    @Setter Integer proteinGramsTotal;
 
     public FoodDiary(final FoodDiaryForm form) {
         setDate(form.getDate());
