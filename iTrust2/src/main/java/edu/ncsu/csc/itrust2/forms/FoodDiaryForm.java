@@ -27,36 +27,11 @@ public class FoodDiaryForm {
     private Integer sugarsGramsPerServing;
     private Integer fiberGramsPerServing;
     private Integer proteinGramsPerServing;
-    private Integer fatGramsTotal;
-    private Integer sodiumMilligramsTotal;
-    private Integer carbsGramsTotal;
-    private Integer sugarsGramsTotal;
-    private Integer fiberGramsTotal;
-    private Integer proteinGramsTotal;
 
     /**
      * Constructs a new form with information from the given food diary.
      *
      * @param foodDiary the food diary object
      */
-    public FoodDiaryForm(@NotNull final FoodDiary foodDiary) {
-        setId(foodDiary.getId());
-        setDate(foodDiary.getDate());
-        setMealType(foodDiary.getMealType());
-        setFoodName(foodDiary.getFoodName());
-        setServingsNum(foodDiary.getServingsNum());
-        setCaloriesPerServing(foodDiary.getCaloriesPerServing());
-        setFatGramsPerServing(foodDiary.getFatGramsPerServing());
-        setSodiumMilligramsPerServing(foodDiary.getSodiumMilligramsPerServing());
-        setCarbsGramsPerServing(foodDiary.getCarbsGramsPerServing());
-        setSugarsGramsPerServing(foodDiary.getSugarsGramsPerServing());
-        setFiberGramsPerServing(foodDiary.getFiberGramsPerServing());
-        setProteinGramsPerServing(foodDiary.getProteinGramsPerServing());
-        setFatGramsTotal(foodDiary.getFatGramsTotal());
-        setSodiumMilligramsTotal(foodDiary.getSodiumMilligramsTotal());
-        setCarbsGramsTotal(foodDiary.getCarbsGramsTotal());
-        setSugarsGramsTotal(foodDiary.getSugarsGramsTotal());
-        setFiberGramsTotal(foodDiary.getFiberGramsTotal());
-        setProteinGramsTotal(foodDiary.getProteinGramsTotal());
-    }
+
 }

@@ -23,9 +23,9 @@ public class FoodDiaryService {
 
     private final PatientService patientService;
 
-    public List<FoodDiary> listByPatient(String patient_name) {
+    public List<FoodDiary> listByPatient(String patientName) {
 
-        final Patient patient = (Patient) patientService.findByName(patient_name);
+        final Patient patient = (Patient) patientService.findByName(patientName);
         return foodDiaryRepository.findAllByPatient(patient);
     }
 
@@ -33,10 +33,10 @@ public class FoodDiaryService {
         return foodDiaryRepository.existsById(id);
     }
 
-    public FoodDiary addFoodDiary(final FoodDiaryForm form, final String patient_name) {
+    public FoodDiary addFoodDiary(final FoodDiaryForm form, final String patientName) {
         try {
             final FoodDiary foodDiary = new FoodDiary(form);
-            final Patient patient = (Patient) patientService.findByName(patient_name);
+            final Patient patient = (Patient) patientService.findByName(patientName);
             foodDiary.setPatient(patient);
 
             // Make sure code does not conflict with existing drugs
