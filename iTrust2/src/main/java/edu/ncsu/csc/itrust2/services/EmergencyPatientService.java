@@ -1,15 +1,23 @@
 package edu.ncsu.csc.itrust2.services;
 
-import edu.ncsu.csc.itrust2.models.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
+import edu.ncsu.csc.itrust2.models.Diagnosis;
+import edu.ncsu.csc.itrust2.models.OfficeVisit;
+import edu.ncsu.csc.itrust2.models.Patient;
+import edu.ncsu.csc.itrust2.records.EmergencyPatientInfo;
+import edu.ncsu.csc.itrust2.models.Prescription;
 import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
 import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -18,16 +26,18 @@ public class EmergencyPatientService {
     private final OfficeVisitRepository officeVisitRepository;
     private final PatientService patientService;
 
-    public PatientInfo getPatientInformation(String patientName) {
+    public EmergencyPatientInfo getPatientInformation(String patientName) {
 
         final Patient patient = (Patient) patientService.findByName(patientName);
 
-        PatientInfo patientInfo =
-                new PatientInfo(
-                        patient.getFirstName(), patient.getPreferredName(),
-                        patient.getLastName(), patient.getDateOfBirth(),
-                        patient.getGender(), patient.getBloodType());
-        return patientInfo;
+        return new EmergencyPatientInfo(
+                patient.getUsername(),
+                patient.getFirstName(),
+                patient.getPreferredName(),
+                patient.getLastName(),
+                patient.getDateOfBirth(),
+                patient.getGender(),
+                patient.getBloodType());
     }
 
     public List<OfficeVisit> getRecentOfficeVisits(String patientName, int dateAmount) {
@@ -47,7 +57,8 @@ public class EmergencyPatientService {
         return officeVisitRepository.findByDateBetweenAndPatientOrderByDateDesc(
                 zoneStartDate, zoneEndDate, patient);
     }
-    public List<Diagnosis> getRecentDiagnoses (String patientName){
+
+    public List<Diagnosis> getRecentDiagnoses(String patientName) {
         List<OfficeVisit> officeVisits = getRecentOfficeVisits(patientName, 60);
 
         List<Diagnosis> diagnoses = new ArrayList<>();
@@ -59,7 +70,7 @@ public class EmergencyPatientService {
         return diagnoses;
     }
 
-    public List<Prescription> getRecentPrescriptions (String patientName){
+    public List<Prescription> getRecentPrescriptions(String patientName) {
         List<OfficeVisit> officeVisits = getRecentOfficeVisits(patientName, 90);
 
         List<Prescription> prescriptions = new ArrayList<>();

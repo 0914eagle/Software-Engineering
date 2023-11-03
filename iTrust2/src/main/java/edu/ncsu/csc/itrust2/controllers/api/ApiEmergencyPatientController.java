@@ -1,12 +1,12 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.records.EmergencyPatientInfo;
 import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
 
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,7 @@ public class ApiEmergencyPatientController {
 
     @GetMapping("/{patientName}")
     @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ER')")
-    public PatientInfo getPatientInfo(@PathVariable String patientName) {
+    public EmergencyPatientInfo getPatientInfo(@PathVariable String patientName) {
         return emergencyPatientService.getPatientInformation(patientName);
     }
 
