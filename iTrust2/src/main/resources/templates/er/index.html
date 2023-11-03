@@ -40,7 +40,7 @@
 			};
 
 			$scope.navigateToPatientDetail = function (patient) {
-				$http.get('/iTrust2/api/v1/emergency/patients/' + patient.username + '?patientName=' + patient.username)
+				$http.get('/iTrust2/api/v1/emergency/patients/' + patient.username)// + '?patientName=' + patient.username)
 						.then(function (response) {
 							$scope.selectedPatient = response.data;
 							console.log(response.data);
@@ -132,6 +132,11 @@
 		<div ng-if="showPatientDetails">
 			<h2>{{selectedPatient.firstName}} {{selectedPatient.lastName}}</h2>
 			<p><strong>Username:</strong> {{selectedPatient.username}}</p>
+			<p><strong>Name:</strong>{{selectedPatient.firstName}} {{selectedPatient.lastName}}</p>
+			<p><strong>Age:</strong> {{selectedPatient.age}}</p>
+			<p><strong>Date of birth:</strong>{{selectedPatient.dateOfBirth}}</p>
+			<p><strong>Gender:</strong>{{selectedPatient.gender}}</p>
+			<p><strong>Blood type:</strong> {{selectedPatient.bloodType}}</p>
 
 			<!-- Display Recent Diagnoses -->
 			<div ng-if="recentDiagnoses.length > 0">
