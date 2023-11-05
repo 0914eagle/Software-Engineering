@@ -88,4 +88,10 @@ public class HCPController {
     public String documentOfficeVisit(final Model model) {
         return "/hcp/documentOfficeVisit";
     }
+
+    @GetMapping("/hcp/foodDiary")
+    @PreAuthorize("hasRole('ROLE_HCP')")
+    public String viewPatientFoodDiary(final Model model) {
+        return "/hcp/foodDiary";
+    }
 }
