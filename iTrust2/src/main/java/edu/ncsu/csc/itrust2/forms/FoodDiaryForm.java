@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class FoodDiaryForm {
-    private Long id;
     private ZonedDateTime date;
     private String mealType;
     private String foodName;
