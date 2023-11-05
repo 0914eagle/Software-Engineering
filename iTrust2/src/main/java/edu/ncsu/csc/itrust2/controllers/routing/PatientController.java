@@ -89,4 +89,10 @@ public class PatientController {
     public String viewDiagnoses(final Model model) {
         return "/patient/officeVisit/viewDiagnoses";
     }
+
+    @GetMapping(value = "patient/foodDiary")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public String viewFoodDiary(final Model model) {
+        return "/patient/foodDiary";
+    }
 }

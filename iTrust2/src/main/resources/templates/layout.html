@@ -176,6 +176,8 @@
                                id="editPatientDemographics">Edit Patient</a></li>
                         <li><a href="/iTrust2/hcp/documentOfficeVisit"
                                id="documentOfficeVisit">Document Office Visit</a></li>
+                        <li><a href="/iTrust2/hcp/foodDiary"
+                               id="viewFoodDiary-hcp">FoodDiary</a></li>
                     </ul>
                 </li>
                 <li class="dropdown"><a class="dropdown-toggle"
@@ -212,7 +214,8 @@
                                id="viewDiagnoses">Diagnoses</a></li>
                         <li><a href="/iTrust2/patient/officeVisit/viewPrescriptions"
                                id="viewPrescriptions">Prescriptions</a></li>
-
+                        <li><a href="/iTrust2/patient/foodDiary"
+                               id="viewFoodDiary">FoodDiary</a></li>
                     </ul>
                 </li>
                 <li class="dropdown"><a class="dropdown-toggle" id="edit"
@@ -258,6 +261,22 @@
 <div id="footer">
     <div class="container">
         <p class="muted credit">iTrust2-v8</p>
+    </div>
+</div>
+
+<div class="modal fade" id="addFoodDiaryModal" tabindex="-1" role="dialog" aria-labelledby="addFoodDiaryModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="addFoodDiaryModalLabel">Add Food Diary</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Your form for adding a food diary entry goes here -->
+            </div>
+        </div>
     </div>
 </div>
 </body>
