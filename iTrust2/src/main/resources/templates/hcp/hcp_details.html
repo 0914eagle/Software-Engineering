@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title}, links=~{})">
+  <title>Patient Details</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+  <script th:inline="javascript">
+    var app = angular.module('patientDetailApp', []);
+
+    app.controller('patientDetailController', function ($scope, $http) {
+      $scope.selectedPatient = {};
+      $scope.recentDiagnoses = [];
+      $scope.recentPrescriptions = [];
+      $scope.message = '';
+
+      $scope.calculateAge = function (birthDate) {
+        // Assuming birthDate is in the format 'yyyy-MM-dd'
+        var birthYear = new Date(birthDate).getFullYear();
+        var currentYear = new Date().getFullYear();
+        return currentYear - birthYear;
+      };
+
+      $scope.init = function () {
+        var pathTokens = window.location.pathname.split('/');
+        var username = pathTokens[pathTokens.length - 1];
+
+        if (username) {
+          $http.get('/iTrust2/api/v1/emergency/patients/' + username)
+                  .then(function (response) {
+                    $scope.selectedPatient = response.data;
+                    return $http.get('/iTrust2/api/v1/emergency/patients/' + username + '/recentDiagnoses');
+                  })
+                  .then(function (response) {
+                    $scope.recentDiagnoses = response.data;
+                    return $http.get('/iTrust2/api/v1/emergency/patients/' + username + '/recentPrescriptions');
+                  })
+                  .then(function (response) {
+                    $scope.recentPrescriptions = response.data;
+                  })
+                  .catch(function (rejection) {
+                    $scope.message = 'Unable to get detailed patient information.';
+                  });
+        } else {
+          $scope.message = 'Username not provided.';
+        }
+      };
+
+      $scope.init();
+    });
+  </script>
+
+  <div ng-app="patientDetailApp" ng-controller="patientDetailController">
+    <h1>Patient Details</h1>
+
+    <!-- Display Patient Details -->
+    <div ng-if="selectedPatient.username">
+      <p><strong>Username:</strong> {{selectedPatient.username}}</p>
+      <p><strong>Name:</strong>{{selectedPatient.firstName}} {{selectedPatient.lastName}}</p>
+      <p><strong>Age:</strong> {{calculateAge(selectedPatient.dateOfBirth)}}</p>
+      <p><strong>Date of birth:</strong>{{selectedPatient.dateOfBirth}}</p>
+      <p><strong>Gender:</strong>{{selectedPatient.gender}}</p>
+      <p><strong>Blood type:</strong> {{selectedPatient.bloodType}}</p>
+    </div>
+
+    <!-- Display Recent Diagnoses -->
+    <div ng-if="recentDiagnoses.length > 0">
+      <h3>Recent Diagnoses</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Note</th>
+          <th>Code ID</th>
+          <th>Visit ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="diagnosis in recentDiagnoses">
+          <td>{{diagnosis.id}}</td>
+          <td>{{diagnosis.note}}</td>
+          <td>{{diagnosis.code_id}}</td>
+          <td>{{diagnosis.visit_id}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- Display Recent Prescriptions -->
+    <div ng-if="recentPrescriptions.length > 0">
+      <h3>Recent Prescriptions</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Prescription ID</th>
+          <th>Dosage</th>
+          <th>End Date</th>
+          <th>Renewals</th>
+          <th>Start Date</th>
+          <th>Drug ID</th>
+          <th>Patient ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="prescription in recentPrescriptions">
+          <td>{{prescription.id}}</td>
+          <td>{{prescription.dosage}}</td>
+          <td>{{prescription.endDate}}</td>
+          <td>{{prescription.renewals}}</td>
+          <td>{{prescription.startDate}}</td>
+          <td>{{prescription.drug_id}}</td>
+          <td>{{prescription.patient_id}}</td>
+          <!-- Add more columns for additional data as needed -->
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- Display Error Message -->
+    <p ng-if="message">{{message}}</p>
+  </div>
+</div>
+</body>
+</html>

@@ -29,7 +29,6 @@ public class FoodDiaryService {
         return foodDiaryRepository.findAllByPatient(patient);
     }
 
-
     public FoodDiary addFoodDiary(final FoodDiaryForm form, String patientName) {
         try {
             final Patient patient = (Patient) patientService.findByName(patientName);

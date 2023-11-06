@@ -3,12 +3,12 @@ package edu.ncsu.csc.itrust2.models;
 import edu.ncsu.csc.itrust2.adapters.ZonedDateTimeAdapter;
 import edu.ncsu.csc.itrust2.adapters.ZonedDateTimeAttributeConverter;
 import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
+import edu.ncsu.csc.itrust2.models.enums.MealType;
 
 import java.time.ZonedDateTime;
 import javax.persistence.*;
 
 import com.google.gson.annotations.JsonAdapter;
-import edu.ncsu.csc.itrust2.models.enums.MealType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +35,7 @@ public class FoodDiary {
     @Setter
     @Enumerated(EnumType.STRING)
     MealType mealType;
+
     @Setter String foodName;
     @Setter Integer servingsNum;
     @Setter Integer caloriesPerServing;

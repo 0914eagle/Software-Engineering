@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -93,5 +94,24 @@ public class HCPController {
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String viewPatientFoodDiary(final Model model) {
         return "/hcp/foodDiary";
+    }
+
+    @GetMapping("/hcp/search_hcp")
+    @PreAuthorize("hasRole('ROLE_HCP')")
+    public String viewHCPPatients(final Model model) {
+        return "/hcp/search_hcp";
+    }
+
+    @RequestMapping(value = "/hcp/hcp_details/{username}")
+    @PreAuthorize("hasRole('ROLE_HCP')")
+    public String viewPatientDetail(final Model model, @PathVariable final String username) {
+        // Add logic to fetch patient details based on the provided username
+        // You may use a service to fetch the details from your data source
+
+        // For example, you can pass the username to the model and let Thymeleaf
+        // render the details in the patient_detail.html page
+        model.addAttribute("username", username);
+
+        return "/hcp/hcp_details"; // Assuming the Thymeleaf template is in "er" directory
     }
 }

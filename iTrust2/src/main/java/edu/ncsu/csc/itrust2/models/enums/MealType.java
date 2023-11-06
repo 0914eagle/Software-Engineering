@@ -1,10 +1,6 @@
 package edu.ncsu.csc.itrust2.models.enums;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lombok.Getter;
-
 
 @Getter
 public enum MealType {

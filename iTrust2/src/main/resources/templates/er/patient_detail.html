@@ -69,18 +69,57 @@
         <!-- Display Recent Diagnoses -->
         <div ng-if="recentDiagnoses.length > 0">
             <h3>Recent Diagnoses</h3>
-            <ul>
-                <li ng-repeat="diagnosis in recentDiagnoses">{{diagnosis.id}}</li>
-            </ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Note</th>
+                    <th>Code ID</th>
+                    <th>Visit ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="diagnosis in recentDiagnoses">
+                    <td>{{diagnosis.id}}</td>
+                    <td>{{diagnosis.note}}</td>
+                    <td>{{diagnosis.code_id}}</td>
+                    <td>{{diagnosis.visit_id}}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+
 
         <!-- Display Recent Prescriptions -->
         <div ng-if="recentPrescriptions.length > 0">
             <h3>Recent Prescriptions</h3>
-            <ul>
-                <li ng-repeat="prescription in recentPrescriptions">{{prescription.id}}</li>
-            </ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>Prescription ID</th>
+                    <th>Dosage</th>
+                    <th>End Date</th>
+                    <th>Renewals</th>
+                    <th>Start Date</th>
+                    <th>Drug ID</th>
+                    <th>Patient ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="prescription in recentPrescriptions">
+                    <td>{{prescription.id}}</td>
+                    <td>{{prescription.dosage}}</td>
+                    <td>{{prescription.endDate}}</td>
+                    <td>{{prescription.renewals}}</td>
+                    <td>{{prescription.startDate}}</td>
+                    <td>{{prescription.drug_id}}</td>
+                    <td>{{prescription.patient_id}}</td>
+                    <!-- Add more columns for additional data as needed -->
+                </tr>
+                </tbody>
+            </table>
         </div>
+
 
         <!-- Display Error Message -->
         <p ng-if="message">{{message}}</p>
