@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:include="layout :: head(title=~{::title}, links=~{})">
@@ -18,45 +20,35 @@
 			$scope.showPatientDetails = false;
 
 			$scope.search = function () {
-				if (!$scope.searchTerm.trim()) {
-					$scope.message = 'No data found. Please enter a search term.';
+				var searchTermRegex = /^[A-Za-z\-\'\s]{1,30}$/;
+				if (!searchTermRegex.test($scope.searchTerm.trim())) {
+					$scope.message = 'Wrong Format. Please enter a valid search term.';
 					$scope.patients = [];
-				} else {
-					$http.get('/iTrust2/api/v1/patientSearch', { params: { nameQuery: $scope.searchTerm } })
-							.then(function (response) {
-								$scope.patients = response.data;
-								$scope.patients = filterPatients(response.data, $scope.searchTerm);
-								if ($scope.patients.length === 0) {
-									$scope.message = 'No data found for the given search term.';
-								} else {
-									$scope.message = '';
-								}
-							})
-							.catch(function(rejection){
-								$scope.message = 'Unable to get the patient data.';
-								$scope.patients = [];
-							});
+				}
+				else {
+					if (!$scope.searchTerm.trim()) {
+						$scope.message = 'No data found. Please enter a search term.';
+						$scope.patients = [];
+					} else {
+						$http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
+								.then(function (response) {
+									$scope.patients = filterPatients(response.data, $scope.searchTerm);
+									if ($scope.patients.length === 0) {
+										$scope.message = 'No data found for the given search term.';
+									} else {
+										$scope.message = '';
+									}
+								})
+								.catch(function (rejection) {
+									$scope.message = 'Unable to get the patient data.';
+									$scope.patients = [];
+								});
+					}
 				}
 			};
 
 			$scope.navigateToPatientDetail = function (patient) {
-				$http.get('/iTrust2/api/v1/emergency/patients/' + patient.username)// + '?patientName=' + patient.username)
-						.then(function (response) {
-							$scope.selectedPatient = response.data;
-							console.log(response.data);
-							return $http.get('/iTrust2/api/v1/emergency/patients/' + patient.username + '/recentDiagnoses');
-						})
-						.then(function (response) {
-							$scope.recentDiagnoses = response.data;
-							return $http.get('/iTrust2/api/v1/emergency/patients/' + patient.username + '/recentPrescriptions');
-						})
-						.then(function (response) {
-							$scope.recentPrescriptions = response.data;
-							$scope.showPatientDetails = true;
-						})
-						.catch(function (rejection) {
-							$scope.message = 'Unable to get detailed patient information.';
-						});
+				window.location.href = '/iTrust2/er/patient_detail/' + patient.username;
 			};
 
 			function filterPatients(data, searchTerm) {
@@ -64,37 +56,6 @@
 					return patient.username.includes(searchTerm) || patient.patientname.includes(searchTerm);
 				});
 			}
-		});
-
-		app.controller('PatientDetailController', function ($scope, $http, $routeParams) {
-			var username = $routeParams.username;
-			$scope.selectedPatient = {};
-			$scope.recentDiagnoses = [];
-			$scope.recentPrescriptions = [];
-
-			$http.get('/iTrust2/api/v1/emergency/patients/' + username)
-					.then(function (response) {
-						$scope.selectedPatient = response.data;
-					})
-					.catch(function (rejection) {
-						$scope.message = 'Unable to get detailed patient information.';
-					});
-
-			$http.get('/api/v1/emergency/patients/' + username + '/recentDiagnoses')
-					.then(function (response) {
-						$scope.recentDiagnoses = response.data;
-					})
-					.catch(function (rejection) {
-						$scope.message = 'Unable to get recent diagnoses.';
-					});
-
-			$http.get('/api/v1/emergency/patients/' + username + '/recentPrescriptions')
-					.then(function (response) {
-						$scope.recentPrescriptions = response.data;
-					})
-					.catch(function (rejection) {
-						$scope.message = 'Unable to get recent prescriptions.';
-					});
 		});
 	</script>
 
@@ -128,32 +89,7 @@
 			</tr>
 		</table>
 
-		<!-- Patient Details -->
-		<div ng-if="showPatientDetails">
-			<h2>{{selectedPatient.firstName}} {{selectedPatient.lastName}}</h2>
-			<p><strong>Username:</strong> {{selectedPatient.username}}</p>
-			<p><strong>Name:</strong>{{selectedPatient.firstName}} {{selectedPatient.lastName}}</p>
-			<p><strong>Age:</strong> {{selectedPatient.age}}</p>
-			<p><strong>Date of birth:</strong>{{selectedPatient.dateOfBirth}}</p>
-			<p><strong>Gender:</strong>{{selectedPatient.gender}}</p>
-			<p><strong>Blood type:</strong> {{selectedPatient.bloodType}}</p>
 
-			<!-- Display Recent Diagnoses -->
-			<div ng-if="recentDiagnoses.length > 0">
-				<h3>Recent Diagnoses</h3>
-				<ul>
-					<li ng-repeat="diagnosis in recentDiagnoses">{{diagnosis.id}}</li>
-				</ul>
-			</div>
-
-			<!-- Display Recent Prescriptions -->
-			<div ng-if="recentPrescriptions.length > 0">
-				<h3>Recent Prescriptions</h3>
-				<ul>
-					<li ng-repeat="prescription in recentPrescriptions">{{prescription.id}}</li>
-				</ul>
-			</div>
-		</div>
 	</div>
 </div>
 </body>

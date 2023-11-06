@@ -1,5 +1,13 @@
 package edu.ncsu.csc.itrust2.services;
 
+import edu.ncsu.csc.itrust2.models.Diagnosis;
+import edu.ncsu.csc.itrust2.models.OfficeVisit;
+import edu.ncsu.csc.itrust2.models.Patient;
+import edu.ncsu.csc.itrust2.models.Prescription;
+import edu.ncsu.csc.itrust2.records.EmergencyPatientInfo;
+import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
+import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -9,13 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import edu.ncsu.csc.itrust2.models.Diagnosis;
-import edu.ncsu.csc.itrust2.models.OfficeVisit;
-import edu.ncsu.csc.itrust2.models.Patient;
-import edu.ncsu.csc.itrust2.records.EmergencyPatientInfo;
-import edu.ncsu.csc.itrust2.models.Prescription;
-import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
-import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
