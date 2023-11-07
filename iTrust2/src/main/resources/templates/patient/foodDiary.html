@@ -69,19 +69,14 @@
                     });
             };
 
-            function twoDigit(num) {
-                if (num < 10) {
-                    return "0" + num;
-                }
-                return num;
-            }
+            $scope.getTodayDate = function() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var yyyy = today.getFullYear();
 
-            // Format a date from given json
-            $scope.getDate = function getDate(date) {
-                /* The months start at 0... only the months.  So we have to add 1 to get the correct input.*/
-                month = date.month + 1;
-                return twoDigit(month) + "/" + twoDigit(date.dayOfMonth) + "/" + date.year;
-            }
+                return yyyy + '-' + mm + '-' + dd;
+            };
         });
     </script>
 
@@ -168,10 +163,15 @@
                         <form name="addFoodDiaryForm" ng-submit="submitFoodDiary()">
                             <!-- Example input field for a Food Diary property -->
                             <label>Date : </label>
-                            <input type="date" name="date" ng-model="newFoodDiary.date" style="margin-bottom: 7px" required><br>
+                            <input type="date" name="date" ng-model="newFoodDiary.date" style="margin-bottom: 7px" max="{{ getTodayDate() }}" required><br>
 
                             <label>Meal Type : </label>
-                            <input type="text" name="mealType" ng-model="newFoodDiary.mealType" style="margin-bottom: 7px" required><br>
+                            <select id="mealType" ng-model="newFoodDiary.mealType" style="margin-bottom: 7px; padding-top: 2px; padding-bottom: 2px" required>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Snack">Snack</option>
+                            </select><br>
 
                             <label>Food Name : </label>
                             <input type="text" name="foodName" ng-model="newFoodDiary.foodName" style="margin-bottom: 7px" required><br>
