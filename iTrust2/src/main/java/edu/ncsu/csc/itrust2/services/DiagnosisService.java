@@ -7,8 +7,8 @@ import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
 import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -32,24 +32,22 @@ public class DiagnosisService extends Service {
     }
 
     public Diagnosis build(final DiagnosisForm form) {
-        var id = form.getId();
-        if (null == id) {
-            return null;
-        }
         final Diagnosis diag = new Diagnosis();
-        diag.setVisit(officeVisitRepository.findById(id).orElse(null));
+        var id = form.getId();
+        if (null != id) {
+            diag.setId(form.getId());
+            diag.setVisit(officeVisitRepository.findById(id).orElse(null));
+        }
         diag.setNote(form.getNote());
         diag.setCode(icdCodeService.findByCode(form.getCode()));
-        diag.setId(form.getId());
-
         return diag;
     }
 
     public List<Diagnosis> findByPatient(final User patient) {
         return officeVisitRepository.findByPatient(patient).stream()
-                .map(e -> findByVisit(e))
-                .flatMap(e -> e.stream())
-                .collect(Collectors.toList());
+                .map(this::findByVisit)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     public List<Diagnosis> findByVisit(final OfficeVisit visit) {
