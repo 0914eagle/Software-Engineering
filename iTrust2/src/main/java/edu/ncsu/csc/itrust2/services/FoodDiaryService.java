@@ -9,13 +9,9 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import static edu.ncsu.csc.itrust2.services.Service.*;
-
-@Component
 @RequiredArgsConstructor
 @Service
 public class FoodDiaryService {

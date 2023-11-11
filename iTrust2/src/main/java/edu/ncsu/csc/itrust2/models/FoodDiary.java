@@ -6,7 +6,15 @@ import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
 import edu.ncsu.csc.itrust2.models.enums.MealType;
 
 import java.time.ZonedDateTime;
-import javax.persistence.*;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.google.gson.annotations.JsonAdapter;
 import lombok.Getter;
@@ -45,6 +53,7 @@ public class FoodDiary {
     @Setter Integer sugarsGramsPerServing;
     @Setter Integer fiberGramsPerServing;
     @Setter Integer proteinGramsPerServing;
+    @Setter Integer caloriesTotal;
     @Setter Integer fatGramsTotal;
     @Setter Integer sodiumMilligramsTotal;
     @Setter Integer carbsGramsTotal;
@@ -53,11 +62,12 @@ public class FoodDiary {
     @Setter Integer proteinGramsTotal;
 
     public FoodDiary(final FoodDiaryForm form, final Patient patient) {
+        final var servingsNum = form.getServingsNum();
         setDate(form.getDate());
         setPatient(patient);
         setMealType(MealType.parse(form.getMealType()));
         setFoodName(form.getFoodName());
-        setServingsNum(form.getServingsNum());
+        setServingsNum(servingsNum);
         setCaloriesPerServing(form.getCaloriesPerServing());
         setFatGramsPerServing(form.getFatGramsPerServing());
         setSodiumMilligramsPerServing(form.getSodiumMilligramsPerServing());
@@ -65,11 +75,12 @@ public class FoodDiary {
         setSugarsGramsPerServing(form.getSugarsGramsPerServing());
         setFiberGramsPerServing(form.getFiberGramsPerServing());
         setProteinGramsPerServing(form.getProteinGramsPerServing());
-        setFatGramsTotal(form.getServingsNum() * form.getFatGramsPerServing());
-        setSodiumMilligramsTotal(form.getServingsNum() * form.getSodiumMilligramsPerServing());
-        setCarbsGramsTotal(form.getServingsNum() * form.getCarbsGramsPerServing());
-        setSugarsGramsTotal(form.getServingsNum() * form.getSugarsGramsPerServing());
-        setFiberGramsTotal(form.getServingsNum() * form.getFiberGramsPerServing());
-        setProteinGramsTotal(form.getServingsNum() * form.getProteinGramsPerServing());
+        setCaloriesTotal(servingsNum * form.getCaloriesPerServing());
+        setFatGramsTotal(servingsNum * form.getFatGramsPerServing());
+        setSodiumMilligramsTotal(servingsNum * form.getSodiumMilligramsPerServing());
+        setCarbsGramsTotal(servingsNum * form.getCarbsGramsPerServing());
+        setSugarsGramsTotal(servingsNum * form.getSugarsGramsPerServing());
+        setFiberGramsTotal(servingsNum * form.getFiberGramsPerServing());
+        setProteinGramsTotal(servingsNum * form.getProteinGramsPerServing());
     }
 }

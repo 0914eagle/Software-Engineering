@@ -2,14 +2,14 @@ package edu.ncsu.csc.itrust2.forms;
 
 import java.time.ZonedDateTime;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /** A form for REST API communication. Contains fields for constructing FoodDiary objects. */
 @Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class FoodDiaryForm {
     private ZonedDateTime date;
     private String mealType;
