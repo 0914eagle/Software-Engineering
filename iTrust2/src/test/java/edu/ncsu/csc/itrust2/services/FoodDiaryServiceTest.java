@@ -8,6 +8,8 @@ import edu.ncsu.csc.itrust2.repositories.FoodDiaryRepository;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,5 +58,19 @@ public class FoodDiaryServiceTest {
         assertThrows(
                 ResponseStatusException.class,
                 () -> foodDiaryService.addFoodDiary(foodDiaryForm, "patient"));
+    }
+
+    @Test
+    public void testListByPatient() {
+        final var patient = new Patient();
+        List<FoodDiary> foodDiaryList = new ArrayList<FoodDiary>();
+
+        given(patientService.findByName(any(String.class))).willReturn(patient);
+
+        given(foodDiaryRepository.findAllByPatient(patient)).willReturn(foodDiaryList);
+
+        final var result = foodDiaryService.listByPatient("patient");
+
+        assertEquals(result, foodDiaryList);
     }
 }
