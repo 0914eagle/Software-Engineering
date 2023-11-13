@@ -1,9 +1,8 @@
 package edu.ncsu.csc.itrust2.services;
 
-import edu.ncsu.csc.itrust2.models.Diagnosis;
-import edu.ncsu.csc.itrust2.models.OfficeVisit;
-import edu.ncsu.csc.itrust2.models.Patient;
-import edu.ncsu.csc.itrust2.models.Prescription;
+import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.models.enums.Role;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.records.EmergencyPatientInfo;
 import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
 import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
@@ -17,7 +16,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -26,10 +27,27 @@ public class EmergencyPatientService {
     private final DiagnosisRepository diagnosisRepository;
     private final OfficeVisitRepository officeVisitRepository;
     private final PatientService patientService;
+    private final UserService userService;
+    final LoggerUtil loggerUtil;
 
     public EmergencyPatientInfo getPatientInformation(String patientName) {
 
         final Patient patient = (Patient) patientService.findByName(patientName);
+
+        String currentUserName = LoggerUtil.currentUser();
+        User currentUser = userService.findByName(currentUserName);
+
+        if (currentUser.isDoctor()){
+            loggerUtil.log(
+                    TransactionType.HCP_VIEW_ER,
+                    currentUserName,
+                    patientName);
+        } else {
+            loggerUtil.log(
+                    TransactionType.ER_VIEW_ER,
+                    currentUserName,
+                    patientName);
+        }
 
         return new EmergencyPatientInfo(
                 patient.getUsername(),
