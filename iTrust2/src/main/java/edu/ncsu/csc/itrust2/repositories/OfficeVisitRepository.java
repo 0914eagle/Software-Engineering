@@ -1,18 +1,22 @@
-package edu.ncsu.csc.iTrust2.repositories;
+package edu.ncsu.csc.itrust2.repositories;
 
+import edu.ncsu.csc.itrust2.models.OfficeVisit;
+import edu.ncsu.csc.itrust2.models.User;
+
+import java.time.ZonedDateTime;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import edu.ncsu.csc.iTrust2.models.OfficeVisit;
-import edu.ncsu.csc.iTrust2.models.User;
-
 public interface OfficeVisitRepository extends JpaRepository<OfficeVisit, Long> {
 
-    public List<OfficeVisit> findByHcp ( User hcp );
+    List<OfficeVisit> findByHcp(@NotNull User hcp);
 
-    public List<OfficeVisit> findByPatient ( User patient );
+    List<OfficeVisit> findByPatient(@NotNull User patient);
 
-    public List<OfficeVisit> findByHcpAndPatient ( User hcp, User patient );
+    List<OfficeVisit> findByHcpAndPatient(@NotNull User hcp, @NotNull User patient);
 
+    List<OfficeVisit> findByDateBetweenAndPatientOrderByDateDesc(
+            @NotNull ZonedDateTime begin, @NotNull ZonedDateTime end, @NotNull User patient);
 }

@@ -1,48 +1,43 @@
-package edu.ncsu.csc.iTrust2.repositories.security;
+package edu.ncsu.csc.itrust2.repositories.security;
+
+import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.security.LoginLockout;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import edu.ncsu.csc.iTrust2.models.User;
-import edu.ncsu.csc.iTrust2.models.security.LoginLockout;
 
 public interface LoginLockoutRepository extends JpaRepository<LoginLockout, Long> {
 
     /**
      * Retrieves a list of LoginLockout records for the given IP address.
      *
-     * @param ipAddress
-     *            The IP address to search on.
+     * @param ipAddress The IP address to search on.
      * @return The list of matching LoginLockouts.
      */
-    public List<LoginLockout> findByIp ( String ipAddress );
+    List<LoginLockout> findByIp(String ipAddress);
 
     /**
      * Deletes all saved LoginLockouts for the given IP address.
      *
-     * @param ipAddress
-     *            The IP address to delete by.
+     * @param ipAddress The IP address to delete by.
      * @return The number of records deleted.
      */
-    public long deleteByIp ( String ipAddress );
+    long deleteByIp(String ipAddress);
 
     /**
      * Retrieves a list of LoginLockout records for the given user.
-     * 
-     * @param user
-     *            The User to search on.
+     *
+     * @param user The User to search on.
      * @return The list of matching LoginLockouts.
      */
-    public List<LoginLockout> findByUser ( User user );
+    List<LoginLockout> findByUser(User user);
 
     /**
      * Deletes all saved LoginLockouts for the given User.
-     * 
-     * @param user
-     *            The user to delete by.
+     *
+     * @param user The user to delete by.
      * @return The number of records deleted.
      */
-    public long deleteByUser ( User user );
-
+    long deleteByUser(User user);
 }

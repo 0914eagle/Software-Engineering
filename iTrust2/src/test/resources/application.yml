@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8100/iTrust2_test?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&useSSL=false
+    username: root
+    password: root
+    hikari:
+      idleTimeout: 500
+      connectionTimeout: 15000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+  mvc:
+    log-request-details: true
+    log-resolved-exception: true
+logging:
+  level:
+    edu:
+      ncsu:
+        csc: TRACE
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
+      hibernate:
+        SQL: DEBUG
+server:
+  port: 8080
+  servlet:
+    contextPath: /iTrust2
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+    csrf:
+      enabled: true
+  show-actuator: true

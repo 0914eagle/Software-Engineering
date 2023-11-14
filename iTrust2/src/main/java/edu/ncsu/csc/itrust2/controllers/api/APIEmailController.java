@@ -1,23 +1,22 @@
-package edu.ncsu.csc.iTrust2.controllers.api;
+package edu.ncsu.csc.itrust2.controllers.api;
+
+import edu.ncsu.csc.itrust2.models.Email;
+import edu.ncsu.csc.itrust2.services.EmailService;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.iTrust2.models.Email;
-import edu.ncsu.csc.iTrust2.services.EmailService;
-
 @RestController
+@RequiredArgsConstructor
 public class APIEmailController extends APIController {
 
-    @Autowired
-    private EmailService service;
+    private final EmailService service;
 
-    @GetMapping ( BASE_PATH + "emails" )
-    public List<Email> getEmails () {
+    @GetMapping("emails")
+    public List<Email> getEmails() {
         return (List<Email>) service.findAll();
     }
-
 }

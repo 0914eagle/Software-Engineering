@@ -1,31 +1,31 @@
-package edu.ncsu.csc.iTrust2.services;
+package edu.ncsu.csc.itrust2.services;
+
+import edu.ncsu.csc.itrust2.models.Drug;
+import edu.ncsu.csc.itrust2.repositories.DrugRepository;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.iTrust2.models.Drug;
-import edu.ncsu.csc.iTrust2.repositories.DrugRepository;
-
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class DrugService extends Service {
 
-    @Autowired
-    private DrugRepository repository;
+    private final DrugRepository repository;
 
     @Override
-    protected JpaRepository getRepository () {
+    protected JpaRepository getRepository() {
         return repository;
     }
 
-    public boolean existsByCode ( final String code ) {
-        return repository.existsByCode( code );
+    public boolean existsByCode(final String code) {
+        return repository.existsByCode(code);
     }
 
-    public Drug findByCode ( final String code ) {
-        return repository.findByCode( code );
+    public Drug findByCode(final String code) {
+        return repository.findByCode(code);
     }
 }

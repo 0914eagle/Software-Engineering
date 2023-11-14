@@ -1,41 +1,40 @@
-package edu.ncsu.csc.iTrust2.services.security;
+package edu.ncsu.csc.itrust2.services.security;
+
+import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.repositories.security.LoginAttemptRepository;
+import edu.ncsu.csc.itrust2.services.Service;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.iTrust2.models.User;
-import edu.ncsu.csc.iTrust2.repositories.security.LoginAttemptRepository;
-import edu.ncsu.csc.iTrust2.services.Service;
-
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class LoginAttemptService extends Service {
 
-    @Autowired
-    private LoginAttemptRepository repository;
+    private final LoginAttemptRepository repository;
 
     @Override
-    protected JpaRepository getRepository () {
+    protected JpaRepository getRepository() {
         return repository;
     }
 
-    public long countByIP ( final String ipAddress ) {
-        return repository.countByIp( ipAddress );
+    public long countByIP(final String ipAddress) {
+        return repository.countByIp(ipAddress);
     }
 
-    public long clearIP ( final String ipAddress ) {
-        return repository.deleteByIp( ipAddress );
+    public long clearIP(final String ipAddress) {
+        return repository.deleteByIp(ipAddress);
     }
 
-    public long countByUser ( final User user ) {
-        return repository.countByUser( user );
+    public long countByUser(final User user) {
+        return repository.countByUser(user);
     }
 
-    public long clearUser ( final User user ) {
-        return repository.deleteByUser( user );
+    public long clearUser(final User user) {
+        return repository.deleteByUser(user);
     }
-
 }

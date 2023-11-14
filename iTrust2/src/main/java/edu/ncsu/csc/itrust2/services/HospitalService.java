@@ -1,28 +1,27 @@
-package edu.ncsu.csc.iTrust2.services;
+package edu.ncsu.csc.itrust2.services;
+
+import edu.ncsu.csc.itrust2.models.Hospital;
+import edu.ncsu.csc.itrust2.repositories.HospitalRepository;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.iTrust2.models.Hospital;
-import edu.ncsu.csc.iTrust2.repositories.HospitalRepository;
-
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class HospitalService extends Service {
 
-    @Autowired
-    private HospitalRepository repository;
+    private final HospitalRepository repository;
 
     @Override
-    protected JpaRepository getRepository () {
+    protected JpaRepository getRepository() {
         return repository;
     }
 
-    public Hospital findByName ( final String name ) {
-        return repository.findByName( name );
+    public Hospital findByName(final String name) {
+        return repository.findByName(name);
     }
-
 }

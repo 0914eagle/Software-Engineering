@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+    <title>View FoodDiary</title>
+
+    <!-- Angular and Bootstrap files  -->
+    <link rel="stylesheet"
+          href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+
+    <script th:inline="javascript">
+        /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+        /*<![CDATA[*/
+        const app = angular.module("viewFoodDiary", []); // Inject ngRoute for routing
+        app.controller('controller', function ($scope, $http) {
+
+            $scope.refreshFoodDiaries = function () {
+                $http.get("/iTrust2/api/v1/foodDiaries").then(
+                    function (response) {
+                        $scope.foodDiaries = response.data;
+                        $scope.message = "";
+                    },
+                    function (rejection) {
+                        $scope.foodDiaries = [];
+                        $scope.message = "Unable to display food diaries";
+                    }
+                );
+            }
+
+            $scope.refreshFoodDiaries();
+
+            $scope.openAddFoodDiaryModal = function () {
+                $('#addFoodDiaryModal').modal('show');
+            }
+
+            $scope.newFoodDiary = {
+                date: '',
+                mealType: '',
+                foodName: '',
+                servingsNum: 0,
+                caloriesPerServing: 0,
+                fatGramsPerServing: 0,
+                sodiumMilligramsPerServing: 0,
+                carbsGramsPerServing: 0,
+                sugarsGramsPerServing: 0,
+                fiberGramsPerServing: 0,
+                proteinGramsPerServing: 0
+            };
+
+            $scope.submitFoodDiary = function () {
+                var data = $scope.newFoodDiary;
+                console.log(data)
+                $http.post('/iTrust2/api/v1/foodDiaries', data)
+                    .then(function (response) {
+                        console.log('Food Diary added:', response.data);
+                        $('#addFoodDiaryModal').modal('hide');
+                        $scope.refreshFoodDiaries();
+                    })
+                    .catch(function (error) {
+                        console.error('Error adding Food Diary:', error);
+                    });
+            };
+
+            $scope.getTodayDate = function() {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var yyyy = today.getFullYear();
+
+                return yyyy + '-' + mm + '-' + dd;
+            };
+        });
+    </script>
+
+    <div ng-app="viewFoodDiary" ng-controller="controller">
+
+        <!-- Info on tables from https://hello-angularjs.appspot.com/removetablerow -->
+        <div class="container">
+            <h4 style="color: red" ng-model="message"></h4>
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h2>Food Diary</h2>
+                <button ng-click="openAddFoodDiaryModal()" class="btn btn-primary">Add Food Diary</button>
+            </div>
+
+            <div ng-show="foodDiaries.length === 0" style="padding-top: 15px">
+                <p>There are no written food diaries yet.</p>
+            </div>
+            <div ng-show="foodDiaries.length > 0" style="padding-top: 15px; overflow-x: auto">
+                <table style="width: 100%" class="table table-hover">
+                    <thead>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 10%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                        <col style="width: 7%;">
+                    </colgroup>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type of Meal</th>
+                        <th>Food Name</th>
+                        <th>Num of Servings</th>
+                        <th>Calories(cal)</th>
+                        <th>Fat(g)</th>
+                        <th>Sodium(mg)</th>
+                        <th>Carbs(g)</th>
+                        <th>Sugars(g)</th>
+                        <th>Fiber(g)</th>
+                        <th>Protein(g)</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="d in foodDiaries" name="foodDiary">
+                    <tr>
+                        <td name="date" rowspan="2">{{d.date | date : 'yyyy.MM.dd'}}</td>
+                        <td name="meal" rowspan="2">{{d.mealType}}</td>
+                        <td name="name" rowspan="2">{{d.foodName}}</td>
+                        <td name="numServings" rowspan="2">{{d.servingsNum}}</td>
+                        <td name="cal">{{d.caloriesPerServing}}</td>
+                        <td name="fat">{{d.fatGramsPerServing}}</td>
+                        <td name="sodium">{{d.sodiumMilligramsPerServing}}</td>
+                        <td name="carbs">{{d.carbsGramsPerServing}}</td>
+                        <td name="sugar">{{d.sugarsGramsPerServing}}</td>
+                        <td name="fiber">{{d.fiberGramsPerServing}}</td>
+                        <td name="protein">{{d.proteinGramsPerServing}}</td>
+                    </tr>
+                    <tr>
+                        <td name="totCal">{{d.servingsNum * d.caloriesPerServing}}</td>
+                        <td name="totFat">{{d.fatGramsTotal}}</td>
+                        <td name="totSodium">{{d.sodiumMilligramsTotal}}</td>
+                        <td name="totCarbs">{{d.carbsGramsTotal}}</td>
+                        <td name="totSugar">{{d.sugarsGramsTotal}}</td>
+                        <td name="totFiber">{{d.fiberGramsTotal}}</td>
+                        <td name="totProtein">{{d.proteinGramsTotal}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="addFoodDiaryModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add Food Diary</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="addFoodDiaryForm" ng-submit="submitFoodDiary()">
+                            <!-- Example input field for a Food Diary property -->
+                            <label>Date : </label>
+                            <input type="date" name="date" ng-model="newFoodDiary.date" style="margin-bottom: 7px" max="{{ getTodayDate() }}" required><br>
+
+                            <label>Meal Type : </label>
+                            <select id="mealType" ng-model="newFoodDiary.mealType" style="margin-bottom: 7px; padding-top: 2px; padding-bottom: 2px" required>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Snack">Snack</option>
+                            </select><br>
+
+                            <label>Food Name : </label>
+                            <input type="text" name="foodName" ng-model="newFoodDiary.foodName" style="margin-bottom: 7px" required><br>
+
+                            <label>Number of Servings : </label>
+                            <input type="number" name="servingsNum" ng-model="newFoodDiary.servingsNum" style="margin-bottom: 7px" required><br>
+
+                            <label>Calories (cal) : </label>
+                            <input type="number" name="caloriesPerServing" ng-model="newFoodDiary.caloriesPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Fat (g) : </label>
+                            <input type="number" name="fatGramsPerServing" ng-model="newFoodDiary.fatGramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Sodium (mg) : </label>
+                            <input type="number" name="sodiumMilligramsPerServing" ng-model="newFoodDiary.sodiumMilligramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Carbs (g) : </label>
+                            <input type="number" name="carbsGramsPerServing" ng-model="newFoodDiary.carbsGramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Sugars (g) : </label>
+                            <input type="number" name="sugarsGramsPerServing" ng-model="newFoodDiary.sugarsGramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Fiber (g) : </label>
+                            <input type="number" name="fiberGramsPerServing" ng-model="newFoodDiary.fiberGramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <label>Protein (g) : </label>
+                            <input type="number" name="proteinGramsPerServing" ng-model="newFoodDiary.proteinGramsPerServing" style="margin-bottom: 7px" required><br>
+
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

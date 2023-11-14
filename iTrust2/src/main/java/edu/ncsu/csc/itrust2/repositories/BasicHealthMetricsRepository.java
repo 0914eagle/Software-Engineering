@@ -1,9 +1,7 @@
-package edu.ncsu.csc.iTrust2.repositories;
+package edu.ncsu.csc.itrust2.repositories;
+
+import edu.ncsu.csc.itrust2.models.BasicHealthMetrics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import edu.ncsu.csc.iTrust2.models.BasicHealthMetrics;
-
-public interface BasicHealthMetricsRepository extends JpaRepository<BasicHealthMetrics, Long> {
-
-}
+public interface BasicHealthMetricsRepository extends JpaRepository<BasicHealthMetrics, Long> {}
