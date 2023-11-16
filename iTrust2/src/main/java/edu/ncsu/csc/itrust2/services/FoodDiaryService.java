@@ -1,7 +1,9 @@
 package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
-import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.models.FoodDiary;
+import edu.ncsu.csc.itrust2.models.Patient;
+import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.repositories.FoodDiaryRepository;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -25,7 +27,7 @@ public class FoodDiaryService {
 
         final Patient patient = (Patient) patientService.findByName(patientName);
 
-        String currentUserName = LoggerUtil.currentUser();
+        String currentUserName = loggerUtil.getCurrentUsername();
         User currentUser = userService.findByName(currentUserName);
 
         if (currentUser.isDoctor()) {
@@ -37,7 +39,7 @@ public class FoodDiaryService {
     }
 
     public FoodDiary addFoodDiary(final FoodDiaryForm form, String patientName) {
-        String currentUserName = LoggerUtil.currentUser();
+        String currentUserName = loggerUtil.getCurrentUsername();
 
         try {
             final Patient patient = (Patient) patientService.findByName(patientName);
