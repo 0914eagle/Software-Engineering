@@ -28,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,7 +37,10 @@ public class EmergencyPatientServiceTest {
     @Mock private DiagnosisRepository diagnosisRepository;
     @Mock private OfficeVisitRepository officeVisitRepository;
     @Mock private PatientService patientService;
-    @Mock private UserService userService;
+
+    @Mock(lenient = true)
+    private UserService userService;
+
     @Mock private LoggerUtil loggerUtil;
 
     @InjectMocks private EmergencyPatientService emergencyPatientService;
@@ -63,6 +67,7 @@ public class EmergencyPatientServiceTest {
         // Mock interactions
         given(patientService.findByName(anyString())).willReturn(patient);
         given(loggerUtil.getCurrentUsername()).willReturn(currentUserName);
+        given(userService.findByName(eq(currentUserName))).willReturn(currentUser);
 
         // Test the method
         EmergencyPatientInfo result = emergencyPatientService.getPatientInformation(patientName);
