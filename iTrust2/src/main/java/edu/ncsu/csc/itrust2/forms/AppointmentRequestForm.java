@@ -45,7 +45,7 @@ public class AppointmentRequestForm {
     private String name;
     private String abbreviation;
     private String cptCode;
-    private String commentsLong;
+    private String longComment;
 
     /**
      * Populate the appt request form from the Appointment request object
@@ -67,7 +67,7 @@ public class AppointmentRequestForm {
 
         setName(request.getName());
         setAbbreviation(request.getAbbreviation());
-        setCPT_Code(request.getCPT_Code());
-        setComments_long(request.getComments_long());
+        setCptCode(request.getCptCode());
+        setLongComment(request.getLongComment());
     }
 }

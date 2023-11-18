@@ -80,8 +80,8 @@ public class AppointmentRequestService extends Service {
 
         ar.setName(raf.getName());
         ar.setAbbreviation(raf.getAbbreviation());
-        ar.setCPT_Code(raf.getCPT_Code());
-        ar.setComments_long(raf.getComments_long());
+        ar.setCptCode(raf.getCptCode());
+        ar.setLongComment(raf.getLongComment());
 
         return ar;
     }
