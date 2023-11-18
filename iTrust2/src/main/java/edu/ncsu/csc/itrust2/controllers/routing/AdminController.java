@@ -38,7 +38,7 @@ public class AdminController {
     @RequestMapping(value = "admin/users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String manageUser(final Model model) {
-        return "/admin/users";
+        return "admin/users";
     }
 
     /**
@@ -50,7 +50,7 @@ public class AdminController {
     @RequestMapping(value = "admin/hospitals")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String manageHospital(final Model model) {
-        return "/admin/hospitals";
+        return "admin/hospitals";
     }
 
     /**
@@ -74,6 +74,6 @@ public class AdminController {
     @RequestMapping(value = "admin/manageICDCodes")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addCode(final Model model) {
-        return "/admin/manageICDCodes";
+        return "admin/manageICDCodes";
     }
 }
