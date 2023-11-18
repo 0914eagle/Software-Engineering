@@ -27,7 +27,7 @@ public class PatientController {
     @GetMapping("/patient/manageAppointmentRequest")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String requestAppointmentForm(final Model model) {
-        return "/patient/manageAppointmentRequest";
+        return "patient/manageAppointmentRequest";
     }
 
     /**
@@ -39,7 +39,7 @@ public class PatientController {
     @GetMapping("/patient/officeVisit/viewOfficeVisits")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String viewOfficeVisits(final Model model) {
-        return "/patient/officeVisit/viewOfficeVisits";
+        return "patient/officeVisit/viewOfficeVisits";
     }
 
     /**
@@ -51,7 +51,7 @@ public class PatientController {
     @GetMapping("/patient/officeVisit/viewPrescriptions")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String viewPrescriptions(final Model model) {
-        return "/patient/officeVisit/viewPrescriptions";
+        return "patient/officeVisit/viewPrescriptions";
     }
 
     /**
@@ -75,7 +75,7 @@ public class PatientController {
     @GetMapping(value = "patient/editDemographics")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String viewDemographics(final Model model) {
-        return "/patient/editDemographics";
+        return "patient/editDemographics";
     }
 
     /**
@@ -87,12 +87,12 @@ public class PatientController {
     @GetMapping(value = "patient/officeVisit/viewDiagnoses")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String viewDiagnoses(final Model model) {
-        return "/patient/officeVisit/viewDiagnoses";
+        return "patient/officeVisit/viewDiagnoses";
     }
 
     @GetMapping(value = "patient/foodDiary")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public String viewFoodDiary(final Model model) {
-        return "/patient/foodDiary";
+        return "patient/foodDiary";
     }
 }

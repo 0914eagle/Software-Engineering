@@ -35,7 +35,7 @@ public class UserController {
     @GetMapping(value = "personnel/editDemographics")
     @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ADMIN')")
     public String viewDemographics(final Model model) {
-        return "/personnel/editDemographics";
+        return "personnel/editDemographics";
     }
 
     @GetMapping(value = "/DrJenkins", produces = MediaType.IMAGE_JPEG_VALUE)

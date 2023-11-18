@@ -39,7 +39,7 @@ public class HCPController {
     @GetMapping("/hcp/editPatientDemographics")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String editPatientDemographics() {
-        return "/hcp/editPatientDemographics";
+        return "hcp/editPatientDemographics";
     }
 
     /**
@@ -50,7 +50,7 @@ public class HCPController {
     @GetMapping("/hcp/editPrescriptions")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String editPrescriptions() {
-        return "/hcp/editPrescriptions";
+        return "hcp/editPrescriptions";
     }
 
     /**
@@ -87,19 +87,19 @@ public class HCPController {
     @GetMapping("/hcp/documentOfficeVisit")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String documentOfficeVisit(final Model model) {
-        return "/hcp/documentOfficeVisit";
+        return "hcp/documentOfficeVisit";
     }
 
     @GetMapping("/hcp/foodDiary")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String viewPatientFoodDiary(final Model model) {
-        return "/hcp/foodDiary";
+        return "hcp/foodDiary";
     }
 
     @GetMapping("/hcp/search_hcp")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public String viewHCPPatients(final Model model) {
-        return "/hcp/search_hcp";
+        return "hcp/search_hcp";
     }
 
     @RequestMapping(value = "/hcp/hcp_details/{username}")
@@ -112,6 +112,6 @@ public class HCPController {
         // render the details in the patient_detail.html page
         model.addAttribute("username", username);
 
-        return "/hcp/hcp_details"; // Assuming the Thymeleaf template is in "er" directory
+        return "hcp/hcp_details"; // Assuming the Thymeleaf template is in "er" directory
     }
 }
