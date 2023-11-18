@@ -76,4 +76,9 @@ public class AppointmentRequest extends DomainObject {
     @Setter
     @NotNull @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Setter private String Name;
+    @Setter private String Abbreviation;
+    @Setter private String CPT_Code;
+    @Setter private String Comments_long;
 }

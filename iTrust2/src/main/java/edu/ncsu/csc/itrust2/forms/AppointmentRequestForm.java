@@ -42,6 +42,11 @@ public class AppointmentRequestForm {
     /** The comments of the appt request */
     private String comments;
 
+    private String name;
+    private String abbreviation;
+    private String cptCode;
+    private String commentsLong;
+
     /**
      * Populate the appt request form from the Appointment request object
      *
@@ -59,5 +64,10 @@ public class AppointmentRequestForm {
         }
 
         setStatus(request.getStatus().toString());
+
+        setName(request.getName());
+        setAbbreviation(request.getAbbreviation());
+        setCPT_Code(request.getCPT_Code());
+        setComments_long(request.getComments_long());
     }
 }
