@@ -1,4 +1,3 @@
 package edu.ncsu.csc.itrust2.forms;
 
-public class PersonalRepresentationForm {
-}
+public class PersonalRepresentationForm {}

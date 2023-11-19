@@ -10,10 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "personal_representatives")
-public class PersonalRepresentatives {
-
-    @Setter
+@Table(name = "personal_representation")
+public class PersonalRepresentation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,11 +20,11 @@ public class PersonalRepresentatives {
     @Setter
     @NotNull @ManyToOne
     @JoinColumn(name = "patient_id", columnDefinition = "varchar(100)")
-    private User patient;
+    private Patient patient;
 
     /** The PR of the patient */
     @Setter
     @NotNull @ManyToOne
-    @JoinColumn(name = "pr_id", columnDefinition = "varchar(100)")
-    private User pr;
+    @JoinColumn(name = "personal_representative_id", columnDefinition = "varchar(100)")
+    private Patient personalRepresentative;
 }
