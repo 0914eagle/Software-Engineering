@@ -1,10 +1,11 @@
 package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.FoodDiaryForm;
-import edu.ncsu.csc.itrust2.models.FoodDiary;
-import edu.ncsu.csc.itrust2.models.FoodDiaryTest;
-import edu.ncsu.csc.itrust2.models.Patient;
+import edu.ncsu.csc.itrust2.forms.UserForm;
+import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.repositories.FoodDiaryRepository;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,12 +17,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FoodDiaryServiceTest {
@@ -30,6 +33,8 @@ public class FoodDiaryServiceTest {
     @Mock private PatientService patientService;
 
     @InjectMocks private FoodDiaryService foodDiaryService;
+
+    @Mock private LoggerUtil loggerUtil;
 
     @Test
     public void testAddFoodDiarySuccess() {
@@ -62,14 +67,19 @@ public class FoodDiaryServiceTest {
 
     @Test
     public void testListByPatient() {
-        final var patient = new Patient();
+        final String patientUsername1 = "patientUser1";
+        final UserForm userForm = new UserForm(patientUsername1, "123456", Role.ROLE_PATIENT, 1);
+        final Patient patientUser1 = new Patient(userForm);
+
+        when(loggerUtil.getCurrentUsername()).thenReturn(patientUsername1);
+        when(patientService.findByName(patientUsername1)).thenReturn(patientUser1);
+
         List<FoodDiary> foodDiaryList = new ArrayList<FoodDiary>();
 
-        given(patientService.findByName(any(String.class))).willReturn(patient);
+        given(patientService.findByName(any(String.class))).willReturn(patientUser1);
+        given(foodDiaryRepository.findAllByPatient(patientUser1)).willReturn(foodDiaryList);
 
-        given(foodDiaryRepository.findAllByPatient(patient)).willReturn(foodDiaryList);
-
-        final var result = foodDiaryService.listByPatient("patient");
+        final List<FoodDiary> result = foodDiaryService.listByPatient("patientUser1");
 
         assertEquals(result, foodDiaryList);
     }
