@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PersonalRepresentationService {
     private final PatientService patientService;
-    private final UserService userService;
-    private final LoggerUtil loggerUtil;
     private final PersonalRepresentationRepository personalRepresentationRepository;
     public List<PersonalRepresentation> listByPatient(String patientName) {
         final Patient patient = (Patient) patientService.findByName(patientName);
@@ -21,6 +19,6 @@ public class PersonalRepresentationService {
     }
     public List<PersonalRepresentation> listByRepresenting(String patientName) {
         final Patient patient = (Patient) patientService.findByName(patientName);
-        return personalRepresentationRepository.findALLByPersonalRepresentative(patient);
+        return personalRepresentationRepository.findAllByPersonalRepresentative(patient);
     }
 }
