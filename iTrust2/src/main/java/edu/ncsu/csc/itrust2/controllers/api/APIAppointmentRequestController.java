@@ -12,6 +12,9 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Kai Presler-Marshall
  * @author Matt Dzwonczyk
  */
+@Tag(name = "[UC20] 예약 요청 생성 API (일반/안과)")
 @RestController
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -137,10 +141,11 @@ public class APIAppointmentRequestController extends APIController {
      *     HttpStatus.BAD_REQUEST if another error occurred while parsing or saving the Request
      *     provided
      */
+    @Operation(summary = "Patient: 예약 요청을 DB에 저장")
     @PostMapping("/appointmentrequests")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public ResponseEntity createAppointmentRequest(
-            @RequestBody final AppointmentRequestForm requestForm) {
+            @Parameter(description = "새로 만들 예약 요청입니다.") @RequestBody final AppointmentRequestForm requestForm) {
         try {
             final AppointmentRequest request = service.build(requestForm);
             if (null != service.findById(request.getId())) {
