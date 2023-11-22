@@ -71,7 +71,6 @@ public class FoodDiaryServiceTest {
         final Patient patientUser1 = new Patient(userForm);
 
         when(loggerUtil.getCurrentUsername()).thenReturn(patientUsername1);
-        when(patientService.findByName(patientUsername1)).thenReturn(patientUser1);
 
         List<FoodDiary> foodDiaryList = new ArrayList<FoodDiary>();
 
