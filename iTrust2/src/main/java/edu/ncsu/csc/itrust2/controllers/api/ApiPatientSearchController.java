@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ApiPatientSearchController {
     private final PatientSearchService patientService;
 
-    @Operation(summary = "HCP: 환자를 이름으로 조회")
+    @Operation(summary = "HCP, ER: 환자를 이름으로 조회")
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ER')")
     public List<Patient> listPatientsByName(@Parameter(description = "조회할 환자의 이름입니다.") @RequestParam String nameQuery) {
