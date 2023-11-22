@@ -60,10 +60,10 @@ public class ApiPersonalRepresentationController {
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public void setPersonalRepresentative(
             @Parameter(description = "대리인으로 지정할 환자의 username 입니다.") @PathVariable
-                final String representativeUsername) {
+                final String personalRepresentativeUsername) {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.setPersonalRepresentation(
-                currentUsername, representativeUsername);
+                currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "HCP: 특정 환자의 대리인 지정")
@@ -73,9 +73,9 @@ public class ApiPersonalRepresentationController {
             @Parameter(description = "대리인을 지정할 특정 환자의 username 입니다.") @PathVariable
                 final String patientUsername,
             @Parameter(description = "대리인으로 지정할 환자의 username 입니다.") @PathVariable
-                final String representativeUsername) {
+                final String personalRepresentativeUsername) {
         personalRepresentationService.setPersonalRepresentation(
-                patientUsername, representativeUsername);
+                patientUsername, personalRepresentativeUsername);
     }
 
     @DeleteMapping("/personalRepresentatives/{personalRepresentativeUsername}")
