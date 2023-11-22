@@ -33,6 +33,7 @@ public class FoodDiaryService {
         if (currentUser.isDoctor()) {
             loggerUtil.log(TransactionType.HCP_VIEW_FOOD_DIARY_ENTRY, currentUserName, patientName);
         } else {
+
             loggerUtil.log(TransactionType.PATIENT_VIEW_FOOD_DIARY_ENTRY, currentUserName);
         }
         return foodDiaryRepository.findAllByPatient(patient);

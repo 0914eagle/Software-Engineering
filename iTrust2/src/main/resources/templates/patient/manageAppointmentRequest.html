@@ -1,22 +1,30 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:include="layout :: head(title=~{::title},links=~{::script})">
     <title>Request Appointment</title>
-    <script th:src="@{/js/dateTimeService.js}"
-            src="../js/dateTimeService.js"></script>
+    <script th:src="@{/js/dateTimeService.js}" src="../js/dateTimeService.js"></script>
+    <style>
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+    </style>
 </head>
 
 <body th:include="layout :: body" th:with="content=~{::content}">
 <div th:fragment="content">
-
     <script th:inline="javascript">
-        /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
-        /*<![CDATA[*/
+        const pattern = new RegExp('[a-zA-Z0-9-]*');
+
+    </script>
+    <script th:inline="javascript">
+
         const app = angular.module("manageAppointmentRequestApp", ['dateTimeServices']);
 
-        /**
-         * A filter to humanize the text to be more user friendly.
-         */
         app.filter('humanize', function () {
             return function (input) {
                 return input.toLowerCase().split('_')
@@ -25,14 +33,21 @@
             }
         });
 
+        // Function to check if a value is not empty
+        function isNotEmpty(value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        }
+
         app.controller('manageAppointmentRequestCtrl', function ($scope, $http, dateTimeService) {
             $scope.appointment = {};
             $scope.hcps = [];
+            $scope.selectedTab = 'medicalAppointmentTab';
 
-            /**
-             * Gets the personnel for the given role and adds it to the doctors object.
-             * @param {string} role The role for which to get a list of personnel.
-             */
+            //tab 왔다갔다할때 appointment 초기화
+            $scope.resetAppointment = function () {
+                $scope.appointment = {};
+            };
+
             $scope.getPersonnelByRole = function (roleObj) {
                 if (Array.isArray(roleObj)) {
                     for (let role of roleObj) {
@@ -52,41 +67,42 @@
                 }
             }
 
-            /**
-             * Loads the proper list of HCPs for the current appointment type.
-             */
             $scope.getHCPsForType = function () {
                 const type = $scope.appointment.type;
                 $scope.hcps = [];
+                console.log(type);
 
                 if (type === 'GENERAL_OPHTHALMOLOGY') {
-                    // Gets all of the ophthalmology personnel
                     $scope.getPersonnelByRole(['OD', 'OPH']);
                 } else if (type === 'OPHTHALMOLOGY_SURGERY') {
-                    // Gets all of the ophthalmologist personnel
                     $scope.getPersonnelByRole('OPH');
                 } else {
-                    // Gets all of the doctor personnel
                     $scope.getPersonnelByRole(['HCP']);
                 }
             }
+            // 페이지 방문 시 default는 먼저 GENERL_CHECKUP으로 설정
+            $scope.appointment.type = "GENERAL_CHECKUP";
+            $scope.getHCPsForType();
 
-            /**
-             * Loads the appointment types from the API.
-             */
             $http.get("/iTrust2/api/v1/appointmenttype")
                 .then(function (response) {
-                    $scope.types = response.data;
+                    //두번쨰 tab키를 위해 GENERAL_CHECKUP 필터링
+                    $scope.types = response.data.filter(function(type) {
+                        return type !== 'GENERAL_CHECKUP';
+                    });
+                    //
                 });
 
-            /**
-             * Submits the appointment request.
-             */
             $scope.submit = function () {
+                //추가 inputfield 업데이트 확인
+                console.log("this is" + $scope.appointment.name);
+                console.log("this is" + $scope.appointment.abbreviation);
+                console.log("this is" + $scope.appointment.cptCode);
+                console.log("this is" + $scope.appointment.longComment);
+                $scope.message = "";
                 $scope.errorMsg = "";
                 $scope.appointment.patient = /*[[${#httpServletRequest.remoteUser}]]*/null;
 
-                // Validate request date
                 const date = new Date($scope.inputDate);
                 const now = new Date();
                 if (!dateTimeService.isValidDate(date) || date - now < 0) {
@@ -122,12 +138,49 @@
                     $scope.message1 = "";
                 }
 
-                // Add generic error message to front
+
+                //추가적인 validation
+                const namePattern = /^[a-zA-Z0-9-]+$/;
+                if($scope.appointment.name === undefined){
+                    $scope.errorMsg += "";
+                }
+                else if ($scope.appointment.name && ( $scope.appointment.name.length > 250 || !namePattern.test($scope.appointment.name))) {
+                    $scope.errorMsg += "Name must be less than 250 characters, allowing only alphanumeric characters and '-'\n";
+                }
+
+
+                // Validate Abbreviation field
+                const abbreviationPattern = /^[a-zA-Z0-9-]+$/;
+                if ($scope.appointment.abbreviation === undefined){
+                    $scope.errorMsg += "";
+                }
+                else if ($scope.appointment.abbreviation && ($scope.appointment.abbreviation.length > 10 || !abbreviationPattern.test($scope.appointment.abbreviation))) {
+                    $scope.errorMsg += "Abbreviation must be less than 10 characters, allowing only alphanumeric characters and '-'\n";
+                }
+
+                // Validate CPT Code field
+                const cptCodePattern = /^90\d{3}$/;
+                if($scope.appointment.cptCode === undefined){
+                    $scope.errorMsg += "";
+                }
+                else if ($scope.appointment.cptCode && !cptCodePattern.test($scope.appointment.cptCode)) {
+                    $scope.errorMsg += "CPT Code must be a 5-digit code starting with '90'\n";
+                }
+
+                // Validate Additional Comments field
+                if($scope.appointment.longComment === undefined){
+                    $scope.errorMsg += "";
+                }
+                else if ($scope.appointment.longComment && $scope.appointment.longComment.length > 500) {
+                    $scope.errorMsg += "Additional Comments must be less than 500 characters\n";
+                }
+                console.log("This is Error msg" + $scope.errorMsg);
                 if ($scope.errorMsg) {
                     $scope.errorMsg = "Could not submit appointment request\n" + $scope.errorMsg;
-                }
+                } else {
                 $http.post("/iTrust2/api/v1/appointmentrequests", $scope.appointment).then(
                     function (response) {
+                        console.log('response');
                         $scope.loadAppointments();
                         $scope.message = "Your appointment request has been requested successfully."
                         $scope.message1 = "";
@@ -137,11 +190,14 @@
                         $scope.errorMsg1 = "";
                         $scope.selectedAppointment = {};
                     }, function (rejection) {
+                        console.log(rejection);
                         $scope.errorMsg += "Could not complete appointment request"
                         $scope.message = "";
                         $scope.message1 = "";
                     });
+                }
             }
+
 
             $scope.selectedAppointment = {};
             $scope.appointments = [];
@@ -158,7 +214,7 @@
             }
 
             $scope.deleteAppointment = function () {
-                $http.delete("/iTrust2/api/v1/appointmentrequests/" + $scope.selectedAppointment.id).then(
+                $http.delete("/iTrust2/api/v1/appointmentrequests/" + $scope.selectedAppointment.id/*,  { data: {} }*/).then(
                     function (response) {
                         $scope.message1 = "Your appointment request was successfully deleted.";
                         $scope.message = "";
@@ -172,11 +228,11 @@
 
             $scope.loadAppointments();
         });
-        /*]]>*/
+
+
     </script>
 
-    <div ng-app="manageAppointmentRequestApp"
-         ng-controller="manageAppointmentRequestCtrl">
+    <div ng-app="manageAppointmentRequestApp" ng-controller="manageAppointmentRequestCtrl">
         <div class="row" style="margin-top: 15px;">
             <div class="col-md-7">
                 <div class="panel panel-default">
@@ -187,22 +243,15 @@
                         <div class="col radio-box">
                             <div class="form-check">
                                 <ul style="list-style: none; padding: 0;">
-                                    <li ng-repeat="appt in appointments"><span> <input
-                                            type="radio" ng-model="selectedAppointment.id" name="appt"
-                                            id="appt{{appt.id}}" value="{{appt.id}}" required="true"/>
-												<label for="appt{{appt.id}}"
-                                                       style="vertical-align: middle; padding-left: 10px; cursor: pointer;">
-													Type: {{appt.type | humanize}}<br/> Date: {{appt.date |
-													date : 'MM/dd/yyyy'}}<br/> Time: {{appt.date | date :
-													'shortTime'}}<br/> Status: {{appt.status | humanize}}
-											</label>
-										</span></li>
+                                    <li ng-repeat="appt in appointments"><span> <input type="radio" ng-model="selectedAppointment.id" name="appt" id="appt{{appt.id}}" value="{{appt.id}}" required="true" />
+                                                <label for="appt{{appt.id}}" style="vertical-align: middle; padding-left: 10px; cursor: pointer;">
+                                                    Type: {{appt.type | humanize}}<br /> Date: {{appt.date | date : 'MM/dd/yyyy'}}<br /> Time: {{appt.date | date : 'shortTime'}}<br /> Status: {{appt.status | humanize}}
+                                                </label>
+                                            </span></li>
                                 </ul>
                             </div>
 
-                            <button class="btn btn-danger" ng-if="appointments.length"
-                                    ng-click="deleteAppointment()" name="deleteRequest">Delete
-                            </button>
+                            <button class="btn btn-danger" ng-if="appointments.length" ng-click="deleteAppointment()" name="deleteRequest">Delete</button>
 
                             <div name="success" class="text-success">{{message1}}</div>
                             <div name="errorMsg" class="text-danger">{{errorMsg1}}</div>
@@ -214,65 +263,121 @@
             <div class="col-md-5">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Request Medical Appointment</h3>
+                        <ul class="nav nav-tabs">
+                            <li ng-class="{ 'active': selectedTab === 'medicalAppointmentTab' }">
+                                <a href="#" ng-click="selectedTab = 'medicalAppointmentTab'; resetAppointment(); appointment.type = 'GENERAL_CHECKUP'; getHCPsForType();" >Request Medical Appointment</a>
+<!--                                <a href="#" ng-click="selectedTab = 'medicalAppointmentTab'" >Request Medical Appointment</a>-->
+
+                            </li>
+                            <li ng-class="{ 'active': selectedTab === 'ophthalmologyAppointmentTab' }">
+                                <a href="#" ng-click="selectedTab = 'ophthalmologyAppointmentTab'; resetAppointment(); appointment.type = 'GENERAL_OPHTHALMOLOGY'; getHCPsForType();">Ophthalmology Appointment</a>
+                            </li>
+                        </ul>
                     </div>
                     <div class="panel-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="type">Type:</label> <select
-                                    ng-model="appointment.type" name="type" class="form-control"
-                                    ng-change="getHCPsForType()">
-                                <option ng-repeat="type in types" value="{{type}}">{{type
-                                    | humanize}}
-                                </option>
-                            </select>
-                            </div>
+                        <div id="medicalAppointmentTab" class="tab" ng-show="selectedTab === 'medicalAppointmentTab'">
+                            <form name="appointmentForm">
+<!--                                <div class="form-group">-->
+<!--                                    <label for="type">Type:</label>-->
+<!--                                    <select ng-model="appointment.type" name="type" class="form-control" ng-change="getHCPsForType()">-->
+<!--                                        <option ng-repeat="type in types" value="{{type}}">{{type | humanize}}</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
 
-                            <div class="form-group">
-                                <label for="hcp">HCP:
-                                    </td> <select ng-model="appointment.hcp" name="hcp" id="hcp"
-                                                  class="form-control" ng-disabled="!appointment.type">
+                                <div class="form-group">
+                                    <label for="hcp">HCP:</label>
+                                    <select ng-model="appointment.hcp" name="hcp" id="hcp" class="form-control" ng-disabled="!appointment.type">
                                         <option ng-repeat="hcp in hcps">{{hcp.username}}</option>
                                     </select>
-                                </label>
-                            </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="date">Date:</label> <input id="date" type="date"
-                                                                       class="form-control" ng-model="inputDate"
-                                                                       name="date"
-                                                                       ng-disabled="!appointment.type" required="true"/>
-                            </div>
+                                <div class="form-group">
+                                    <label for="date">Date:</label>
+                                    <input id="date" type="date" class="form-control" ng-model="inputDate" name="date" ng-disabled="!appointment.type" required="true" />
+                                </div>
 
-                            <div class="form-group">
-                                <label for="time">Time:</label> <input id="time" type="time"
-                                                                       name="time" class="form-control"
-                                                                       ng-model="inputTime"
-                                                                       ng-disabled="!appointment.type" required="true"/>
-                            </div>
+                                <div class="form-group">
+                                    <label for="time">Time:</label>
+                                    <input id="time" type="time" name="time" class="form-control" ng-model="inputTime" ng-disabled="!appointment.type" required="true" />
+                                </div>
 
-                            <div class="form-group">
-                                <label for="comments">Comments:</label>
-                                <textarea id="comments" class="form-control"
-                                          ng-disabled="!appointment.type"
-                                          ng-model="appointment.comments" name="comments">
-									</textarea>
-                            </div>
+                                <div class="form-group">
+                                    <label for="comments">Comments:</label>
+                                    <textarea id="comments" class="form-control" ng-disabled="!appointment.type" ng-model="appointment.comments" name="comments"></textarea>
+                                </div>
 
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary"
-                                        ng-click="submit()" name="submitRequest">Submit
-                                    Request
-                                </button>
-                            </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" ng-click="submit()" name="submitRequest">Submit Request</button>
+                                </div>
 
-                            <div name="success" class="text-success"
-                                 style="white-space: pre;">{{message}}
-                            </div>
-                            <div name="errorMsg" class="text-danger"
-                                 style="white-space: pre;">{{errorMsg}}
-                            </div>
-                        </form>
+                                <div name="success" class="text-success" style="white-space: pre;">{{message}}</div>
+                                <div name="errorMsg" class="text-danger" style="white-space: pre;">{{errorMsg}}</div>
+                            </form>
+                        </div>
+
+                        <div id="ophthalmologyAppointmentTab" class="tab" ng-show="selectedTab === 'ophthalmologyAppointmentTab'">
+                            <form name="ophappointmentForm">
+                                <div class="form-group">
+                                    <label for="ophthalmologytype">Type:</label>
+                                    <select ng-model="appointment.type" name="ophthalmologytype" class="form-control" ng-change="getHCPsForType()">
+                                        <option ng-repeat="type in types" value="{{type}}">{{type | humanize}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyhcp">HCP:</label>
+                                    <select ng-model="appointment.hcp" name="hcp" id="ophthalmologyhcp" class="form-control" ng-disabled="!appointment.type">
+                                        <option ng-repeat="hcp in hcps">{{hcp.username}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologydate">Date:</label>
+                                    <input id="ophthalmologydate" type="date" class="form-control" ng-model="inputDate" name="date" ng-disabled="!appointment.type" required="true" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologytime">Time:</label>
+                                    <input id="ophthalmologytime" type="time" name="time" class="form-control" ng-model="inputTime" ng-disabled="!appointment.type" required="true" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyComments">Comments:</label>
+                                    <textarea id="ophthalmologyComments" class="form-control" ng-disabled="!appointment.type" ng-model="appointment.comments" name="comments"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyName">Name:</label>
+                                    <input id="ophthalmologyName" type="text" class="form-control" ng-model="appointment.name" name="ophthalmologyName" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyAbbreviation">Abbreviation:</label>
+                                    <input id="ophthalmologyAbbreviation" type="text" class="form-control" ng-model="appointment.abbreviation" name="ophthalmologyAbbreviation" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyCptCode">CPT Code:</label>
+                                    <input id="ophthalmologyCptCode" type="text" class="form-control" ng-model="appointment.cptCode" name="ophthalmologyCptCode" />
+                                </div>
+
+
+
+
+
+                                <div class="form-group">
+                                    <label for="ophthalmologyAdditionalComments">Additional Comments:</label>
+                                    <textarea id="ophthalmologyAdditionalComments" class="form-control" ng-model="appointment.longComment" name="ophthalmologyAdditionalComments" ng-maxlength="500" ></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" ng-click="submit()" name="submitRequest">Submit Request</button>
+                                </div>
+
+                                <div name="success" class="text-success" style="white-space: pre;">{{message}}</div>
+                                <div name="errorMsg" class="text-danger" style="white-space: pre;">{{errorMsg}}</div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,4 +385,5 @@
     </div>
 </div>
 </body>
+
 </html>

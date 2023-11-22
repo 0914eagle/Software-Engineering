@@ -78,6 +78,11 @@ public class AppointmentRequestService extends Service {
         }
         ar.setType(at);
 
+        ar.setName(raf.getName());
+        ar.setAbbreviation(raf.getAbbreviation());
+        ar.setCptCode(raf.getCptCode());
+        ar.setLongComment(raf.getLongComment());
+
         return ar;
     }
 }

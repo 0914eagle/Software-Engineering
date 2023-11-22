@@ -17,12 +17,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import com.google.gson.annotations.JsonAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateConverter;
 
+@Schema(description = "환자입니다.")
 @NoArgsConstructor
 @Getter
 @Entity
