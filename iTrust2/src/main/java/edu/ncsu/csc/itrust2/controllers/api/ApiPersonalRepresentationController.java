@@ -84,7 +84,7 @@ public class ApiPersonalRepresentationController {
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public void cancelPersonalRepresentative(
             @Parameter(description = "지정 해제할 대리인의 username") @PathVariable
-            String personalRepresentativeUsername) {
+                    String personalRepresentativeUsername) {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
@@ -95,7 +95,7 @@ public class ApiPersonalRepresentationController {
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public void cancelRepresentingPatient(
             @Parameter(description = "지정 해제할 대리하고 있는 환자의 username") @PathVariable
-            String representingPatientUsername) {
+                    String representingPatientUsername) {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
