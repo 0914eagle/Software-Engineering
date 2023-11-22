@@ -4,16 +4,9 @@ import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.PersonalRepresentation;
 import edu.ncsu.csc.itrust2.repositories.PatientRepository;
 import edu.ncsu.csc.itrust2.repositories.PersonalRepresentationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 import javax.transaction.Transactional;
-import java.util.List;
-
-import edu.ncsu.csc.itrust2.models.Patient;
-import edu.ncsu.csc.itrust2.models.PersonalRepresentation;
-import edu.ncsu.csc.itrust2.repositories.PersonalRepresentationRepository;
-
-import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,9 +35,9 @@ public class PersonalRepresentationService {
         Patient patient = patientRepository.findByUsername(patientName);
         Patient representative = patientRepository.findByUsername(representativeName);
 
-        PersonalRepresentation personalRepresentation
-                = personalRepresentationRepository
-                .findByPatientAndPersonalRepresentative(patient, representative);
+        PersonalRepresentation personalRepresentation =
+                personalRepresentationRepository.findByPatientAndPersonalRepresentative(
+                        patient, representative);
 
         personalRepresentationRepository.delete(personalRepresentation);
     }

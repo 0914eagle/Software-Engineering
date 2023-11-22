@@ -24,7 +24,8 @@ public class ApiPatientSearchController {
     @Operation(summary = "HCP, ER: 환자를 이름으로 조회")
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ER')")
-    public List<Patient> listPatientsByName(@Parameter(description = "조회할 환자의 이름입니다.") @RequestParam String nameQuery) {
+    public List<Patient> listPatientsByName(
+            @Parameter(description = "조회할 환자의 이름입니다.") @RequestParam String nameQuery) {
         if (nameQuery == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "patientName is required");
         }

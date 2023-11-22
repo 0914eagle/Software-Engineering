@@ -27,6 +27,7 @@ public class ApiFoodDiaryController {
     private final FoodDiaryService foodDiaryService;
     private final LoggerUtil loggerUtil;
 
+    @Operation(summary = "Patient: 자신의 음식 일기 목록 조회")
     @GetMapping("/foodDiaries")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<FoodDiary> listFoodDiariesByCurrentPatient() {
@@ -34,9 +35,12 @@ public class ApiFoodDiaryController {
         return foodDiaryService.listByPatient(patientName);
     }
 
+    @Operation(summary = "Patient: 음식 일기 추가")
     @PostMapping("/foodDiaries")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    public FoodDiary addFoodDiary(@RequestBody final FoodDiaryForm foodDiary) {
+    public FoodDiary addFoodDiary(
+            @Parameter(description = "환자의 foodDiary입니다.") @RequestBody
+                    final FoodDiaryForm foodDiary) {
         final String patientName = loggerUtil.getCurrentUsername();
         return foodDiaryService.addFoodDiary(foodDiary, patientName);
     }

@@ -145,7 +145,8 @@ public class APIAppointmentRequestController extends APIController {
     @PostMapping("/appointmentrequests")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public ResponseEntity createAppointmentRequest(
-            @Parameter(description = "새로 만들 예약 요청입니다.") @RequestBody final AppointmentRequestForm requestForm) {
+            @Parameter(description = "새로 만들 예약 요청입니다.") @RequestBody
+                    final AppointmentRequestForm requestForm) {
         try {
             final AppointmentRequest request = service.build(requestForm);
             if (null != service.findById(request.getId())) {

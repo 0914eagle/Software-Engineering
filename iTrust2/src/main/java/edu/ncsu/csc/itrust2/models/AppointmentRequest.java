@@ -31,7 +31,6 @@ import lombok.Setter;
  *
  * @author Kai Presler-Marshall
  */
-
 @Schema(description = "환자가 보낸 예약 요청입니다.")
 @NoArgsConstructor
 @Getter
@@ -79,7 +78,8 @@ public class AppointmentRequest extends DomainObject {
 
     /** Any (optional) comments on the AppointmentRequest */
     @Schema(description = "환자가 보내는 50자 이내의 comment입니다.")
-    @Setter private String comments;
+    @Setter
+    private String comments;
 
     /** The Status of the AppointmentRequest */
     @Schema(description = "환자가 보낸 예약 요청의 상태입니다. 승인, 거절, 미결정이 가능합니다.")
@@ -87,8 +87,19 @@ public class AppointmentRequest extends DomainObject {
     @NotNull @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 이름입니다. 250자 이내의 alphabet과 숫자, '-'으로 구성된 문자열입니다.") @Setter private String name;
-    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 약어입니다. 10자 이내의 alphabet과 숫자, '-'으로 구성된 문자열입니다.") @Setter private String abbreviation;
-    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 CPT 코드입니다. 90으로 시작하는 5자리의 숫자입니다.")@Setter private String cptCode;
-    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 500자 이내의 comment입니다.") @Setter private String longComment;
+    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 이름입니다. 250자 이내의 alphabet과 숫자, '-'으로 구성된 문자열입니다.")
+    @Setter
+    private String name;
+
+    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 약어입니다. 10자 이내의 alphabet과 숫자, '-'으로 구성된 문자열입니다.")
+    @Setter
+    private String abbreviation;
+
+    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 CPT 코드입니다. 90으로 시작하는 5자리의 숫자입니다.")
+    @Setter
+    private String cptCode;
+
+    @Schema(description = "안과 예약에서만 쓰이는 환자가 보내는 500자 이내의 comment입니다.")
+    @Setter
+    private String longComment;
 }
