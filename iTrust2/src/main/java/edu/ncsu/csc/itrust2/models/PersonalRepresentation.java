@@ -30,4 +30,9 @@ public class PersonalRepresentation {
     @NotNull @ManyToOne
     @JoinColumn(name = "personal_representative_id", columnDefinition = "varchar(100)")
     private Patient personalRepresentative;
+
+    public PersonalRepresentation(final Patient patient, final Patient personalRepresentative) {
+        setPatient(patient);
+        setPersonalRepresentative(personalRepresentative);
+    }
 }

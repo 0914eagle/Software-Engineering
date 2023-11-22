@@ -27,6 +27,17 @@ public class PersonalRepresentationService {
     private final PatientService patientService;
 
     @Transactional
+    public void setPersonalRepresentation(String patientName, String representativeName) {
+        Patient patient = patientRepository.findByUsername(patientName);
+        Patient representative = patientRepository.findByUsername(representativeName);
+
+        PersonalRepresentation personalRepresentation =
+                new PersonalRepresentation(patient, representative);
+
+        personalRepresentationRepository.save(personalRepresentation);
+    }
+
+    @Transactional
     public void cancelPersonalRepresentation(String patientName, String representativeName) {
         Patient patient = patientRepository.findByUsername(patientName);
         Patient representative = patientRepository.findByUsername(representativeName);
@@ -46,6 +57,5 @@ public class PersonalRepresentationService {
     public List<PersonalRepresentation> listByRepresenting(String patientName) {
         final Patient patient = (Patient) patientService.findByName(patientName);
         return personalRepresentationRepository.findAllByPersonalRepresentative(patient);
-
     }
 }
