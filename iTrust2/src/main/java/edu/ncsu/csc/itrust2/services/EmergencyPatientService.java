@@ -30,7 +30,7 @@ public class EmergencyPatientService {
     private final OfficeVisitRepository officeVisitRepository;
     private final PatientService patientService;
     private final UserService userService;
-    final LoggerUtil loggerUtil;
+    private final LoggerUtil loggerUtil;
 
     public EmergencyPatientInfo getPatientInformation(String patientName) {
 
@@ -88,12 +88,8 @@ public class EmergencyPatientService {
     public List<Prescription> getRecentPrescriptions(String patientName) {
         List<OfficeVisit> officeVisits = getRecentOfficeVisits(patientName, 90);
 
-        List<Prescription> prescriptions = new ArrayList<>();
-        for (OfficeVisit officeVisit : officeVisits) {
-            List<Prescription> diagnosisList = officeVisit.getPrescriptions();
-            prescriptions.addAll(diagnosisList);
-        }
-
-        return prescriptions;
+        return officeVisits.stream()
+                .flatMap(officeVisit -> officeVisit.getPrescriptions().stream())
+                .toList();
     }
 }
