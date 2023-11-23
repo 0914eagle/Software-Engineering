@@ -32,7 +32,7 @@
 					} else {
 						$http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
 								.then(function (response) {
-									$scope.patients = filterPatients(response.data, $scope.searchTerm);
+									$scope.patients = response.data; //filterPatients(response.data, $scope.searchTerm);
 									if ($scope.patients.length === 0) {
 										$scope.message = 'No data found for the given search term.';
 									} else {
