@@ -153,5 +153,5 @@
 
 ## Demonstrations
 
-- [Iteration 1 Demonstration](./presentation/1031_first_iteration/README.md)
+- [Iteration 1 Demonstration](./presentation/1031-iteration-1/README.md)
 - [Iteration 2 Demonstration](./presentation/1123-iteration-2/README.md)
