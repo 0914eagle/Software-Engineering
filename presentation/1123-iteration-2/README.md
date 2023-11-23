@@ -140,6 +140,9 @@ _유저 시나리오가 docs에 명시되어 있지 않음. -> 기능 구현 위
 - 특정 환자가 누구의 PR인지 리스트를 볼 수 있음.
 
 ![Untitled](resources/uc16_pr.png)
+![Untitled](resources/UC16_front1.png)
+![Untitled](resources/UC16_front2.png)
+![Untitled](resources/UC16_front3.png)
 
 ### UC2?
 
