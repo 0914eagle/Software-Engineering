@@ -1,4 +1,4 @@
-# 11.23 Iteration 2 Demonstration
+_# 11.23 Iteration 2 Demonstration
 
 ## 조직 구성
 
@@ -296,6 +296,9 @@ Iter3는 예상 방안입니다.
 
 - 단위 테스트 instruction coverage 80%를 달성하였습니다.
 
+### HTTP, HTTPS, and CI/CD 
+see documentation [here](infra-http-https-CICD.md)
+
 ### 정기적 커밋
 
 ![regular-commit](resources/regular-commit.png)
@@ -325,4 +328,4 @@ Iter3는 예상 방안입니다.
 
 ---
 
-Iteration 3, 증분 3도 즐겁게 개발해봅시다~
+Iteration 3, 증분 3도 즐겁게 개발해봅시다~_

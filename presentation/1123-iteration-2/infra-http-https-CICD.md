@@ -8,9 +8,9 @@
 - main 환경에서 기본적인 jar파일을 배포하는데 성공했습니다. 이를 통해 localhost에서만 실행했었던 프로그램을 서버에서 실행할 수 있게 되었습니다. 아래는 처음에 예시로 ‘Hello, world!’만 띄우는 jar파일을 배포한 결과입니다.
     - EB screenshots
         
-        ![Screenshot 2023-11-07 at 3.24.06 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-07_at_3.24.06_PM.png)
+        ![Screenshot 2023-11-07 at 3.24.06 PM.png](iter2-infra/Screenshot_2023-11-07_at_3.24.06_PM.png)
         
-        ![Untitled](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Untitled.png)
+        ![Untitled](iter2-infra/Untitled.png)
         
     
 
@@ -23,17 +23,17 @@
             
             빌드의 username과 password가 root로 설정되어 있는 탓에 배포 실패.
             
-            ![Screenshot 2023-11-09 at 3.40.28 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-09_at_3.40.28_PM.png)
+            ![Screenshot 2023-11-09 at 3.40.28 PM.png](iter2-infra/Screenshot_2023-11-09_at_3.40.28_PM.png)
             
-            ![Untitled](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Untitled%201.png)
+            ![Untitled](iter2-infra/Untitled%201.png)
             
-            ![Screenshot 2023-11-09 at 3.40.59 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-09_at_3.40.59_PM.png)
+            ![Screenshot 2023-11-09 at 3.40.59 PM.png](iter2-infra/Screenshot_2023-11-09_at_3.40.59_PM.png)
             
         - 2. DB endpoint랑 port 설정을 완료한 뒤 재배포 완료. (성공)
             
             다음과 같이 [`sogong.hajin.kim/iTrust2/login`](http://sogong.hajin.kim/iTrust2/login) 으로 성공적으로 접속했습니다. 이를 하기 위해서는 저희 팀에서 사용하고 있었던 hajin.kim 도메인에서 subdomain을 생성해서 EB에서 설정해줬습니다. (Not Secure)
             
-            ![Screenshot 2023-11-09 at 4.27.14 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-09_at_4.27.14_PM.png)
+            ![Screenshot 2023-11-09 at 4.27.14 PM.png](iter2-infra/Screenshot_2023-11-09_at_4.27.14_PM.png)
             
 
 ### HTTPS
@@ -44,14 +44,14 @@ HTTP는 암호화가 되지 않은 상태에서 데이터를 전송함으로 보
 
 - HTTPS로 [`sogong.hajin.kim`](http://sogong.hajin.kim) 도메인 연결 성공.
     
-    ![Screenshot 2023-11-11 at 4.20.21 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-11_at_4.20.21_PM.png)
+    ![Screenshot 2023-11-11 at 4.20.21 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.20.21_PM.png)
     
 - HTTP 로드 밸런서를 자동으로 HTTPS로 변경되도록 설정.
     - EC2 → 로드 밸런서 → 리스너 규칙 → 규칙 편집 → 리디렉션
         
-        ![Screenshot 2023-11-11 at 4.36.57 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-11_at_4.36.57_PM.png)
+        ![Screenshot 2023-11-11 at 4.36.57 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.36.57_PM.png)
         
-        ![Screenshot 2023-11-11 at 4.39.24 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-11_at_4.39.24_PM.png)
+        ![Screenshot 2023-11-11 at 4.39.24 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.39.24_PM.png)
         
     
 
@@ -61,11 +61,11 @@ HTTP는 암호화가 되지 않은 상태에서 데이터를 전송함으로 보
 
 - 로드 밸런서
     
-    ![Screenshot 2023-11-23 at 1.48.05 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-23_at_1.48.05_PM.png)
+    ![Screenshot 2023-11-23 at 1.48.05 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.48.05_PM.png)
     
-    ![Screenshot 2023-11-23 at 1.25.07 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-23_at_1.25.07_PM.png)
+    ![Screenshot 2023-11-23 at 1.25.07 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.25.07_PM.png)
     
-    ![Untitled](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Untitled%202.png)
+    ![Untitled](iter2-infra/Untitled%202.png)
     
 
 # CI/CD
@@ -79,11 +79,11 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
         
         Pipeline Editor을 활용한 .gitlab-ci.yml을 제작/실행을 시도했을 때, 무한 pending 상태가 되었다.
         
-        ![Screenshot 2023-10-27 at 9.13.57 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.13.57_PM.png)
+        ![Screenshot 2023-10-27 at 9.13.57 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.13.57_PM.png)
         
-        ![Screenshot 2023-10-27 at 9.14.21 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.14.21_PM.png)
+        ![Screenshot 2023-10-27 at 9.14.21 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.14.21_PM.png)
         
-        ![Screenshot 2023-10-27 at 9.14.50 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.14.50_PM.png)
+        ![Screenshot 2023-10-27 at 9.14.50 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.14.50_PM.png)
         
         Runner가 없기 때문에 Job이 실행이 안 된다.
         
@@ -93,18 +93,18 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
         
         Runner를 설치/등록하려 했으나, command로 하는 방식은 deprecated.
         
-        ![Screenshot 2023-10-27 at 9.17.52 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.17.52_PM.png)
+        ![Screenshot 2023-10-27 at 9.17.52 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.17.52_PM.png)
         
-        ![Screenshot 2023-10-27 at 9.08.55 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.08.55_PM.png)
+        ![Screenshot 2023-10-27 at 9.08.55 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.08.55_PM.png)
         
     - **x509: certificate signed by unknown authority**
         - `x509: certificate signed by unknown authority`
             
-            ![Screenshot 2023-10-27 at 9.48.51 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.48.51_PM.png)
+            ![Screenshot 2023-10-27 at 9.48.51 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.48.51_PM.png)
             
         - **Possible solution: Specify a custom certificate file (expired)**
             
-            ![Screenshot 2023-10-27 at 9.54.29 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.54.29_PM.png)
+            ![Screenshot 2023-10-27 at 9.54.29 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.54.29_PM.png)
             
             `❯ gitlab-runner register --tls-ca-file=/Users/hyunjoon/34.64.100.199.cer`
             
@@ -112,7 +112,7 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
             
             에러 메시지를 보고 인증키의 유효기간을 확인해보니 10/18일 만료되었다는 것을 확인했습니다. 
             
-            ![Screenshot 2023-10-27 at 9.58.31 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-27_at_9.58.31_PM.png)
+            ![Screenshot 2023-10-27 at 9.58.31 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.58.31_PM.png)
             
         - **Possible solution: Change date to be within certificate expiration**
             
@@ -132,7 +132,7 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
             PANIC: Failed to register the runner.
             ```
             
-            ![Screenshot 2023-10-17 at 1.55.13 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-10-17_at_1.55.13_PM.png)
+            ![Screenshot 2023-10-17 at 1.55.13 PM.png](iter2-infra/Screenshot_2023-10-17_at_1.55.13_PM.png)
             
 
 ### 결론
@@ -149,7 +149,7 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
 
 - **`CI/CD Pipeline 1 (Jenkins+Kube)`**
     
-    ![pipeline.png](././Iter2%20인프라%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/pipelinearch1.png)
+    ![pipeline.png](iter2-infra/pipelinearch1.png)
 
 ### 젠킨스 시행착오
 
@@ -157,10 +157,10 @@ CI/CD를 구축하기에 앞서 실행중인 Jenkins 인스턴스를 생성해�
 
 - 젠킨스 설치 및 실행
     
-    ![Screenshot 2023-11-21 at 3.53.48 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-21_at_3.53.48_PM.png)
+    ![Screenshot 2023-11-21 at 3.53.48 PM.png](iter2-infra/Screenshot_2023-11-21_at_3.53.48_PM.png)
     
-    ![Screenshot 2023-11-21 at 3.56.06 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-21_at_3.56.06_PM.png)
+    ![Screenshot 2023-11-21 at 3.56.06 PM.png](iter2-infra/Screenshot_2023-11-21_at_3.56.06_PM.png)
     
 - ansible-playbook.yaml 실행 실패
     
-    ![Screenshot 2023-11-21 at 11.41.30 PM.png](Iter2%20%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%91%E1%85%B3%E1%84%85%E1%85%A1%20-%20HTTP,%20HTTPS,%20CICD%203a5209ab755140079652f30784029e6c/Screenshot_2023-11-21_at_11.41.30_PM.png)
+    ![Screenshot 2023-11-21 at 11.41.30 PM.png](iter2-infra/Screenshot_2023-11-21_at_11.41.30_PM.png)
