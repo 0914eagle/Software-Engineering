@@ -86,6 +86,7 @@ Iter3는 예상 방안입니다.
 | 단위 테스트     | 완료     |
 | 제품 리뷰       | 완료     |
 | Acceptance test | 계획: W7 |
+https://www.notion.so/kimhajin/UC15-123bdaa0c2534494b56d3335a8503ca5
 
 ### UC19
 
