@@ -53,7 +53,7 @@
 
             function filterPatients(data, searchTerm) {
                 return data.filter(function (patient) {
-                    return patient.username.includes(searchTerm) || patient.patientname.includes(searchTerm);
+                    return patient.username.includes(searchTerm) || patient.firstName.includes(searchTerm) || patient.lastName.includes(searchTerm);
                 });
             }
         });
