@@ -164,7 +164,6 @@ Iter3는 예상 방안입니다.
 
     ![Untitled](../../meeting-logs/resources/1107-infra-images/Untitled 2.png)
 
-
 ## nginx port 설정
 
 - 만약, 배포 후 ***502 Bad Gateway(nginx)라는 오류***가 생긴다면?
@@ -177,9 +176,10 @@ Iter3는 예상 방안입니다.
 
   ![Untitled](../../meeting-logs/resources/1107-infra-images/Untitled 4.png)
 
-
 ## RDS
+
 (※ 연결 마무리는 인수인계 이후 완수됨)
+
 - database 인스턴스 생성
   - choose a database creation method-standard create
   - Engine options-MySQL
@@ -279,7 +279,7 @@ Iter3는 예상 방안입니다.
 
 ### 향후 계획
 
-## 기타
+## 그 외 현황
 
 ### 테스트
 
@@ -291,6 +291,10 @@ Iter3는 예상 방안입니다.
   - 혹시 이러한 방법론에 관해 디스커션하는데 관심이 있으시면 컨택 부탁드립니다.  
     <https://github.com/hajin-kim/tdd-study>  
     <https://github.com/hajin-kim/tdd-step-by-step>
+
+![unit-test-coverage](resources/unit-test-coverage.png)
+
+- 단위 테스트 instruction coverage 80%를 달성하였습니다.
 
 ### 정기적 커밋
 
