@@ -32,17 +32,18 @@
                     } else {
                         $http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
                             .then(function (response) {
-                                $scope.patients = filterPatients(response.data, $scope.searchTerm);
-                                if ($scope.patients.length === 0) {
-                                    $scope.message = 'No data found for the given search term.';
-                                } else {
-                                    $scope.message = '';
-                                }
-                            })
-                            .catch(function (rejection) {
-                                $scope.message = 'Unable to get the patient data.';
-                                $scope.patients = [];
+                                $scope.patients = response.data;
+                                // $scope.patients = filterPatients(response.data, $scope.searchTerm);
+                                // if ($scope.patients.length === 0) {
+                                //     $scope.message = 'No data found for the given search term.';
+                                // } else {
+                                //     $scope.message = '';
+                                // }
                             });
+                            // .catch(function (rejection) {
+                            //     $scope.message = 'Unable to get the patient data.';
+                            //     $scope.patients = [];
+                            // });
                     }
                 }
             };
