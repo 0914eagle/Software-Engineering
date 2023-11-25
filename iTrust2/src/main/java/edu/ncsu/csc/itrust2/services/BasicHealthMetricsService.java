@@ -2,8 +2,10 @@ package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.BasicHealthMetrics;
+import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.BasicHealthMetricsRepository;
 
+import java.util.List;
 import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -40,5 +42,9 @@ public class BasicHealthMetricsService extends Service {
         bhm.setWeight(ovf.getWeight());
 
         return bhm;
+    }
+
+    public List<BasicHealthMetrics> findByPatient(User patient) {
+        return basicHealthMetricsRepository.findByPatient(patient);
     }
 }

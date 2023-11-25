@@ -1,7 +1,13 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
-import edu.ncsu.csc.itrust2.models.PersonalRepresentation;
+import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.models.security.LogEntry;
+import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
+import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
+import edu.ncsu.csc.itrust2.services.DiagnosisService;
+import edu.ncsu.csc.itrust2.services.PatientService;
 import edu.ncsu.csc.itrust2.services.PersonalRepresentationService;
+import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 import java.util.List;
@@ -10,8 +16,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Tag(name = "[UC16] 환자 대리인 API")
 @RequiredArgsConstructor
@@ -19,6 +27,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class ApiPersonalRepresentationController {
     private final PersonalRepresentationService personalRepresentationService;
+    private final DiagnosisService diagnosisService;
+    private final AppointmentRequestService appointmentRequestService;
+    private final BasicHealthMetricsService basicHealthMetricsService;
+    private final PatientService patientService;
+    private final EmergencyPatientService emergencyPatientService;
     private final LoggerUtil loggerUtil;
 
     @Operation(summary = "Patient: 자신의 대리인 목록 조회")
@@ -99,5 +112,76 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
+    }
+
+    @Operation(summary = "Patient: 특정 환자의 logs 목록 조회")
+    @GetMapping("/representingPatients/{representingPatientUsername}/logs")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<LogEntry> listPatientLogs(
+            @Parameter(description = "조회할 환자의 username") @PathVariable
+                    String representingPatientUsername) {
+
+        Patient patient = (Patient) patientService.findByName(representingPatientUsername);
+        String currentUsername = loggerUtil.getCurrentUsername();
+
+        if (!personalRepresentationService.isRepresentative(
+                currentUsername, representingPatientUsername)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied. 대리인 관계의 환자가 아닙니다.");
+        }
+        return loggerUtil.getAllForUser(representingPatientUsername);
+    }
+
+    @Operation(summary = "Patient: 특정 환자의 basic medical records 목록 조회")
+    @GetMapping("/representingPatients/{representingPatientUsername}/basic-medicalRecords")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<BasicHealthMetrics> listPatientMedicalRecords(
+            @Parameter(description = "조회할 환자의 username") @PathVariable
+                    String representingPatientUsername) {
+
+        Patient patient = (Patient) patientService.findByName(representingPatientUsername);
+        String currentUsername = loggerUtil.getCurrentUsername();
+
+        if (!personalRepresentationService.isRepresentative(
+                currentUsername, representingPatientUsername)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied. 대리인 관계의 환자가 아닙니다.");
+        }
+        return basicHealthMetricsService.findByPatient(patient);
+    }
+
+    @Operation(summary = "Patient: 특정 환자의 diagnoses 목록 조회")
+    @GetMapping("/representingPatients/{representingPatientUsername}/diagnoses")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<Diagnosis> listPatientDiagnosesIn60Days(
+            @Parameter(description = "조회할 환자의 username") @PathVariable
+                    String representingPatientUsername) {
+
+        String currentUsername = loggerUtil.getCurrentUsername();
+
+        if (!personalRepresentationService.isRepresentative(
+                currentUsername, representingPatientUsername)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied. 대리인 관계의 환자가 아닙니다.");
+        }
+        return emergencyPatientService.getRecentDiagnoses(representingPatientUsername);
+    }
+
+    @Operation(summary = "Patient: 특정 환자의 appointments 목록 조회")
+    @GetMapping("/representingPatients/{representingPatientUsername}/appointments")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<AppointmentRequest> listPatientAppointments(
+            @Parameter(description = "조회할 환자의 username") @PathVariable
+                    String representingPatientUsername) {
+
+        Patient patient = (Patient) patientService.findByName(representingPatientUsername);
+        String currentUsername = loggerUtil.getCurrentUsername();
+
+        if (!personalRepresentationService.isRepresentative(
+                currentUsername, representingPatientUsername)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Access denied. 대리인 관계의 환자가 아닙니다.");
+        }
+        return appointmentRequestService.findByPatient(patient);
     }
 }
