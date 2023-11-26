@@ -5,9 +5,9 @@ import edu.ncsu.csc.itrust2.models.security.LogEntry;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
 import edu.ncsu.csc.itrust2.services.DiagnosisService;
+import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
 import edu.ncsu.csc.itrust2.services.PatientService;
 import edu.ncsu.csc.itrust2.services.PersonalRepresentationService;
-import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 import java.util.List;
