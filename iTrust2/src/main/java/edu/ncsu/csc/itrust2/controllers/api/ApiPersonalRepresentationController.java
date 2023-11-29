@@ -5,7 +5,6 @@ import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LogEntry;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
-import edu.ncsu.csc.itrust2.services.DiagnosisService;
 import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
 import edu.ncsu.csc.itrust2.services.PatientService;
 import edu.ncsu.csc.itrust2.services.PersonalRepresentationService;
@@ -28,7 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/v1")
 public class ApiPersonalRepresentationController {
     private final PersonalRepresentationService personalRepresentationService;
-    private final DiagnosisService diagnosisService;
     private final AppointmentRequestService appointmentRequestService;
     private final BasicHealthMetricsService basicHealthMetricsService;
     private final PatientService patientService;
@@ -95,7 +93,8 @@ public class ApiPersonalRepresentationController {
                 patientUsername, personalRepresentativeUsername);
 
         String currentUsername = loggerUtil.getCurrentUsername();
-        loggerUtil.log(TransactionType.HCP_DECLARE_PR, currentUsername, personalRepresentativeUsername);
+        loggerUtil.log(
+                TransactionType.HCP_DECLARE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "Patient: 자신의 대리인 지정 해제")
@@ -121,7 +120,8 @@ public class ApiPersonalRepresentationController {
         personalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
 
-        loggerUtil.log(TransactionType.REMOVE_SELF_AS_PR, currentUsername, representingPatientUsername);
+        loggerUtil.log(
+                TransactionType.REMOVE_SELF_AS_PR, currentUsername, representingPatientUsername);
     }
 
     @Operation(summary = "Patient: 특정 환자의 logs 목록 조회")

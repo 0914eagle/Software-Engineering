@@ -2,7 +2,6 @@ package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.AppointmentRequestForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
-import edu.ncsu.csc.itrust2.models.FoodDiary;
 import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.Personnel;
 import edu.ncsu.csc.itrust2.models.enums.*;
@@ -11,8 +10,8 @@ import edu.ncsu.csc.itrust2.repositories.AppointmentRequestRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +31,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
     @InjectMocks private AppointmentRequestService appointmentRequestService;
 
     @Test
-    public void testListByPatient(){
+    public void testListByPatient() {
         final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
@@ -61,7 +60,8 @@ public class OphthalmologyAppointmentRequestServiceTest {
         List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
         expectedFindByPatient.add(expectedOphAppointment);
 
-        given(appointmentRequestRepository.findByPatient(eq(patient))).willReturn(expectedFindByPatient);
+        given(appointmentRequestRepository.findByPatient(eq(patient)))
+                .willReturn(expectedFindByPatient);
 
         final List<AppointmentRequest> result = appointmentRequestService.findByPatient(patient);
 
@@ -69,7 +69,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
     }
 
     @Test
-    public void testListByHCP(){
+    public void testListByHCP() {
         final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
@@ -98,7 +98,8 @@ public class OphthalmologyAppointmentRequestServiceTest {
         List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
         expectedFindByPatient.add(expectedOphAppointment);
 
-        given(appointmentRequestRepository.findByHcp(eq(ophUser))).willReturn(expectedFindByPatient);
+        given(appointmentRequestRepository.findByHcp(eq(ophUser)))
+                .willReturn(expectedFindByPatient);
 
         final List<AppointmentRequest> result = appointmentRequestService.findByHcp(ophUser);
 
@@ -106,7 +107,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
     }
 
     @Test
-    public void testListByHcpAndPatient(){
+    public void testListByHcpAndPatient() {
         final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
@@ -135,9 +136,11 @@ public class OphthalmologyAppointmentRequestServiceTest {
         List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
         expectedFindByPatient.add(expectedOphAppointment);
 
-        given(appointmentRequestRepository.findByHcpAndPatient(eq(ophUser), eq(patient))).willReturn(expectedFindByPatient);
+        given(appointmentRequestRepository.findByHcpAndPatient(eq(ophUser), eq(patient)))
+                .willReturn(expectedFindByPatient);
 
-        final List<AppointmentRequest> result = appointmentRequestService.findByHcpAndPatient(ophUser, patient);
+        final List<AppointmentRequest> result =
+                appointmentRequestService.findByHcpAndPatient(ophUser, patient);
 
         assertEquals(expectedFindByPatient, result);
     }
