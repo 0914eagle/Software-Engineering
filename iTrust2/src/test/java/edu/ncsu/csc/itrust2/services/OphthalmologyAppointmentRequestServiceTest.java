@@ -2,13 +2,17 @@ package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.AppointmentRequestForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
+import edu.ncsu.csc.itrust2.models.FoodDiary;
 import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.Personnel;
 import edu.ncsu.csc.itrust2.models.enums.*;
+import edu.ncsu.csc.itrust2.repositories.AppointmentRequestRepository;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +28,119 @@ import static org.mockito.BDDMockito.given;
 @RunWith(MockitoJUnitRunner.class)
 public class OphthalmologyAppointmentRequestServiceTest {
     @Mock private UserService userService;
+    @Mock private AppointmentRequestRepository appointmentRequestRepository;
     @InjectMocks private AppointmentRequestService appointmentRequestService;
+
+    @Test
+    public void testListByPatient(){
+        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+
+        String patientName = "TestPatient";
+        final Patient patient = new Patient();
+        patient.setUsername(patientName);
+
+        String ophName = "TestOph";
+        final Personnel ophUser = new Personnel();
+        ophUser.setUsername(ophName);
+        ophUser.setRoles(Set.of(Role.ROLE_HCP, Role.ROLE_OPH));
+
+        AppointmentRequest expectedOphAppointment =
+                new AppointmentRequest(
+                        1L,
+                        patient,
+                        ophUser,
+                        date,
+                        AppointmentType.GENERAL_OPHTHALMOLOGY,
+                        "test comment",
+                        Status.PENDING,
+                        "test name",
+                        "test abb",
+                        "90000",
+                        "test long comment");
+
+        List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
+        expectedFindByPatient.add(expectedOphAppointment);
+
+        given(appointmentRequestRepository.findByPatient(eq(patient))).willReturn(expectedFindByPatient);
+
+        final List<AppointmentRequest> result = appointmentRequestService.findByPatient(patient);
+
+        assertEquals(expectedFindByPatient, result);
+    }
+
+    @Test
+    public void testListByHCP(){
+        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+
+        String patientName = "TestPatient";
+        final Patient patient = new Patient();
+        patient.setUsername(patientName);
+
+        String ophName = "TestOph";
+        final Personnel ophUser = new Personnel();
+        ophUser.setUsername(ophName);
+        ophUser.setRoles(Set.of(Role.ROLE_HCP, Role.ROLE_OPH));
+
+        AppointmentRequest expectedOphAppointment =
+                new AppointmentRequest(
+                        1L,
+                        patient,
+                        ophUser,
+                        date,
+                        AppointmentType.GENERAL_OPHTHALMOLOGY,
+                        "test comment",
+                        Status.PENDING,
+                        "test name",
+                        "test abb",
+                        "90000",
+                        "test long comment");
+
+        List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
+        expectedFindByPatient.add(expectedOphAppointment);
+
+        given(appointmentRequestRepository.findByHcp(eq(ophUser))).willReturn(expectedFindByPatient);
+
+        final List<AppointmentRequest> result = appointmentRequestService.findByHcp(ophUser);
+
+        assertEquals(expectedFindByPatient, result);
+    }
+
+    @Test
+    public void testListByHcpAndPatient(){
+        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+
+        String patientName = "TestPatient";
+        final Patient patient = new Patient();
+        patient.setUsername(patientName);
+
+        String ophName = "TestOph";
+        final Personnel ophUser = new Personnel();
+        ophUser.setUsername(ophName);
+        ophUser.setRoles(Set.of(Role.ROLE_HCP, Role.ROLE_OPH));
+
+        AppointmentRequest expectedOphAppointment =
+                new AppointmentRequest(
+                        1L,
+                        patient,
+                        ophUser,
+                        date,
+                        AppointmentType.GENERAL_OPHTHALMOLOGY,
+                        "test comment",
+                        Status.PENDING,
+                        "test name",
+                        "test abb",
+                        "90000",
+                        "test long comment");
+
+        List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
+        expectedFindByPatient.add(expectedOphAppointment);
+
+        given(appointmentRequestRepository.findByHcpAndPatient(eq(ophUser), eq(patient))).willReturn(expectedFindByPatient);
+
+        final List<AppointmentRequest> result = appointmentRequestService.findByHcpAndPatient(ophUser, patient);
+
+        assertEquals(expectedFindByPatient, result);
+    }
 
     @Test
     public void testBuild() {
