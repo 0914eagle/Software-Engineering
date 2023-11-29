@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import edu.ncsu.csc.itrust2.models.*;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LogEntry;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
@@ -77,6 +78,8 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.setPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
+
+        loggerUtil.log(TransactionType.DECLARE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "HCP: 특정 환자의 대리인 지정")
@@ -90,6 +93,9 @@ public class ApiPersonalRepresentationController {
                     final String personalRepresentativeUsername) {
         personalRepresentationService.setPersonalRepresentation(
                 patientUsername, personalRepresentativeUsername);
+
+        String currentUsername = loggerUtil.getCurrentUsername();
+        loggerUtil.log(TransactionType.HCP_DECLARE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "Patient: 자신의 대리인 지정 해제")
@@ -101,6 +107,8 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
+
+        loggerUtil.log(TransactionType.REMOVE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "Patient: 자신이 대리하고 있는 환자 지정 해제")
@@ -112,6 +120,8 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
+
+        loggerUtil.log(TransactionType.REMOVE_SELF_AS_PR, currentUsername, representingPatientUsername);
     }
 
     @Operation(summary = "Patient: 특정 환자의 logs 목록 조회")
