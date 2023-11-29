@@ -63,8 +63,9 @@ public class OphthalmologyAppointmentRequestServiceTest {
 
         assertAppointmentRequestEquals(expectedOphAppointment, result);
     }
+
     @Test
-    public void testBuildNullStatusAndType(){
+    public void testBuildNullStatusAndType() {
         final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
@@ -93,8 +94,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
                         "90000",
                         "test long comment");
 
-        AppointmentRequestForm appointmentForm =
-                new AppointmentRequestForm(expectedAppointment);
+        AppointmentRequestForm appointmentForm = new AppointmentRequestForm(expectedAppointment);
         appointmentForm.setType(null);
         appointmentForm.setStatus(null);
 
@@ -102,8 +102,9 @@ public class OphthalmologyAppointmentRequestServiceTest {
 
         assertAppointmentRequestEquals(expectedAppointment, result);
     }
+
     @Test
-    public void testBuildThrowsExceptionWhenDateIsBeforeNow(){
+    public void testBuildThrowsExceptionWhenDateIsBeforeNow() {
         final var date = ZonedDateTime.of(2023, 1, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
@@ -130,16 +131,18 @@ public class OphthalmologyAppointmentRequestServiceTest {
         appointmentForm.setCptCode("90000");
         appointmentForm.setLongComment("test long comment");
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> appointmentRequestService.build(appointmentForm));
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> appointmentRequestService.build(appointmentForm));
 
         String expectedErrorMessage = "Cannot request an appointment before the current time";
         String actualErrorMessage = exception.getMessage();
         assertEquals(expectedErrorMessage, actualErrorMessage);
     }
 
-
-    public static void assertAppointmentRequestEquals(AppointmentRequest expectedOphAppointment, AppointmentRequest result){
+    public static void assertAppointmentRequestEquals(
+            AppointmentRequest expectedOphAppointment, AppointmentRequest result) {
         assertEquals(expectedOphAppointment.getId(), result.getId());
         assertEquals(expectedOphAppointment.getPatient(), result.getPatient());
         assertEquals(expectedOphAppointment.getHcp(), result.getHcp());
