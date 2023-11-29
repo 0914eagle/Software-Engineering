@@ -23,7 +23,7 @@ public class ApiPatientSearchController {
 
     @Operation(summary = "HCP, ER: 환자를 이름으로 조회")
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ER')")
+    @PreAuthorize("hasAnyRole('ROLE_HCP', 'ROLE_ER', 'ROLE_PATIENT')")
     public List<Patient> listPatientsByName(
             @Parameter(description = "조회할 환자의 이름입니다.") @RequestParam String nameQuery) {
         if (nameQuery == null) {

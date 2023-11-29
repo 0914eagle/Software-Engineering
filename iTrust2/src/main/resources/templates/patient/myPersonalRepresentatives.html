@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{::script})">
+    <title>Personal Representatives</title>
+    <script th:src="@{/js/dateTimeService.js}" src="../js/dateTimeService.js"></script>
+    <style>
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+    <script th:inline="javascript">
+        const pattern = new RegExp('[a-zA-Z0-9-]*');
+
+    </script>
+    <script th:inline="javascript">
+
+        const app = angular.module("managePersonalRepresentativeApp", []);
+
+        app.filter('humanize', function () {
+            return function (input) {
+                return input.toLowerCase().split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+                    .join(' ');
+            }
+        });
+
+        // Function to check if a value is not empty
+        function isNotEmpty(value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        }
+
+        app.controller('managePersonalRepresentativeCtrl', function ($scope, $http) {
+            $scope.myPRs = [];
+            $scope.selectedTab = 'declareTab';
+
+            $scope.getMyPersonalRepresentatives = function () {
+                $http.get("/iTrust2/api/v1/personalRepresentatives").then(
+                    function (response) {
+                        $scope.myPRs = response.data;
+                        if ($scope.myPRs.length === 0) {
+                            $scope.message = 'No data found for the given search term.'
+                        } else {
+                            $scope.message = '';
+                        }
+                    }
+                );
+            }
+
+            $scope.getMyPersonalRepresentatives();
+
+            $scope.searchTerm = '';
+            $scope.patients = [];
+            $scope.message = 'Welcome to hcp search';
+            $scope.showPatientDetails = false;
+
+            $scope.search = function () {
+                $scope.getSelectedUsernames();
+                var searchTermRegex = /^[A-Za-z\-\'\s]{1,30}$/;
+                if (!searchTermRegex.test($scope.searchTerm.trim())) {
+                    $scope.message = 'Wrong Format. Please enter a valid search term.';
+                    $scope.patients = [];
+                }
+                else {
+                    if (!$scope.searchTerm.trim()) {
+                        $scope.message = 'No data found. Please enter a search term.';
+                        $scope.patients = [];
+                    } else {
+                        $http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
+                            .then(function (response) {
+                                $scope.patients = response.data;
+                                // $scope.patients = filterPatients(response.data, $scope.searchTerm);
+                                if ($scope.patients.length === 0) {
+                                    $scope.message = 'No data found for the given search term.';
+                                } else {
+                                    $scope.message = '';
+                                    alert("okay")
+                                }
+                            });
+                        // .catch(function (rejection) {
+                        //     $scope.message = 'Unable to get the patient data.';
+                        //     $scope.patients = [];
+                        // });
+                    }
+                }
+            };
+
+            $scope.getSelectedUsernames = function() {
+                return $scope.myPRs.map(pr => pr.personalRepresentative.username);
+            };
+
+            $scope.declareRepresentative = function (declarePR) {
+                $http.post('/iTrust2/api/v1/personalRepresentatives/' + declarePR)
+                    .then(function (response) {
+                        console.log('Declare PR: ', declarePR);
+                        $scope.getMyPersonalRepresentatives();
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                    });
+            }
+
+            $scope.unDeclareRepresentative = function (unDeclarePR) {
+                $http.delete('/iTrust2/api/v1/personalRepresentatives/' + unDeclarePR)
+                    .then(function (response) {
+                        console.log('UnDeclare PR: ', unDeclarePR);
+                        $scope.getMyPersonalRepresentatives();
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                    });
+            }
+        });
+
+
+    </script>
+
+    <div ng-app="managePersonalRepresentativeApp" ng-controller="managePersonalRepresentativeCtrl">
+        <div class="container">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h2>My Personal Representatives</h2>
+            </div>
+            <div class="row" style="margin-top: 15px; margin-left: 5px; margin-right: 5px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li ng-class="{ 'active': selectedTab === 'declareTab' }">
+                                <a href="#" ng-click="selectedTab = 'declareTab';" >Declare a Representative</a>
+                                <!--                                <a href="#" ng-click="selectedTab = 'medicalAppointmentTab'" >Request Medical Appointment</a>-->
+                                <form>
+                                </form>
+                            </li>
+                            <li ng-class="{ 'active': selectedTab === 'undeclareTab' }">
+                                <a href="#" ng-click="selectedTab = 'undeclareTab';">Undeclare Representatives</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="declareTab" class="tab" ng-show="selectedTab === 'declareTab'">
+                            <form name="declare">
+                                <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <table ng-if="myPRs.length > 0" style="margin-top: 4px; padding-left: 2px">
+                                            <tr ng-repeat="pr in myPRs">
+                                                <td style="padding-top: 3px">{{pr.personalRepresentative.username}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-5" style="border-left: 1px solid #5e5e5e; height: 500px; padding-top: 5px">
+                                        <input type="text" ng-model="searchTerm" placeholder="Enter your search term"/>
+                                        <button type="button" ng-click="search()">Search</button>
+                                        <!-- Table of Patients -->
+                                        <table ng-if="patients.length > 0" style="margin-top: 10px; margin-left: 5px;">
+                                            <tr ng-repeat="patient in patients">
+                                                <td style="padding-top: 3px">{{patient.username}}</td>
+                                                <td style="padding-top: 3px; padding-left: 30px">
+                                                    <a ng-click="declareRepresentative(patient.username)">
+                                                        Confirm Declaration
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="undeclareTab" class="tab" ng-show="selectedTab === 'undeclareTab'">
+                            <form name="undeclare">
+                                <table ng-if="myPRs.length > 0" style="margin-top: 4px; margin-left: 15px">
+                                    <tr ng-repeat="pr in myPRs">
+                                        <td style="padding-top: 3px">{{pr.personalRepresentative.username}}</td>
+                                        <td style="padding-top: 3px; padding-left: 30px">
+                                            <a ng-click="unDeclareRepresentative(pr.personalRepresentative.username)">
+                                                Undeclare
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

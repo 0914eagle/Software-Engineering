@@ -95,4 +95,16 @@ public class PatientController {
     public String viewFoodDiary(final Model model) {
         return "patient/foodDiary";
     }
+
+    @GetMapping(value = "patient/myPersonalRepresentatives")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public String viewMyPR(final Model model) {
+        return "patient/myPersonalRepresentatives";
+    }
+
+    @GetMapping(value = "patient/myRepresentingPatients")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public String viewMyPatient(final Model model) {
+        return "patient/myRepresentingPatients";
+    }
 }
