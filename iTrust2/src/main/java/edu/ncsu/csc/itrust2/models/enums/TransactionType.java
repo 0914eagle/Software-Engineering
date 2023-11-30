@@ -202,8 +202,10 @@ public enum TransactionType {
     OPH_VIEW_UPCOMING_APPOINTMENT(2001, "OPH viewed upcoming appointment", true),
     /** Patient requests ophthalmology appointment */
     PATIENT_REQ_OPH_APPT(2010, "Patient requests ophthalmology appointment", true),
+    /** OPH viewed pending ophthalmology appointment */
+    OPH_VIEWS_APPT_REQ(2011, "HCP viewed pending ophthalmology appointment", true),
     /** Patient viewed pending ophthalmology appointment */
-    OPH_VIEWS_APPT_REQ(2011, "Patient viewed pending ophthalmology appointment", true),
+    PATIENT_VIEWS_APPT_REQ(2011, "Patient viewed pending ophthalmology appointment", true),
     /** Patient deletes ophthalmology appointment request */
     PATIENT_DELETES_OPH_APPT_REQUEST(
             2012, "Patient deletes ophthalmology appointment request", true),
