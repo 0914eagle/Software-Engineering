@@ -128,7 +128,7 @@ public class ApiPersonalRepresentationController {
     @GetMapping("/representingPatients/{representingPatientUsername}/logs")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<LogEntry> listPatientLogs(
-            @Parameter(description = "조회할 환자의 username") @PathVariable
+            @Parameter(description = "조회할 환자의 username 입니다.") @PathVariable
                     String representingPatientUsername) {
 
         Patient patient = (Patient) patientService.findByName(representingPatientUsername);
@@ -146,7 +146,7 @@ public class ApiPersonalRepresentationController {
     @GetMapping("/representingPatients/{representingPatientUsername}/basic-medicalRecords")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<BasicHealthMetrics> listPatientMedicalRecords(
-            @Parameter(description = "조회할 환자의 username") @PathVariable
+            @Parameter(description = "조회할 환자의 username 입니다.") @PathVariable
                     String representingPatientUsername) {
 
         Patient patient = (Patient) patientService.findByName(representingPatientUsername);
@@ -164,7 +164,7 @@ public class ApiPersonalRepresentationController {
     @GetMapping("/representingPatients/{representingPatientUsername}/diagnoses")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<Diagnosis> listPatientDiagnosesIn60Days(
-            @Parameter(description = "조회할 환자의 username") @PathVariable
+            @Parameter(description = "조회할 환자의 username 입니다.") @PathVariable
                     String representingPatientUsername) {
 
         String currentUsername = loggerUtil.getCurrentUsername();
@@ -181,7 +181,7 @@ public class ApiPersonalRepresentationController {
     @GetMapping("/representingPatients/{representingPatientUsername}/appointments")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<AppointmentRequest> listPatientAppointments(
-            @Parameter(description = "조회할 환자의 username") @PathVariable
+            @Parameter(description = "조회할 환자의 username 입니다.") @PathVariable
                     String representingPatientUsername) {
 
         Patient patient = (Patient) patientService.findByName(representingPatientUsername);
