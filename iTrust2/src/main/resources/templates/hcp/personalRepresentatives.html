@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{::script})">
+    <title>Personal Representatives</title>
+    <script th:src="@{/js/dateTimeService.js}" src="../js/dateTimeService.js"></script>
+    <style>
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+    <script th:inline="javascript">
+        const pattern = new RegExp('[a-zA-Z0-9-]*');
+
+    </script>
+    <script th:inline="javascript">
+
+        const app = angular.module("managePersonalRepresentativesApp", []);
+
+        app.filter('humanize', function () {
+            return function (input) {
+                return input.toLowerCase().split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+                    .join(' ');
+            }
+        });
+
+        // Function to check if a value is not empty
+        function isNotEmpty(value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        }
+
+        app.controller('managePersonalRepresentativesCtrl', function ($scope, $http) {
+            $scope.selectedTab = 'personalRepresentativesTab';
+            $scope.patients = [];
+            $scope.curPatient = ''
+
+            $scope.reset = function () {
+                $scope.curPatient = '';
+                $scope.personalRepresentatives = [];
+                $scope.representingPatients = [];
+            };
+
+            $scope.getPatients = function () {
+                $http.get("/iTrust2/api/v1/patients").then(
+                    function (response) {
+                        $scope.patients = response.data;
+                        console.log('Patients List: ', $scope.patients)
+                        if ($scope.patients.length === 0) {
+                            $scope.message = 'No data found.'
+                        } else {
+                            $scope.message = '';
+                        }
+                    }
+                );
+            }
+
+            $scope.getPatients();
+
+            $scope.personalRepresentatives = [];
+
+            $scope.checkPR = function (patient) {
+                $scope.curPatient = patient;
+                $http.get('/iTrust2/api/v1/patients/' + patient + '/personalRepresentatives')
+                    .then(function (response) {
+                        $scope.personalRepresentatives = response.data;
+                        console.log('Representing Patients: ', $scope.personalRepresentatives);
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                    });
+            }
+
+            $scope.representingPatients = [];
+
+            $scope.checkRP = function (patient) {
+                $scope.curPatient = patient;
+                $http.get('/iTrust2/api/v1/patients/' + patient + '/representingPatients')
+                    .then(function (response) {
+                        $scope.representingPatients = response.data;
+                        console.log('Representing Patients: ', $scope.representingPatients);
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                    });
+            }
+
+            $scope.searchTerm = '';
+            $scope.searchPatients = [];
+
+            $scope.search = function () {
+                console.log('start search');
+                var searchTermRegex = /^[A-Za-z\-\'\s]{1,30}$/;
+                if (!searchTermRegex.test($scope.searchTerm.trim())) {
+                    $scope.message = 'Wrong Format. Please enter a valid search term.';
+                    $scope.searchPatients = [];
+                }
+                else {
+                    if (!$scope.searchTerm.trim()) {
+                        $scope.message = 'No data found. Please enter a search term.';
+                        $scope.searchPatients = [];
+                    } else {
+                        $http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
+                            .then(function (response) {
+                                $scope.searchPatients = response.data;
+                                console.log(response.data);
+                                // $scope.patients = filterPatients(response.data, $scope.searchTerm);
+                                if ($scope.searchPatients.length === 0) {
+                                    $scope.message = 'No data found for the given search term.';
+                                } else {
+                                    $scope.message = '';
+                                }
+                            });
+                        // .catch(function (rejection) {
+                        //     $scope.message = 'Unable to get the patient data.';
+                        //     $scope.patients = [];
+                        // });
+                    }
+                }
+            };
+
+            $scope.declareRepresentative = function (declarePR) {
+                $http.post('/iTrust2/api/v1/patients/' + $scope.curPatient + '/personalRepresentatives/' + declarePR)
+                    .then(function (response) {
+                        console.log('declare PR: ', declarePR);
+                        $scope.checkPR($scope.curPatient);
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                        alert('Error declaring PR');
+                    });
+            }
+        });
+
+
+    </script>
+
+    <div ng-app="managePersonalRepresentativesApp" ng-controller="managePersonalRepresentativesCtrl">
+        <div class="container">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h2>Personal Representatives</h2>
+            </div>
+            <div class="row" style="margin-top: 15px; margin-left: 5px; margin-right: 5px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li ng-class="{ 'active': selectedTab === 'personalRepresentativesTab' }">
+                                <a href="#" ng-click="selectedTab = 'personalRepresentativesTab'; reset();" >Personal Representatives</a>
+                                <form>
+                                </form>
+                            </li>
+                            <li ng-class="{ 'active': selectedTab === 'representingPatientsTab' }">
+                                <a href="#" ng-click="selectedTab = 'representingPatientsTab'; reset();">Representing Patients</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="personalRepresentativesTab" class="tab" ng-show="selectedTab === 'personalRepresentativesTab'">
+                            <form name="personalRepresentatives">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-2" style="padding-top: 5px">
+                                            <table ng-if="patients.length > 0" style="margin-top: 4px; padding-left: 2px">
+                                                <tr ng-repeat="patient in patients">
+                                                    <td style="padding-top: 3px">
+                                                        <a ng-click="checkPR(patient.username)" ng-style="{'color': patient.username === curPatient ? 'blue' : 'black'}">
+                                                            {{ patient.username }}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-2" style="border-left: 1px solid #5e5e5e; height: 500px; padding-top: 5px">
+                                            <table ng-if="personalRepresentatives.length > 0" style="margin-top: 4px; padding-left: 2px">
+                                                <tr ng-repeat="rp in personalRepresentatives">
+                                                    <td style="padding-top: 3px">{{rp.personalRepresentative.username}}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-5" style="border-left: 1px solid #5e5e5e; height: 500px; padding-top: 5px">
+                                            <input type="text" ng-model="searchTerm" placeholder="Enter your search term"/>
+                                            <button type="button" ng-click="search()">Search</button>
+                                            <!-- Table of Patients -->
+                                            <table ng-if="searchPatients.length > 0" style="margin-top: 10px; margin-left: 5px;">
+                                                <tr ng-repeat="patient in searchPatients">
+                                                    <td style="padding-top: 3px">{{patient.username}}</td>
+                                                    <td style="padding-top: 3px; padding-left: 30px">
+                                                        <a ng-click="declareRepresentative(patient.username)">
+                                                            Confirm Declaration
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="representingPatientsTab" class="tab" ng-show="selectedTab === 'representingPatientsTab'">
+                            <form name="representingPatients">
+                                <div class="col-md-2" style="padding-top: 5px">
+                                    <table ng-if="patients.length > 0" style="margin-top: 4px; padding-left: 2px">
+                                        <tr ng-repeat="patient in patients">
+                                            <td style="padding-top: 3px">
+                                                <a ng-click="checkRP(patient.username)" ng-style="{'color': patient.username === curPatient ? 'blue' : 'black'}">
+                                                    {{ patient.username }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-2" style="border-left: 1px solid #5e5e5e; height: 500px; padding-top: 5px">
+                                    <table ng-if="representingPatients.length > 0" style="margin-top: 4px; padding-left: 2px">
+                                        <tr ng-repeat="rp in representingPatients">
+                                            <td style="padding-top: 3px">{{rp.patient.username}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
