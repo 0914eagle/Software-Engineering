@@ -1,40 +1,37 @@
 # Iter2: 인프라 - HTTP, HTTPS, CICD
 
-# EB, HTTP, HTTPS
+## EB, HTTP, HTTPS
 
 ### Elastic Beanstalk
 
 - ElasticBeanstalk을 하나 만들고, 해당 ElasticBeanstalk에 환경 main을 생성했습니다.
 - main 환경에서 기본적인 jar파일을 배포하는데 성공했습니다. 이를 통해 localhost에서만 실행했었던 프로그램을 서버에서 실행할 수 있게 되었습니다. 아래는 처음에 예시로 ‘Hello, world!’만 띄우는 jar파일을 배포한 결과입니다.
-    - EB screenshots
-        
+  - EB screenshots
+
         ![Screenshot 2023-11-07 at 3.24.06 PM.png](iter2-infra/Screenshot_2023-11-07_at_3.24.06_PM.png)
-        
+
         ![Untitled](iter2-infra/Untitled.png)
-        
-    
 
 ### HTTP
 
 - 기본적인 Hello World jar파일을 배포하여 HTTP sogong.hajin.kim으로 연결 완료했습니다.
 - DB를 포함한 파일 배포하는중.
-    - 시행착오
-        - 1. 상태: Severe. (실패)
-            
+  - 시행착오
+    - 1. 상태: Severe. (실패)
+
             빌드의 username과 password가 root로 설정되어 있는 탓에 배포 실패.
-            
+
             ![Screenshot 2023-11-09 at 3.40.28 PM.png](iter2-infra/Screenshot_2023-11-09_at_3.40.28_PM.png)
-            
+
             ![Untitled](iter2-infra/Untitled%201.png)
-            
+
             ![Screenshot 2023-11-09 at 3.40.59 PM.png](iter2-infra/Screenshot_2023-11-09_at_3.40.59_PM.png)
-            
-        - 2. DB endpoint랑 port 설정을 완료한 뒤 재배포 완료. (성공)
-            
+
+    - 2. DB endpoint랑 port 설정을 완료한 뒤 재배포 완료. (성공)
+
             다음과 같이 [`sogong.hajin.kim/iTrust2/login`](http://sogong.hajin.kim/iTrust2/login) 으로 성공적으로 접속했습니다. 이를 하기 위해서는 저희 팀에서 사용하고 있었던 hajin.kim 도메인에서 subdomain을 생성해서 EB에서 설정해줬습니다. (Not Secure)
-            
+
             ![Screenshot 2023-11-09 at 4.27.14 PM.png](iter2-infra/Screenshot_2023-11-09_at_4.27.14_PM.png)
-            
 
 ### HTTPS
 
@@ -43,87 +40,84 @@
 HTTP는 암호화가 되지 않은 상태에서 데이터를 전송함으로 보안이 취약하지만, HTTPS는 데이터를 암호화하여 전송함으로 제3자가 네트워크를 통해 정보를 가로챌 수 있음을 보장합니다. 개인정보를 다루는 경우에 이런 보안은 중요하기 때문에 HTTPS를 사용했습니다.
 
 - HTTPS로 [`sogong.hajin.kim`](http://sogong.hajin.kim) 도메인 연결 성공.
-    
+
     ![Screenshot 2023-11-11 at 4.20.21 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.20.21_PM.png)
-    
+
 - HTTP 로드 밸런서를 자동으로 HTTPS로 변경되도록 설정.
-    - EC2 → 로드 밸런서 → 리스너 규칙 → 규칙 편집 → 리디렉션
-        
+  - EC2 → 로드 밸런서 → 리스너 규칙 → 규칙 편집 → 리디렉션
+
         ![Screenshot 2023-11-11 at 4.36.57 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.36.57_PM.png)
-        
+
         ![Screenshot 2023-11-11 at 4.39.24 PM.png](iter2-infra/Screenshot_2023-11-11_at_4.39.24_PM.png)
-        
-    
 
 ***로드 밸런서란?***
 
 트래픽이 서버 풀(서버들의 그룹)에 도달하기 전에 거치게 되어 있으며, 서버에 가해지는 부하(load)를 분산(balance)해주는 장치입니다.
 
 - 로드 밸런서
-    
-    ![Screenshot 2023-11-23 at 1.48.05 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.48.05_PM.png)
-    
-    ![Screenshot 2023-11-23 at 1.25.07 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.25.07_PM.png)
-    
-    ![Untitled](iter2-infra/Untitled%202.png)
-    
 
-# CI/CD
+    ![Screenshot 2023-11-23 at 1.48.05 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.48.05_PM.png)
+
+    ![Screenshot 2023-11-23 at 1.25.07 PM.png](iter2-infra/Screenshot_2023-11-23_at_1.25.07_PM.png)
+
+    ![Untitled](iter2-infra/Untitled%202.png)
+
+## CI/CD
 
 ### 배경지식: Gitlab Pipeline을 사용 못하는 이유
 
 Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이라는 기능이 존재합니다. 그러나, Gitlab Pipeline은 다양한 Job들을 실행하기 위해서는 **Gitlab Runner**을 사용해야 하는데, Gitlab Runner을 발급받기 위해서는 **인증서**가 필요합니다. 그러나, 해당 인증서를 사용해보려고 했을 때, 이는 **이미 유효기간이 만료**되었다는 사실을 알게 되었고 새로 발급 받는것도 교수님께 불가능하다고 전달 받았습니다.
 
 - **Gitlab 시행착오 및 유효기간 만료 관련 자료**
-    - **Runner을 써야 하는 이유**
-        
+  - **Runner을 써야 하는 이유**
+
         Pipeline Editor을 활용한 .gitlab-ci.yml을 제작/실행을 시도했을 때, 무한 pending 상태가 되었다.
-        
+
         ![Screenshot 2023-10-27 at 9.13.57 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.13.57_PM.png)
-        
+
         ![Screenshot 2023-10-27 at 9.14.21 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.14.21_PM.png)
-        
+
         ![Screenshot 2023-10-27 at 9.14.50 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.14.50_PM.png)
-        
+
         Runner가 없기 때문에 Job이 실행이 안 된다.
-        
+
         **결론→Runner을 써야한다.**
-        
-    - **Registration Tokens Deprecated**
-        
+
+  - **Registration Tokens Deprecated**
+
         Runner를 설치/등록하려 했으나, command로 하는 방식은 deprecated.
-        
+
         ![Screenshot 2023-10-27 at 9.17.52 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.17.52_PM.png)
-        
+
         ![Screenshot 2023-10-27 at 9.08.55 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.08.55_PM.png)
-        
-    - **x509: certificate signed by unknown authority**
-        - `x509: certificate signed by unknown authority`
-            
+
+  - **x509: certificate signed by unknown authority**
+    - `x509: certificate signed by unknown authority`
+
             ![Screenshot 2023-10-27 at 9.48.51 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.48.51_PM.png)
-            
-        - **Possible solution: Specify a custom certificate file (expired)**
-            
+
+    - **Possible solution: Specify a custom certificate file (expired)**
+
             ![Screenshot 2023-10-27 at 9.54.29 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.54.29_PM.png)
-            
+
             `❯ gitlab-runner register --tls-ca-file=/Users/hyunjoon/34.64.100.199.cer`
-            
+
             **certificate has expired or not yet valid.**
-            
-            에러 메시지를 보고 인증키의 유효기간을 확인해보니 10/18일 만료되었다는 것을 확인했습니다. 
-            
+
+            에러 메시지를 보고 인증키의 유효기간을 확인해보니 10/18일 만료되었다는 것을 확인했습니다.
+
             ![Screenshot 2023-10-27 at 9.58.31 PM.png](iter2-infra/Screenshot_2023-10-27_at_9.58.31_PM.png)
-            
-        - **Possible solution: Change date to be within certificate expiration**
-            
+
+    - **Possible solution: Change date to be within certificate expiration**
+
             x509 Error가 계속 발생하여
-            
+
             1) cer/crt 파일을 직접 받아서 연결하려 했고
-            
+
             2) 디바이스 날짜를 변경해서 유효기간 안으로 맞춰봤으나,
-            
+
             다음과 같이 다른 에러가 나왔다.
-            
+
             ```bash
             WARNING: Support for registration tokens and runner parameters in the 'register' command has been deprecated in GitLab Runner 15.6 and will be replaced with support for authentication tokens. For more information, see https://docs.gitlab.com/ee/ci/runners/new_creation_workflow
             
@@ -131,9 +125,8 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
             
             PANIC: Failed to register the runner.
             ```
-            
+
             ![Screenshot 2023-10-17 at 1.55.13 PM.png](iter2-infra/Screenshot_2023-10-17_at_1.55.13_PM.png)
-            
 
 ### 결론
 
@@ -148,7 +141,7 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
 저희가 구현하게 될 CI/CD 파이프라인의 첫번째 아키텍처는 다음과 같습니다.
 
 - **`CI/CD Pipeline 1 (Jenkins+Kube)`**
-    
+
     ![pipeline.png](iter2-infra/pipelinearch1.png)
 
 ### 젠킨스 시행착오
@@ -156,11 +149,11 @@ Gitlab에서 CI/CD Pipeline을 구현하기 위해서는 **Gitlab Pipeline**이�
 CI/CD를 구축하기에 앞서 실행중인 Jenkins 인스턴스를 생성해야 했습니다. 그러기 위해서 젠킨스를 설치하고 다음과 같이 젠킨스를 설치하고 localhost에 실행하는 것까지는 성공했습니다.
 
 - 젠킨스 설치 및 실행
-    
+
     ![Screenshot 2023-11-21 at 3.53.48 PM.png](iter2-infra/Screenshot_2023-11-21_at_3.53.48_PM.png)
-    
+
     ![Screenshot 2023-11-21 at 3.56.06 PM.png](iter2-infra/Screenshot_2023-11-21_at_3.56.06_PM.png)
-    
+
 - ansible-playbook.yaml 실행 실패
-    
+
     ![Screenshot 2023-11-21 at 11.41.30 PM.png](iter2-infra/Screenshot_2023-11-21_at_11.41.30_PM.png)
