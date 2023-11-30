@@ -44,7 +44,9 @@ public class AppointmentRequestService extends Service {
     public AppointmentRequest build(final AppointmentRequestForm raf) {
         final AppointmentRequest ar = new AppointmentRequest();
 
-        ar.setId(Long.parseLong(raf.getId()));
+        if (raf.getId() != null) {
+            ar.setId(Long.parseLong(raf.getId()));
+        }
 
         ar.setPatient(userService.findByName(raf.getPatient()));
         ar.setHcp(userService.findByName(raf.getHcp()));

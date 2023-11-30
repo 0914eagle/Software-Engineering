@@ -3,6 +3,7 @@ package edu.ncsu.csc.itrust2.controllers.api;
 import edu.ncsu.csc.itrust2.forms.AppointmentRequestForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
 import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
@@ -55,19 +56,7 @@ public class APIAppointmentRequestController extends APIController {
     @GetMapping("/appointmentrequests")
     @PreAuthorize("hasAnyRole('ROLE_HCP')")
     public List<AppointmentRequest> getAppointmentRequests() {
-        final List<AppointmentRequest> requests = (List<AppointmentRequest>) service.findAll();
-
-        requests.stream()
-                .map(AppointmentRequest::getPatient)
-                .distinct()
-                .forEach(
-                        e ->
-                                loggerUtil.log(
-                                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                                        loggerUtil.getCurrentUsername(),
-                                        e.getUsername()));
-
-        return requests;
+        return (List<AppointmentRequest>) service.findAll();
     }
 
     /**
@@ -79,9 +68,41 @@ public class APIAppointmentRequestController extends APIController {
     @PreAuthorize("hasAnyRole('ROLE_PATIENT')")
     public List<AppointmentRequest> getAppointmentRequestsForPatient() {
         final User patient = userService.findByName(loggerUtil.getCurrentUsername());
-        return service.findByPatient(patient).stream()
-                .filter(e -> e.getStatus().equals(Status.PENDING))
-                .toList();
+        final List<AppointmentRequest> requests = service.findByPatient(patient);
+
+        requests.stream()
+                .map(AppointmentRequest::getPatient)
+                .distinct()
+                .forEach(
+                        patients -> {
+                            List<AppointmentRequest> patientRequests =
+                                    requests.stream()
+                                            .filter(
+                                                    request ->
+                                                            request.getPatient().equals(patients))
+                                            .toList();
+                            String patientName = patients.getUsername();
+                            patientRequests.stream()
+                                    .map(AppointmentRequest::getType)
+                                    .distinct()
+                                    .forEach(
+                                            Type -> {
+                                                if (Type == AppointmentType.GENERAL_CHECKUP) {
+                                                    loggerUtil.log(
+                                                            TransactionType
+                                                                    .APPOINTMENT_REQUEST_VIEWED,
+                                                            loggerUtil.getCurrentUsername(),
+                                                            patientName);
+                                                } else {
+                                                    loggerUtil.log(
+                                                            TransactionType.OPH_VIEWS_APPT_REQ,
+                                                            loggerUtil.getCurrentUsername(),
+                                                            patientName);
+                                                }
+                                            });
+                        });
+
+        return requests.stream().filter(e -> e.getStatus().equals(Status.PENDING)).toList();
     }
 
     /**
@@ -112,10 +133,15 @@ public class APIAppointmentRequestController extends APIController {
     public ResponseEntity getAppointmentRequest(@PathVariable("id") final Long id) {
         final AppointmentRequest request = (AppointmentRequest) service.findById(id);
         if (null != request) {
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                    request.getPatient(),
-                    request.getHcp());
+            if (request.getType().equals(AppointmentType.GENERAL_CHECKUP)) {
+                loggerUtil.log(
+                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
+                        request.getPatient(),
+                        request.getHcp());
+            } else {
+                loggerUtil.log(
+                        TransactionType.OPH_VIEWS_APPT_REQ, request.getPatient(), request.getHcp());
+            }
 
             /* Patient can't look at anyone else's requests */
             final User self = userService.findByName(loggerUtil.getCurrentUsername());
@@ -158,10 +184,17 @@ public class APIAppointmentRequestController extends APIController {
                         HttpStatus.CONFLICT);
             }
             service.save(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_SUBMITTED,
-                    request.getPatient(),
-                    request.getHcp());
+            if (request.getType().equals(AppointmentType.GENERAL_CHECKUP)) {
+                loggerUtil.log(
+                        TransactionType.APPOINTMENT_REQUEST_SUBMITTED,
+                        request.getPatient(),
+                        request.getHcp());
+            } else {
+                loggerUtil.log(
+                        TransactionType.PATIENT_REQ_OPH_APPT,
+                        request.getPatient(),
+                        request.getHcp());
+            }
             return new ResponseEntity(request, HttpStatus.OK);
         } catch (final Exception e) {
             return new ResponseEntity(
@@ -198,10 +231,17 @@ public class APIAppointmentRequestController extends APIController {
         }
         try {
             service.delete(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_DELETED,
-                    request.getPatient(),
-                    request.getHcp());
+            if (request.getType().equals(AppointmentType.GENERAL_CHECKUP)) {
+                loggerUtil.log(
+                        TransactionType.APPOINTMENT_REQUEST_DELETED,
+                        request.getPatient(),
+                        request.getHcp());
+            } else {
+                loggerUtil.log(
+                        TransactionType.PATIENT_DELETES_OPH_APPT_REQUEST,
+                        request.getPatient(),
+                        request.getHcp());
+            }
             return new ResponseEntity(id, HttpStatus.OK);
         } catch (final Exception e) {
             return new ResponseEntity(
@@ -249,20 +289,53 @@ public class APIAppointmentRequestController extends APIController {
             }
 
             service.save(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_UPDATED,
-                    request.getPatient(),
-                    request.getHcp());
-            if (request.getStatus().getCode() == Status.APPROVED.getCode()) {
+
+            if (request.getType().equals(AppointmentType.GENERAL_CHECKUP)) {
                 loggerUtil.log(
-                        TransactionType.APPOINTMENT_REQUEST_APPROVED,
+                        TransactionType.APPOINTMENT_REQUEST_UPDATED,
                         request.getPatient(),
                         request.getHcp());
             } else {
                 loggerUtil.log(
-                        TransactionType.APPOINTMENT_REQUEST_DENIED,
+                        TransactionType.OPH_APPT_REQ_UPDATED,
                         request.getPatient(),
                         request.getHcp());
+            }
+
+            if (request.getStatus().getCode() == Status.APPROVED.getCode()) {
+                if (request.getType().equals(AppointmentType.GENERAL_OPHTHALMOLOGY)) {
+                    loggerUtil.log(
+                            TransactionType.OPH_APPT_REQ_APPROVED,
+                            request.getPatient(),
+                            request.getHcp());
+                } else if (request.getType().equals(AppointmentType.OPHTHALMOLOGY_SURGERY)) {
+                    loggerUtil.log(
+                            TransactionType.OPH_SURG_REQ_APPROVED,
+                            request.getPatient(),
+                            request.getHcp());
+                } else {
+                    loggerUtil.log(
+                            TransactionType.APPOINTMENT_REQUEST_APPROVED,
+                            request.getPatient(),
+                            request.getHcp());
+                }
+            } else {
+                if (request.getType().equals(AppointmentType.GENERAL_OPHTHALMOLOGY)) {
+                    loggerUtil.log(
+                            TransactionType.OPH_APPT_REQ_DENIED,
+                            request.getPatient(),
+                            request.getHcp());
+                } else if (request.getType().equals(AppointmentType.OPHTHALMOLOGY_SURGERY)) {
+                    loggerUtil.log(
+                            TransactionType.OPH_SURG_REQ_DENIED,
+                            request.getPatient(),
+                            request.getHcp());
+                } else {
+                    loggerUtil.log(
+                            TransactionType.APPOINTMENT_REQUEST_DENIED,
+                            request.getPatient(),
+                            request.getHcp());
+                }
             }
 
             return new ResponseEntity(request, HttpStatus.OK);
@@ -293,15 +366,27 @@ public class APIAppointmentRequestController extends APIController {
                         .filter(e -> e.getStatus().equals(Status.APPROVED))
                         .toList();
         /* Log the event */
-        appointment.stream()
-                .map(AppointmentRequest::getPatient)
-                .distinct()
-                .forEach(
-                        e ->
-                                loggerUtil.log(
-                                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                                        loggerUtil.getCurrentUsername(),
-                                        e.getUsername()));
+        if (hcp.getRoles().contains(Role.ROLE_OPH) || hcp.getRoles().contains(Role.ROLE_OD)) {
+            appointment.stream()
+                    .map(AppointmentRequest::getPatient)
+                    .distinct()
+                    .forEach(
+                            e ->
+                                    loggerUtil.log(
+                                            TransactionType.OPH_VIEW_UPCOMING_APPOINTMENT,
+                                            loggerUtil.getCurrentUsername(),
+                                            e.getUsername()));
+        } else {
+            appointment.stream()
+                    .map(AppointmentRequest::getPatient)
+                    .distinct()
+                    .forEach(
+                            e ->
+                                    loggerUtil.log(
+                                            TransactionType.APPOINTMENT_REQUEST_VIEWED,
+                                            loggerUtil.getCurrentUsername(),
+                                            e.getUsername()));
+        }
         return appointment;
     }
 }
