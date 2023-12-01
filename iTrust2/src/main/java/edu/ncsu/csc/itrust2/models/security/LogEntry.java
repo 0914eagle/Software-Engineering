@@ -15,8 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.google.gson.annotations.JsonAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +29,6 @@ import lombok.Setter;
  *
  * @author Kai Presler-Marshall
  */
-
 @Schema(description = "이벤트에 관한 로그 기록입니다.")
 @NoArgsConstructor
 @Getter
@@ -39,11 +38,13 @@ public class LogEntry extends DomainObject {
 
     /** Type of event that has been logged */
     @Schema(description = "로그로 기록된 이벤트의 유형입니다.")
-    @Setter @NotNull private TransactionType logCode;
+    @Setter
+    @NotNull private TransactionType logCode;
 
     /** The primary user for the event that has been logged */
     @Schema(description = "이벤트의 주요 사용자입니다.")
-    @Setter @NotNull private String primaryUser;
+    @Setter
+    @NotNull private String primaryUser;
 
     /** The timestamp of when the event occurred */
     @Schema(description = "이벤트 발생 시간입니다.")
@@ -60,7 +61,8 @@ public class LogEntry extends DomainObject {
 
     /** An additional elaborative message for the event that has been logged. Optional. */
     @Schema(description = "로그에 대한 설명 메세지입니다.")
-    @Setter private String message;
+    @Setter
+    private String message;
 
     /** ID of the LogEntry */
     @Schema(description = "고유 아이디입니다.")

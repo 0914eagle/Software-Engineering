@@ -26,4 +26,8 @@ public class UserService extends Service {
     public User findByName(final String username) {
         return repository.findByUsername(username);
     }
+/**
+    public User findByEmail(final String email) {
+        return repository.findByUseremail(email);
+    }**/
 }

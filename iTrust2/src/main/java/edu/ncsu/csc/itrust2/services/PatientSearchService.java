@@ -4,7 +4,6 @@ import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.repositories.PatientRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

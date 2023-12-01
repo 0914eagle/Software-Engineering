@@ -40,4 +40,5 @@ public class Email extends DomainObject {
         this.subject = subject;
         this.messageBody = messageBody;
     }
+
 }
