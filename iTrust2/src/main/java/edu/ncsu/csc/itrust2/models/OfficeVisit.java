@@ -57,6 +57,11 @@ public class OfficeVisit extends DomainObject {
     @JoinColumn(name = "basichealthmetrics_id")
     private BasicHealthMetrics basicHealthMetrics;
 
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ophthalmologySurgery_id")
+    private OphthalmologySurgery ophthalmologySurgery;
+
     /** The date of this office visit */
     @Setter
     @NotNull @Basic
