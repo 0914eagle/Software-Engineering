@@ -9,8 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,7 +40,8 @@ public class Diagnosis extends DomainObject {
     private OfficeVisit visit;
 
     @Schema(description = "노트 기록입니다.")
-    @Setter private String note;
+    @Setter
+    private String note;
 
     @Schema(description = "진단 코드입니다.")
     @Setter

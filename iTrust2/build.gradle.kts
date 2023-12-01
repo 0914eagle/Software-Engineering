@@ -50,9 +50,14 @@ dependencies {
     implementation("com.paulhammant:ngwebdriver:1.0")
     implementation("io.github.bonigarcia:webdrivermanager:3.6.2")
 
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+
     testImplementation("io.cucumber:cucumber-java:6.9.0")
     testImplementation("io.cucumber:cucumber-junit:6.9.0")
     testImplementation("io.cucumber:cucumber-spring:6.9.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test:5.3.6.RELEASE")
     testImplementation("junit:junit:4.13.1")

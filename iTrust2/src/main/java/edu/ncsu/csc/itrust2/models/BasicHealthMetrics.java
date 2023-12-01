@@ -81,11 +81,13 @@ public class BasicHealthMetrics extends DomainObject {
 
     /** Smoking status of the patient's household. */
     @Schema(description = "가정 내 흡연 상태입니다.")
-    @Setter private HouseholdSmokingStatus houseSmokingStatus;
+    @Setter
+    private HouseholdSmokingStatus houseSmokingStatus;
 
     /** Smoking status of the patient. */
     @Schema(description = "환자 흡연 상태입니다.")
-    @Setter private PatientSmokingStatus patientSmokingStatus;
+    @Setter
+    private PatientSmokingStatus patientSmokingStatus;
 
     /** The Patient who is associated with this AppointmentRequest */
     @Schema(description = "본 요청과 연관된 환자입니다.")

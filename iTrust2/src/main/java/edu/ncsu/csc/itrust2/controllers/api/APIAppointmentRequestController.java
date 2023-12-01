@@ -97,7 +97,8 @@ public class APIAppointmentRequestController extends APIController {
                                                     if (!logged.contains("oph")) {
                                                         logged.add("oph");
                                                         loggerUtil.log(
-                                                                TransactionType.PATIENT_VIEWS_APPT_REQ,
+                                                                TransactionType
+                                                                        .PATIENT_VIEWS_APPT_REQ,
                                                                 patient,
                                                                 hcp);
                                                     }
@@ -415,9 +416,7 @@ public class APIAppointmentRequestController extends APIController {
                     .forEach(
                             e ->
                                     loggerUtil.log(
-                                            TransactionType.OPH_VIEW_UPCOMING_APPOINTMENT,
-                                            hcp,
-                                            e));
+                                            TransactionType.OPH_VIEW_UPCOMING_APPOINTMENT, hcp, e));
         } else {
             appointment.stream()
                     .map(AppointmentRequest::getPatient)
@@ -425,9 +424,7 @@ public class APIAppointmentRequestController extends APIController {
                     .forEach(
                             e ->
                                     loggerUtil.log(
-                                            TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                                            hcp,
-                                            e));
+                                            TransactionType.APPOINTMENT_REQUEST_VIEWED, hcp, e));
         }
         return appointment;
     }
