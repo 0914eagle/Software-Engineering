@@ -2,13 +2,15 @@ package edu.ncsu.csc.itrust2.models;
 
 import edu.ncsu.csc.itrust2.models.enums.OphthalmologySurgeryType;
 
-import java.util.regex.Pattern;
+import java.math.BigDecimal;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @NoArgsConstructor
 @Getter
@@ -21,23 +23,23 @@ public class OphthalmologySurgery extends DomainObject {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull @Setter private Integer leftVisualAcuityResult;
+    @NotNull private Integer leftVisualAcuityResult;
 
-    @NotNull @Setter private Integer rightVisualAcuityResult;
+    @NotNull private Integer rightVisualAcuityResult;
 
-    @NotNull @Setter private Float leftSphere;
+    @NotNull private Float leftSphere;
 
-    @NotNull @Setter private Float rightSphere;
+    @NotNull private Float rightSphere;
 
-    @Setter private Float leftCylinder;
+    private Integer leftAxis;
 
-    @Setter private Float rightCylinder;
+    private Integer rightAxis;
 
-    @Setter private Integer leftAxis;
+    private Float leftCylinder;
 
-    @Setter private Integer rightAxis;
+    private Float rightCylinder;
 
-    @Setter private OphthalmologySurgeryType surgeryType;
+    @NotNull @Setter private OphthalmologySurgeryType surgeryType;
 
     @Setter
     @NotNull @ManyToOne
@@ -50,54 +52,98 @@ public class OphthalmologySurgery extends DomainObject {
     @JoinColumn(name = "hcp_id", columnDefinition = "varchar(100)")
     private User hcp;
 
-    public boolean checkVisualAcuityResultValid(final Integer visualAcuityResult) {
+    public void checkVisualAcuityResultValid(final Integer visualAcuityResult) {
         if (visualAcuityResult == null) {
-            throw new IllegalArgumentException("visual acuity result cannot be null");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Visual acuity result cannot be null");
         }
         if (leftVisualAcuityResult < 20 || leftVisualAcuityResult > 200) {
-            throw new IllegalArgumentException(
-                    "visual acuity result must be the value between 20 and 200.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Visual acuity result must be the value between 20 and 200.");
         }
-        return true;
     }
 
     public void setLeftVisualAcuityResult(final Integer leftVisualAcuityResult) {
-        boolean flag = checkVisualAcuityResultValid(leftVisualAcuityResult);
-        if (flag) {
-            this.leftVisualAcuityResult = leftVisualAcuityResult;
-        }
+        checkVisualAcuityResultValid(leftVisualAcuityResult);
+        this.leftVisualAcuityResult = leftVisualAcuityResult;
     }
 
     public void setRightVisualAcuityResult(final Integer rightVisualAcuityResult) {
-        boolean flag = checkVisualAcuityResultValid(rightVisualAcuityResult);
-        if (flag) {
-            this.rightVisualAcuityResult = rightVisualAcuityResult;
-        }
+        checkVisualAcuityResultValid(rightVisualAcuityResult);
+        this.rightVisualAcuityResult = rightVisualAcuityResult;
     }
 
-    public boolean checkSphereValid(final Float sphere) {
+    public void checkSphereValid(final Float sphere) {
         if (sphere == null) {
-            throw new IllegalArgumentException("sphere cannot be null");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"Sphere cannot be null");
         }
-        String pattern = "^[-]?\\d+(\\.[0-9]{1,2})?$";
-        if (!Pattern.matches(pattern, String.valueOf(sphere))) {
-            throw new IllegalArgumentException(
-                    "sphere must be the floating point number up to two digits.");
+        BigDecimal sphereBigDecimal = new BigDecimal(sphere.toString());
+        if(!(sphereBigDecimal.scale() <= 2 && (sphereBigDecimal.abs().compareTo(BigDecimal.TEN) < 0))){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Sphere must be the floating point number up to two digits.");
         }
-        return true;
     }
 
     public void setLeftSphere(final Float leftSphere) {
-        boolean flag = checkSphereValid(leftSphere);
-        if (flag) {
-            this.leftSphere = leftSphere;
-        }
+        checkSphereValid(leftSphere);
+        this.leftSphere = leftSphere;
     }
 
     public void setRightSphere(final Float rightSphere) {
-        boolean flag = checkSphereValid(rightSphere);
-        if (flag) {
-            this.rightSphere = rightSphere;
+        checkSphereValid(rightSphere);
+        this.rightSphere = rightSphere;
+    }
+
+    public void checkCylinderValid(final Float cylinder, final Integer axis) {
+        if(leftCylinder != null) {
+            if (axis == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Axis cannot be null if Cylinder is not null."
+                );
+            }
+            BigDecimal cylinderBigDecimal = new BigDecimal(cylinder.toString());
+            if (!(cylinderBigDecimal.scale() <= 2 && (cylinderBigDecimal.abs().compareTo(BigDecimal.TEN) < 0))) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Sphere must be the floating point number up to two digits.");
+            }
         }
     }
+
+    public void setLeftCylinder(final Float leftCylinder){
+        checkCylinderValid(leftCylinder, this.leftAxis);
+        this.leftCylinder = leftCylinder;
+    }
+
+    public void setRightCylinder(final Float rightCylinder){
+        checkCylinderValid(rightCylinder, this.rightAxis);
+        this.rightCylinder = rightCylinder;
+    }
+
+    public void checkAxisValid(final Integer axis){
+        if(axis != null){
+            if(axis < 1 || axis > 180){
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Axis must be the value between 1 and 180.");
+            }
+        }
+    }
+
+    public void setLeftAxis(final Integer leftAxis){
+        checkAxisValid(leftAxis);
+        this.leftAxis = leftAxis;
+    }
+
+    public void setRightAxis(final Integer rightAxis){
+        checkAxisValid(rightAxis);
+        this.rightAxis = rightAxis;
+    }
+
+
+
 }

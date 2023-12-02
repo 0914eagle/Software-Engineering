@@ -25,11 +25,11 @@ public class OphthalmologySurgeryService {
         ophthalmologySurgery.setRightSphere(officeVisitForm.getRightSphere());
         ophthalmologySurgery.setLeftSphere(officeVisitForm.getLeftSphere());
 
-        ophthalmologySurgery.setRightCylinder(officeVisitForm.getRightCylinder());
-        ophthalmologySurgery.setLeftCylinder(officeVisitForm.getLeftCylinder());
-
         ophthalmologySurgery.setRightAxis(officeVisitForm.getRightAxis());
         ophthalmologySurgery.setLeftAxis(officeVisitForm.getLeftAxis());
+
+        ophthalmologySurgery.setRightCylinder(officeVisitForm.getRightCylinder());
+        ophthalmologySurgery.setLeftCylinder(officeVisitForm.getLeftCylinder());
 
         ophthalmologySurgery.setSurgeryType(officeVisitForm.getSurgeryType());
 

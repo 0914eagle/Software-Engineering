@@ -5,8 +5,6 @@ import edu.ncsu.csc.itrust2.models.OfficeVisit;
 import edu.ncsu.csc.itrust2.services.OfficeVisitService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,28 +19,8 @@ public class ApiOphthalmologySurgeryController extends APIController {
 
     @PostMapping("/officevisits/ophthalmologySurgery")
     @PreAuthorize("hasRole('ROLE_OPH')")
-    public ResponseEntity createOphthalmologySurgery(
+    public OfficeVisit createOphthalmologySurgery(
             @RequestBody final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
-        try {
-            final OfficeVisit visit =
-                    officeVisitService.buildOphthalmologySurgeryVisit(ophthalmologySurgeryForm);
-
-            if (null != visit.getId() && officeVisitService.existsById(visit.getId())) {
-                return new ResponseEntity(
-                        errorResponse(
-                                "Office visit with the id " + visit.getId() + " already exists"),
-                        HttpStatus.CONFLICT);
-            }
-            officeVisitService.save(visit);
-            return new ResponseEntity(visit, HttpStatus.OK);
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity(
-                    errorResponse(
-                            "Could not validate or save the OfficeVisit provided due to "
-                                    + e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
+        return officeVisitService.addOphthalmologySurgery(ophthalmologySurgeryForm);
     }
 }

@@ -19,7 +19,9 @@ import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 @Transactional
@@ -57,6 +59,26 @@ public class OfficeVisitService extends Service {
 
     public List<OfficeVisit> findByHcpAndPatient(final User hcp, final User patient) {
         return officeVisitRepository.findByHcpAndPatient(hcp, patient);
+    }
+
+    public OfficeVisit addOphthalmologySurgery(final OphthalmologySurgeryForm ophthalmologySurgeryForm){
+
+        try {
+            final OfficeVisit visit = buildOphthalmologySurgeryVisit(ophthalmologySurgeryForm);
+
+            if (null != visit.getId() && existsById(visit.getId())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Office visit with the id " + visit.getId() + " already exists");
+            }
+
+            save(visit);
+            return visit;
+        } catch (final Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Could not create ophthalmology service document because of " + e.getMessage());
+        }
     }
 
     public OfficeVisit initOfficeVisit(final OfficeVisitForm ovf) {
