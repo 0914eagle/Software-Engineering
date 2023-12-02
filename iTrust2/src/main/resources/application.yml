@@ -7,6 +7,20 @@ spring:
     hikari:
       idleTimeout: 500
       connectionTimeout: 15000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hajinkids3106 #${mail.username}
+    password:  #${mail.password} #앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000 #(ms)
+          starttls:
+            enable: true
+          debug: true
+          ssl:
   jpa:
     hibernate:
       ddl-auto: update
