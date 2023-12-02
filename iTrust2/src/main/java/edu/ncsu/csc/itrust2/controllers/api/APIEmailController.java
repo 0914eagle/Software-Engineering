@@ -2,7 +2,9 @@ package edu.ncsu.csc.itrust2.controllers.api;
 
 import edu.ncsu.csc.itrust2.forms.EmailForm;
 import edu.ncsu.csc.itrust2.models.Email;
+import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.services.EmailService;
+import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 import java.util.List;
@@ -17,14 +19,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "[UC23] 이메일 전송 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class APIEmailController extends APIController {
-    @Autowired private final EmailService service;
-    final LoggerUtil loggerUtil;
+
+    private final EmailService service;
+    private final UserService userService;
+    private final LoggerUtil loggerUtil;
 
     @GetMapping("emails")
     public List<Email> getEmails() {
@@ -42,5 +48,22 @@ public class APIEmailController extends APIController {
                 emailForm.getReceiver(),
                 emailForm.getSubject(),
                 emailForm.getMessageBody());
+
+    }
+    @Operation(summary = "환자가 발송한 메일 목록을 조회합니다.")
+    @GetMapping("/Outbox")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<Email> viewOutbox() {
+        String currentUsername = loggerUtil.getCurrentUsername();
+        return service.findBySender(currentUsername);
+    }
+
+    @Operation(summary = "환자가 수신한 메일 목록을 조회합니다.")
+    @GetMapping("/Inbox")
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    public List<Email> viewInbox() {
+        String currentUsername = loggerUtil.getCurrentUsername();
+        User currentUser = userService.findByName(currentUsername);
+        return service.findByReceiver(currentUser);
     }
 }

@@ -79,4 +79,8 @@ public class EmailService extends Service {
 
         return validation;
     }
+
+    public List<Email> findBySender(final String sender) {
+        return repository.findBySender(sender);
+    }
 }
