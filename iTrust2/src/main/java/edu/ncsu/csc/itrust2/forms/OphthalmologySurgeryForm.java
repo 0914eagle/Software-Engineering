@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OphthalmologySurgeryForm {
-    private Long id;
-    private Integer leftVisualActuityResult;
-    private Integer rightVisualActuityResult;
+public class OphthalmologySurgeryForm extends OfficeVisitForm {
+    private Integer leftVisualAcuityResult;
+    private Integer rightVisualAcuityResult;
     private Float leftSphere;
     private Float rightSphere;
     private Float leftCylinder;

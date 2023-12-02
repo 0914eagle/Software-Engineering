@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.OfficeVisitForm;
+import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.forms.PrescriptionForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
 import edu.ncsu.csc.itrust2.models.Diagnosis;
@@ -39,6 +40,8 @@ public class OfficeVisitService extends Service {
 
     private final DiagnosisService diagnosisService;
 
+    private final OphthalmologySurgeryService ophthalmologySurgeryService;
+
     @Override
     protected JpaRepository getRepository() {
         return officeVisitRepository;
@@ -56,7 +59,7 @@ public class OfficeVisitService extends Service {
         return officeVisitRepository.findByHcpAndPatient(hcp, patient);
     }
 
-    public OfficeVisit build(final OfficeVisitForm ovf) {
+    public OfficeVisit initOfficeVisit(final OfficeVisitForm ovf) {
         final OfficeVisit ov = new OfficeVisit();
 
         ov.setPatient(userService.findByName(ovf.getPatient()));
@@ -69,18 +72,6 @@ public class OfficeVisitService extends Service {
 
         final ZonedDateTime visitDate = ZonedDateTime.parse(ovf.getDate());
         ov.setDate(visitDate);
-
-        AppointmentType at = null;
-        try {
-            at = AppointmentType.valueOf(ovf.getType());
-        } catch (final NullPointerException npe) {
-            at = AppointmentType.GENERAL_CHECKUP; /*
-                                                   * If for some reason we don't
-                                                   * have a type, default to
-                                                   * general checkup
-                                                   */
-        }
-        ov.setType(at);
 
         if (null != ovf.getPreScheduled()) {
             final List<AppointmentRequest> requests =
@@ -122,6 +113,23 @@ public class OfficeVisitService extends Service {
             ov.setPrescriptions(
                     ps.stream().map(prescriptionService::build).collect(Collectors.toList()));
         }
+        return ov;
+    }
+
+    public OfficeVisit build(final OfficeVisitForm ovf) {
+        final OfficeVisit ov = initOfficeVisit(ovf);
+
+        AppointmentType at = null;
+        try {
+            at = AppointmentType.valueOf(ovf.getType());
+        } catch (final NullPointerException npe) {
+            at = AppointmentType.GENERAL_CHECKUP; /*
+             * If for some reason we don't
+             * have a type, default to
+             * general checkup
+             */
+        }
+        ov.setType(at);
 
         final Patient p = (Patient) ov.getPatient();
         if (p == null || p.getDateOfBirth() == null) {
@@ -145,6 +153,44 @@ public class OfficeVisitService extends Service {
         } else {
             ov.validate12AndOver();
         }
+
+        return ov;
+    }
+
+    public OfficeVisit buildOphthalmologySurgeryVisit(final OphthalmologySurgeryForm ovf) {
+        final OfficeVisit ov = initOfficeVisit(ovf);
+        ;
+
+        ov.setType(AppointmentType.OPHTHALMOLOGY_SURGERY);
+
+        ov.setOphthalmologySurgery(ophthalmologySurgeryService.build(ovf));
+
+        if (ov.getBasicHealthMetrics() != null) {
+            final Patient p = (Patient) ov.getPatient();
+            if (p == null || p.getDateOfBirth() == null) {
+                return ov; // we're done, patient can't be tested against
+            }
+            final LocalDate dob = p.getDateOfBirth();
+            int age = ov.getDate().getYear() - dob.getYear();
+            // Remove the -1 when changing the dob to OffsetDateTime
+            if (ov.getDate().getMonthValue() < dob.getMonthValue()) {
+                age -= 1;
+            } else if (ov.getDate().getMonthValue() == dob.getMonthValue()) {
+                if (ov.getDate().getDayOfMonth() < dob.getDayOfMonth()) {
+                    age -= 1;
+                }
+            }
+
+            if (age < 3) {
+                ov.validateUnder3();
+            } else if (age < 12) {
+                ov.validateUnder12();
+            } else {
+                ov.validate12AndOver();
+            }
+        }
+
+        ov.validateOphthalmologySurgery();
 
         return ov;
     }

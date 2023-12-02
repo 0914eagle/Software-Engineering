@@ -59,7 +59,7 @@ public class OfficeVisit extends DomainObject {
 
     @Setter
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ophthalmologySurgery_id")
+    @JoinColumn(name = "ophthalmology_surgery_id")
     private OphthalmologySurgery ophthalmologySurgery;
 
     /** The date of this office visit */
@@ -122,6 +122,22 @@ public class OfficeVisit extends DomainObject {
             if (d.getCode() == null) {
                 throw new IllegalArgumentException("Diagnosis Code missing!");
             }
+        }
+    }
+
+    public void validateOphthalmologySurgery() {
+        final OphthalmologySurgery ophthalmologySurgery = getOphthalmologySurgery();
+        if (ophthalmologySurgery.getLeftVisualAcuityResult() == null
+                || ophthalmologySurgery.getRightVisualAcuityResult() == null
+                || ophthalmologySurgery.getLeftSphere() == null
+                || ophthalmologySurgery.getRightSphere() == null
+                || (ophthalmologySurgery.getRightCylinder() != null
+                        && ophthalmologySurgery.getRightAxis() == null)
+                || (ophthalmologySurgery.getLeftCylinder() != null
+                        && ophthalmologySurgery.getLeftAxis() == null)
+                || ophthalmologySurgery.getSurgeryType() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for ophthalmology surgery metrics were submitted");
         }
     }
 
