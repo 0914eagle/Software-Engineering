@@ -10,8 +10,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: hajinkids3106 #${mail.username}
-    password: #${mail.password} #앱 비밀번호
+    username: hajinkids3106
+    password: ${mail.password}
     properties:
       mail:
         smtp:
