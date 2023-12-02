@@ -22,8 +22,7 @@ public class PersonalRepresentationService {
     private final PatientService patientService;
 
     @Transactional
-    public void setPersonalRepresentation(String patientName, String representativeName) {
-        // TODO where is the unit test?
+    public PersonalRepresentation setPersonalRepresentation(String patientName, String representativeName) {
         if (patientName.equals(representativeName))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "환자와 대리인이 같을 수 없습니다.");
 
@@ -33,7 +32,7 @@ public class PersonalRepresentationService {
         PersonalRepresentation personalRepresentation =
                 new PersonalRepresentation(patient, representative);
 
-        personalRepresentationRepository.save(personalRepresentation);
+        return personalRepresentationRepository.save(personalRepresentation);
     }
 
     @Transactional

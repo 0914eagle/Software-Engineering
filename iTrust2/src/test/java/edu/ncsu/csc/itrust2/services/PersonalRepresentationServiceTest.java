@@ -24,12 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,6 +41,27 @@ public class PersonalRepresentationServiceTest {
     @InjectMocks private PersonalRepresentationService personalRepresentationService;
     @InjectMocks private ApiPersonalRepresentationController apiController;
     @Mock private PatientRepository patientRepository;
+
+    @Test
+    public void testSetPersonalRepresentation() {
+        final String patient = "patient";
+        final String representative = "representative";
+
+        final UserForm patientUserForm = new UserForm(patient, "123456", Role.ROLE_PATIENT, 1);
+        final UserForm representativeUserForm = new UserForm(representative, "123456", Role.ROLE_PATIENT, 1);
+        final Patient patientUser = new Patient(patientUserForm);
+        final Patient representativeUser= new Patient(representativeUserForm);
+
+        given(patientRepository.findByUsername(patient)).willReturn(patientUser);
+        given(patientRepository.findByUsername(representative)).willReturn(representativeUser);
+        given(PersonalRepresentationRepository.save(any(PersonalRepresentation.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+        final PersonalRepresentation result = personalRepresentationService.setPersonalRepresentation(patient, representative);
+
+        verify(PersonalRepresentationRepository).save(any(PersonalRepresentation.class));
+        assertEquals(patientUser, result.getPatient());
+        assertEquals(representativeUser, result.getPersonalRepresentative());
+    }
 
     @Test
     public void testListByPatient() {
