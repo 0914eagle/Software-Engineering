@@ -30,15 +30,16 @@ public class AppointmentRequestService extends Service {
     }
 
     public List<AppointmentRequest> findByPatient(final User patient) {
-        return appointmentRequestRepository.findByPatient(patient);
+        return appointmentRequestRepository.findByPatientAndDateAfter(patient, ZonedDateTime.now());
     }
 
     public List<AppointmentRequest> findByHcp(final User hcp) {
-        return appointmentRequestRepository.findByHcp(hcp);
+        return appointmentRequestRepository.findByHcpAndDateAfter(hcp, ZonedDateTime.now());
     }
 
     public List<AppointmentRequest> findByHcpAndPatient(final User hcp, final User patient) {
-        return appointmentRequestRepository.findByHcpAndPatient(hcp, patient);
+        return appointmentRequestRepository.findByHcpAndPatientAndDateAfter(
+                hcp, patient, ZonedDateTime.now());
     }
 
     public AppointmentRequest build(final AppointmentRequestForm raf) {
