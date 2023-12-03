@@ -6,6 +6,7 @@ import edu.ncsu.csc.itrust2.models.*;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LogEntry;
+import edu.ncsu.csc.itrust2.repositories.DiagnosisRepository;
 import edu.ncsu.csc.itrust2.repositories.PatientRepository;
 import edu.ncsu.csc.itrust2.repositories.PersonalRepresentationRepository;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -23,20 +24,20 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersonalRepresentationServiceTest {
     @Mock private PersonalRepresentationRepository PersonalRepresentationRepository;
+    @Mock private DiagnosisRepository diagnosisRepository;
     @Mock private PatientService patientService;
     @Mock private AppointmentRequestService appointmentRequestService;
     @Mock private BasicHealthMetricsService basicHealthMetricsService;
-    @Mock private EmergencyPatientService emergencyPatientService;
+    @Mock private DiagnosisService diagnosisService;
+    @Mock private OfficeVisitService officeVisitService;
     @Mock private LoggerUtil loggerUtil;
     @Mock private PersonalRepresentationService mockpersonalRepresentationService;
     @InjectMocks private PersonalRepresentationService personalRepresentationService;
@@ -105,14 +106,12 @@ public class PersonalRepresentationServiceTest {
 
     @Test
     public void testListPatientLogs() {
-        // 환자 사용자 이름과 관련 객체 설정
-        final String currentUsername = "currentUsername";
+        final String currentUsername = "currentUser1";
         final String representingPatientUsername = "patient1";
         final UserForm patient1Form =
                 new UserForm(representingPatientUsername, "123456", Role.ROLE_PATIENT, 1);
         Patient representingPatientUser = new Patient(patient1Form);
 
-        // 데이터 준비
         LogEntry log1 =
                 new LogEntry(
                         TransactionType.LOGIN_SUCCESS,
@@ -122,7 +121,6 @@ public class PersonalRepresentationServiceTest {
         List<LogEntry> expectedLogs = new ArrayList<>();
         expectedLogs.add(log1);
 
-        // 모킹 설정
         given(patientService.findByName(representingPatientUsername))
                 .willReturn(representingPatientUser);
         given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
@@ -138,11 +136,9 @@ public class PersonalRepresentationServiceTest {
                 .willReturn(true);
         given(loggerUtil.getAllForUser(representingPatientUsername)).willReturn(expectedLogs);
 
-        // 정상 시나리오 테스트
         List<LogEntry> actualLogs = apiController.listPatientLogs(representingPatientUsername);
         assertEquals(expectedLogs, actualLogs);
 
-        // 예외 시나리오 테스트
         mockpersonalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
         given(
@@ -157,7 +153,7 @@ public class PersonalRepresentationServiceTest {
     @Test
     public void testListPatientMedicalRecords() {
         final String patientUsername = "patient1";
-        final String currentUserUsername = "currentUsername";
+        final String currentUsername = "currentUser1";
         final UserForm patientUserForm =
                 new UserForm(patientUsername, "123456", Role.ROLE_PATIENT, 1);
         final Patient patient = new Patient(patientUserForm);
@@ -165,16 +161,16 @@ public class PersonalRepresentationServiceTest {
                 Arrays.asList(new BasicHealthMetrics(), new BasicHealthMetrics());
 
         given(patientService.findByName(patientUsername)).willReturn(patient);
-        given(loggerUtil.getCurrentUsername()).willReturn(currentUserUsername);
+        given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
 
         PersonalRepresentation representation = new PersonalRepresentation();
         PersonalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
-                patientUsername, currentUserUsername);
+                patientUsername, currentUsername);
 
         given(
                         mockpersonalRepresentationService.isRepresentative(
-                                currentUserUsername, patientUsername))
+                                currentUsername, patientUsername))
                 .willReturn(true);
         given(basicHealthMetricsService.findByPatient(patient)).willReturn(expectedHealthMetrics);
 
@@ -183,10 +179,10 @@ public class PersonalRepresentationServiceTest {
         assertEquals(expectedHealthMetrics, actualHealthMetrics);
 
         mockpersonalRepresentationService.cancelPersonalRepresentation(
-                patientUsername, currentUserUsername);
+                patientUsername, currentUsername);
         given(
                         mockpersonalRepresentationService.isRepresentative(
-                                currentUserUsername, patientUsername))
+                                currentUsername, patientUsername))
                 .willReturn(false);
         try {
             apiController.listPatientMedicalRecords(patientUsername);
@@ -197,38 +193,45 @@ public class PersonalRepresentationServiceTest {
     }
 
     @Test
-    public void testListPatientDiagnosesIn60Days() {
+    public void testListPatientDiagnoses() {
         final String patientUsername = "patient1";
-        final String currentUserUsername = "currentUsername";
+        final String currentUsername = "currentUser1";
         final UserForm patientUserForm =
                 new UserForm(patientUsername, "123456", Role.ROLE_PATIENT, 1);
-        List<Diagnosis> expectedDiagnoses = Arrays.asList(new Diagnosis(), new Diagnosis());
+        final Patient patient = new Patient(patientUserForm);
+
+        List<Diagnosis> expectedDiagnoses = new ArrayList<Diagnosis>();
+        List<OfficeVisit> officeVisits = Arrays.asList(new OfficeVisit(), new OfficeVisit());
+        for (OfficeVisit officeVisit : officeVisits) {
+            List<Diagnosis> expectedDiagnosis = diagnosisRepository.findByVisit(officeVisit);
+            expectedDiagnoses.addAll(expectedDiagnosis);
+        }
 
         PersonalRepresentation representation = new PersonalRepresentation();
         PersonalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
-                patientUsername, currentUserUsername);
+                patientUsername, currentUsername);
 
-        given(loggerUtil.getCurrentUsername()).willReturn(currentUserUsername);
+        given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
         given(
                         mockpersonalRepresentationService.isRepresentative(
-                                currentUserUsername, patientUsername))
+                                currentUsername, patientUsername))
                 .willReturn(true);
-        given(emergencyPatientService.getRecentDiagnoses(patientUsername))
-                .willReturn(expectedDiagnoses);
+
+        lenient().when(diagnosisService.findByPatient(patient)).thenReturn(expectedDiagnoses);
 
         List<Diagnosis> actualDiagnoses =
-                apiController.listPatientDiagnosesIn60Days(patientUsername);
+                apiController.listPatientDiagnoses(patientUsername);
         assertEquals(expectedDiagnoses, actualDiagnoses);
 
         mockpersonalRepresentationService.cancelPersonalRepresentation(
-                patientUsername, currentUserUsername);
+                patientUsername, currentUsername);
         given(
                         mockpersonalRepresentationService.isRepresentative(
-                                currentUserUsername, patientUsername))
+                                currentUsername, patientUsername))
                 .willReturn(false);
         try {
-            apiController.listPatientDiagnosesIn60Days(patientUsername);
+            apiController.listPatientDiagnoses(patientUsername);
             fail("Expected an ResponseStatusException to be thrown");
         } catch (ResponseStatusException e) {
             assertEquals("Access denied. 대리인 관계의 환자가 아닙니다.", e.getReason());
@@ -237,7 +240,7 @@ public class PersonalRepresentationServiceTest {
 
     @Test
     public void testListPatientAppointments() {
-        final String currentUsername = "currentUsername";
+        final String currentUsername = "currentUser1";
         final String representingPatientUsername = "patient1";
         final UserForm patient1Form =
                 new UserForm(representingPatientUsername, "123456", Role.ROLE_PATIENT, 1);

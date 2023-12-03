@@ -59,15 +59,6 @@ public class PersonalRepresentationService {
     }
 
     public boolean isRepresentative(String currentUsername, String patientName) {
-        // TODO 성능 이슈 우려됨. 쿼리 수준에서 처리 가능하니 바꿀 것
-        final Patient patient = (Patient) patientService.findByName(patientName);
-        List<PersonalRepresentation> representations =
-                personalRepresentationRepository.findAllByPatient(patient);
-        return representations.stream()
-                .anyMatch(
-                        repr ->
-                                repr.getPersonalRepresentative()
-                                        .getUsername()
-                                        .equals(currentUsername));
+        return personalRepresentationRepository.isRepresentative(patientName, currentUsername);
     }
 }

@@ -5,7 +5,7 @@ import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LogEntry;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
-import edu.ncsu.csc.itrust2.services.EmergencyPatientService;
+import edu.ncsu.csc.itrust2.services.DiagnosisService;
 import edu.ncsu.csc.itrust2.services.PatientService;
 import edu.ncsu.csc.itrust2.services.PersonalRepresentationService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -30,7 +30,7 @@ public class ApiPersonalRepresentationController {
     private final AppointmentRequestService appointmentRequestService;
     private final BasicHealthMetricsService basicHealthMetricsService;
     private final PatientService patientService;
-    private final EmergencyPatientService emergencyPatientService;
+    private final DiagnosisService diagnosisService;
     private final LoggerUtil loggerUtil;
 
     @Operation(summary = "Patient: 자신의 대리인 목록 조회")
@@ -163,18 +163,20 @@ public class ApiPersonalRepresentationController {
     @Operation(summary = "Patient: 특정 환자의 diagnoses 목록 조회")
     @GetMapping("/representingPatients/{representingPatientUsername}/diagnoses")
     @PreAuthorize("hasRole('ROLE_PATIENT')")
-    public List<Diagnosis> listPatientDiagnosesIn60Days(
+    public List<Diagnosis> listPatientDiagnoses(
             @Parameter(description = "조회할 환자의 username 입니다.") @PathVariable
                     String representingPatientUsername) {
 
         String currentUsername = loggerUtil.getCurrentUsername();
+        Patient patient = (Patient) patientService.findByName(representingPatientUsername);
+
 
         if (!personalRepresentationService.isRepresentative(
                 currentUsername, representingPatientUsername)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "Access denied. 대리인 관계의 환자가 아닙니다.");
         }
-        return emergencyPatientService.getRecentDiagnoses(representingPatientUsername);
+        return diagnosisService.findByPatient(patient);
     }
 
     @Operation(summary = "Patient: 특정 환자의 appointments 목록 조회")
