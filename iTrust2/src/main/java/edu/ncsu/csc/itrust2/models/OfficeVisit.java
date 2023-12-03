@@ -27,6 +27,8 @@ import com.google.gson.annotations.JsonAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * This is the validated database-persisted office visit representation
@@ -52,12 +54,10 @@ public class OfficeVisit extends DomainObject {
     private User hcp;
 
     /** The basic health metric data associated with this office visit. */
-    @Setter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "basichealthmetrics_id")
     private BasicHealthMetrics basicHealthMetrics;
 
-    @Setter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ophthalmology_surgery_id")
     private OphthalmologySurgery ophthalmologySurgery;
@@ -91,7 +91,6 @@ public class OfficeVisit extends DomainObject {
      * The set of diagnoses associated with this visits Marked transient so not serialized or saved
      * in DB If removed, serializer gets into an infinite loop
      */
-    @Setter
     @OneToMany(cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Diagnosis> diagnoses;
@@ -110,10 +109,59 @@ public class OfficeVisit extends DomainObject {
     @JsonManagedReference
     private List<Prescription> prescriptions;
 
-    public void validateDiagnoses() {
-        if (diagnoses == null) {
+    public int calculateAge(final Patient p) {
+        final var dob = p.getDateOfBirth();
+        final var date = getDate();
+        int age = date.getYear() - dob.getYear();
+
+        // Remove the -1 when changing the dob to OffsetDateTime
+        if (date.getMonthValue() < dob.getMonthValue()) {
+            age -= 1;
+        } else if (date.getMonthValue() == dob.getMonthValue()) {
+            if (date.getDayOfMonth() < dob.getDayOfMonth()) {
+                age -= 1;
+            }
+        }
+
+        return age;
+    }
+
+    public void setBasicHealthMetrics(BasicHealthMetrics basicHealthMetrics) {
+        final Patient p = (Patient) getPatient();
+
+        if (p == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient cannot be null");
+        }
+
+        if (basicHealthMetrics == null) {
+            this.basicHealthMetrics = null;
             return;
         }
+
+        if (p.getDateOfBirth() == null) {
+            this.basicHealthMetrics = basicHealthMetrics;
+            return; // we're done, patient can't be tested against
+        }
+
+        final var age = calculateAge(p);
+
+        if (age < 3) {
+            basicHealthMetrics.validateUnder3();
+        } else if (age < 12) {
+            basicHealthMetrics.validateUnder12();
+        } else {
+            basicHealthMetrics.validate12AndOver();
+        }
+
+        this.basicHealthMetrics = basicHealthMetrics;
+    }
+
+    public void setDiagnoses(List<Diagnosis> diagnoses) {
+        if (diagnoses == null) {
+            this.diagnoses = null;
+            return;
+        }
+
         for (final Diagnosis d : diagnoses) {
             if (d.getNote().length() > 500) {
                 throw new IllegalArgumentException(
@@ -122,11 +170,13 @@ public class OfficeVisit extends DomainObject {
             if (d.getCode() == null) {
                 throw new IllegalArgumentException("Diagnosis Code missing!");
             }
+
+            d.setVisit(this);
         }
+        this.diagnoses = diagnoses;
     }
 
-    public void validateOphthalmologySurgery() {
-        final OphthalmologySurgery ophthalmologySurgery = getOphthalmologySurgery();
+    public void setOphthalmologySurgery(OphthalmologySurgery ophthalmologySurgery) {
         if (ophthalmologySurgery.getLeftVisualAcuityResult() == null
                 || ophthalmologySurgery.getRightVisualAcuityResult() == null
                 || ophthalmologySurgery.getLeftSphere() == null
@@ -136,56 +186,11 @@ public class OfficeVisit extends DomainObject {
                 || (ophthalmologySurgery.getLeftCylinder() != null
                         && ophthalmologySurgery.getLeftAxis() == null)
                 || ophthalmologySurgery.getSurgeryType() == null) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "Not all necessary fields for ophthalmology surgery metrics were submitted");
         }
-    }
 
-    /**
-     * Validates an office visit form for containing correct fields for patients 12 and over.
-     * Expects the basic health metrics to already be set by the OfficeVisit constructor.
-     */
-    public void validate12AndOver() {
-        // should already be set in office visit constructor
-        final BasicHealthMetrics bhm = getBasicHealthMetrics();
-        if (bhm.getDiastolic() == null
-                || bhm.getHdl() == null
-                || bhm.getHeight() == null
-                || bhm.getHouseSmokingStatus() == null
-                || bhm.getLdl() == null
-                || bhm.getPatientSmokingStatus() == null
-                || bhm.getSystolic() == null
-                || bhm.getTri() == null
-                || bhm.getWeight() == null) {
-            throw new IllegalArgumentException(
-                    "Not all necessary fields for basic health metrics were submitted.");
-        }
-    }
-
-    /** Validates an office visit form for containing correct fields for patients 12 and under. */
-    public void validateUnder12() {
-        // should already be set in office visit constructor
-        final BasicHealthMetrics bhm = getBasicHealthMetrics();
-        if (bhm.getDiastolic() == null
-                || bhm.getHeight() == null
-                || bhm.getHouseSmokingStatus() == null
-                || bhm.getSystolic() == null
-                || bhm.getWeight() == null) {
-            throw new IllegalArgumentException(
-                    "Not all necessary fields for basic health metrics were submitted.");
-        }
-    }
-
-    /** Validates an office visit form for containing correct fields for patients 3 and under. */
-    public void validateUnder3() {
-        // should already be set in office visit constructor
-        final BasicHealthMetrics bhm = getBasicHealthMetrics();
-        if (bhm.getHeight() == null
-                || bhm.getHeadCircumference() == null
-                || bhm.getHouseSmokingStatus() == null
-                || bhm.getWeight() == null) {
-            throw new IllegalArgumentException(
-                    "Not all necessary fields for basic health metrics were submitted.");
-        }
+        this.ophthalmologySurgery = ophthalmologySurgery;
     }
 }

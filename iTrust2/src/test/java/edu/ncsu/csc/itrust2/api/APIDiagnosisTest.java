@@ -18,6 +18,7 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.services.DiagnosisService;
 import edu.ncsu.csc.itrust2.services.HospitalService;
 import edu.ncsu.csc.itrust2.services.ICDCodeService;
+import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
 import edu.ncsu.csc.itrust2.services.OfficeVisitService;
 import edu.ncsu.csc.itrust2.services.UserService;
 
@@ -64,6 +65,8 @@ public class APIDiagnosisTest {
     @Autowired private ICDCodeService icdCodeService;
 
     @Autowired private OfficeVisitService officeVisitService;
+
+    @Autowired private OfficeVisitMutationService officeVisitMutationService;
 
     /** Sets up test */
     @Before
@@ -131,9 +134,7 @@ public class APIDiagnosisTest {
 
         form.setDiagnoses(list.stream().map(DiagnosisForm::new).toList());
 
-        final OfficeVisit visit = officeVisitService.build(form);
-
-        officeVisitService.save(visit);
+        final OfficeVisit visit = officeVisitMutationService.create(form);
 
         final OfficeVisit retrieved = (OfficeVisit) officeVisitService.findAll().get(0);
 

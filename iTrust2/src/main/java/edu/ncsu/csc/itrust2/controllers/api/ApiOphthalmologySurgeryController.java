@@ -2,7 +2,7 @@ package edu.ncsu.csc.itrust2.controllers.api;
 
 import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.models.OfficeVisit;
-import edu.ncsu.csc.itrust2.services.OfficeVisitService;
+import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "[UC22] Swagger는 왜 안 쓴거야 API")
 public class ApiOphthalmologySurgeryController extends APIController {
 
-    private final OfficeVisitService officeVisitService;
+    private final OfficeVisitMutationService officeVisitMutationService;
 
     @PostMapping("/officevisits/ophthalmologySurgery")
     @PreAuthorize("hasRole('ROLE_OPH')")
     public OfficeVisit createOphthalmologySurgery(
             @RequestBody final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
-        return officeVisitService.createOphthalmologySurgery(ophthalmologySurgeryForm);
+        return officeVisitMutationService.createForOphthalmologySurgery(ophthalmologySurgeryForm);
     }
 }

@@ -31,4 +31,13 @@ public enum AppointmentType {
     AppointmentType(final int code) {
         this.code = code;
     }
+
+    public static AppointmentType parseOrDefault(final String code) {
+        for (final AppointmentType type : values()) {
+            if (type.name().equals(code)) {
+                return type;
+            }
+        }
+        return AppointmentType.GENERAL_CHECKUP;
+    }
 }

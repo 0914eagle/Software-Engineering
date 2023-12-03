@@ -95,11 +95,11 @@ public class OfficeVisitTest {
 
         basicHealthMetricsService.save(bhm);
 
-        visit.setBasicHealthMetrics(bhm);
         visit.setType(AppointmentType.GENERAL_CHECKUP);
         visit.setHospital(hosp);
         visit.setPatient(userService.findByName("AliceThirteen"));
         visit.setHcp(userService.findByName("AliceThirteen"));
+        visit.setBasicHealthMetrics(bhm);
         visit.setDate(ZonedDateTime.now());
         officeVisitService.save(visit);
 

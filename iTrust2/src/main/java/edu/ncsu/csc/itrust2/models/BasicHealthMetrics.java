@@ -228,6 +228,51 @@ public class BasicHealthMetrics extends DomainObject {
         this.tri = tri;
     }
 
+    /**
+     * Validates an office visit form for containing correct fields for patients 12 and over.
+     * Expects the basic health metrics to already be set by the OfficeVisit constructor.
+     */
+    public void validate12AndOver() {
+        // should already be set in office visit constructor
+        if (getDiastolic() == null
+                || getHdl() == null
+                || getHeight() == null
+                || getHouseSmokingStatus() == null
+                || getLdl() == null
+                || getPatientSmokingStatus() == null
+                || getSystolic() == null
+                || getTri() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
+    }
+
+    /** Validates an office visit form for containing correct fields for patients 12 and under. */
+    public void validateUnder12() {
+        // should already be set in office visit constructor
+        if (getDiastolic() == null
+                || getHeight() == null
+                || getHouseSmokingStatus() == null
+                || getSystolic() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
+    }
+
+    /** Validates an office visit form for containing correct fields for patients 3 and under. */
+    public void validateUnder3() {
+        // should already be set in office visit constructor
+        if (getHeight() == null
+                || getHeadCircumference() == null
+                || getHouseSmokingStatus() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
