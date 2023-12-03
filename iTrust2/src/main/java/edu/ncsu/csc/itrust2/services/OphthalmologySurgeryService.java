@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.models.OphthalmologySurgery;
+import edu.ncsu.csc.itrust2.repositories.OphthalmologySurgeryRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Service;
 public class OphthalmologySurgeryService {
 
     private final UserService userService;
+    private final OphthalmologySurgeryRepository ophthalmologySurgeryRepository;
 
-    public OphthalmologySurgery build(final OphthalmologySurgeryForm officeVisitForm) {
+    public OphthalmologySurgery create(final OphthalmologySurgeryForm officeVisitForm) {
         final OphthalmologySurgery ophthalmologySurgery = new OphthalmologySurgery();
 
         ophthalmologySurgery.setPatient(userService.findByName(officeVisitForm.getPatient()));
@@ -33,6 +35,6 @@ public class OphthalmologySurgeryService {
 
         ophthalmologySurgery.setSurgeryType(officeVisitForm.getSurgeryType());
 
-        return ophthalmologySurgery;
+        return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
     }
 }

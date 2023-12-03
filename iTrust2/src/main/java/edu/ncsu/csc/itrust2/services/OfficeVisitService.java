@@ -15,12 +15,12 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
@@ -61,10 +61,12 @@ public class OfficeVisitService extends Service {
         return officeVisitRepository.findByHcpAndPatient(hcp, patient);
     }
 
-    public OfficeVisit addOphthalmologySurgery(final OphthalmologySurgeryForm ophthalmologySurgeryForm){
+    @Transactional
+    public OfficeVisit createOphthalmologySurgery(
+            final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
 
         try {
-            final OfficeVisit visit = buildOphthalmologySurgeryVisit(ophthalmologySurgeryForm);
+            final var visit = build(ophthalmologySurgeryForm);
 
             if (null != visit.getId() && existsById(visit.getId())) {
                 throw new ResponseStatusException(
@@ -72,16 +74,22 @@ public class OfficeVisitService extends Service {
                         "Office visit with the id " + visit.getId() + " already exists");
             }
 
-            save(visit);
-            return visit;
-        } catch (final Exception e){
+            final var ophthalmologySurgery =
+                    ophthalmologySurgeryService.create(ophthalmologySurgeryForm);
+
+            visit.setType(AppointmentType.OPHTHALMOLOGY_SURGERY);
+            visit.setOphthalmologySurgery(ophthalmologySurgery);
+            visit.validateOphthalmologySurgery();
+
+            return officeVisitRepository.save(visit);
+        } catch (final Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Could not create ophthalmology service document because of " + e.getMessage());
         }
     }
 
-    public OfficeVisit initOfficeVisit(final OfficeVisitForm ovf) {
+    public OfficeVisit build(final OfficeVisitForm ovf) {
         final OfficeVisit ov = new OfficeVisit();
 
         ov.setPatient(userService.findByName(ovf.getPatient()));
@@ -135,11 +143,6 @@ public class OfficeVisitService extends Service {
             ov.setPrescriptions(
                     ps.stream().map(prescriptionService::build).collect(Collectors.toList()));
         }
-        return ov;
-    }
-
-    public OfficeVisit build(final OfficeVisitForm ovf) {
-        final OfficeVisit ov = initOfficeVisit(ovf);
 
         AppointmentType at = null;
         try {
@@ -175,44 +178,6 @@ public class OfficeVisitService extends Service {
         } else {
             ov.validate12AndOver();
         }
-
-        return ov;
-    }
-
-    public OfficeVisit buildOphthalmologySurgeryVisit(final OphthalmologySurgeryForm ovf) {
-        final OfficeVisit ov = initOfficeVisit(ovf);
-        ;
-
-        ov.setType(AppointmentType.OPHTHALMOLOGY_SURGERY);
-
-        ov.setOphthalmologySurgery(ophthalmologySurgeryService.build(ovf));
-
-        if (ov.getBasicHealthMetrics() != null) {
-            final Patient p = (Patient) ov.getPatient();
-            if (p == null || p.getDateOfBirth() == null) {
-                return ov; // we're done, patient can't be tested against
-            }
-            final LocalDate dob = p.getDateOfBirth();
-            int age = ov.getDate().getYear() - dob.getYear();
-            // Remove the -1 when changing the dob to OffsetDateTime
-            if (ov.getDate().getMonthValue() < dob.getMonthValue()) {
-                age -= 1;
-            } else if (ov.getDate().getMonthValue() == dob.getMonthValue()) {
-                if (ov.getDate().getDayOfMonth() < dob.getDayOfMonth()) {
-                    age -= 1;
-                }
-            }
-
-            if (age < 3) {
-                ov.validateUnder3();
-            } else if (age < 12) {
-                ov.validateUnder12();
-            } else {
-                ov.validate12AndOver();
-            }
-        }
-
-        ov.validateOphthalmologySurgery();
 
         return ov;
     }

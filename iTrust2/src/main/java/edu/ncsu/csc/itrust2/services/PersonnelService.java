@@ -3,10 +3,9 @@ package edu.ncsu.csc.itrust2.services;
 import edu.ncsu.csc.itrust2.repositories.PersonnelRepository;
 import edu.ncsu.csc.itrust2.repositories.UserRepository;
 
-import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

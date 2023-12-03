@@ -6,7 +6,6 @@ import edu.ncsu.csc.itrust2.models.Drug;
 import edu.ncsu.csc.itrust2.services.DrugService;
 
 import java.io.UnsupportedEncodingException;
-import javax.transaction.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +21,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;

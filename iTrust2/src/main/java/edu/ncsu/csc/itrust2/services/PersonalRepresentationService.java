@@ -6,11 +6,11 @@ import edu.ncsu.csc.itrust2.repositories.PatientRepository;
 import edu.ncsu.csc.itrust2.repositories.PersonalRepresentationRepository;
 
 import java.util.List;
-import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -22,7 +22,8 @@ public class PersonalRepresentationService {
     private final PatientService patientService;
 
     @Transactional
-    public PersonalRepresentation setPersonalRepresentation(String patientName, String representativeName) {
+    public PersonalRepresentation setPersonalRepresentation(
+            String patientName, String representativeName) {
         if (patientName.equals(representativeName))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "환자와 대리인이 같을 수 없습니다.");
 

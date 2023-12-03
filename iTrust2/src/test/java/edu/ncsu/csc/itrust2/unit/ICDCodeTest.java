@@ -4,13 +4,12 @@ import edu.ncsu.csc.itrust2.TestConfig;
 import edu.ncsu.csc.itrust2.forms.ICDCodeForm;
 import edu.ncsu.csc.itrust2.models.ICDCode;
 
-import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

@@ -2,7 +2,6 @@ package edu.ncsu.csc.itrust2.models;
 
 import edu.ncsu.csc.itrust2.models.enums.OphthalmologySurgeryType;
 
-import java.math.BigDecimal;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -55,10 +54,9 @@ public class OphthalmologySurgery extends DomainObject {
     public void checkVisualAcuityResultValid(final Integer visualAcuityResult) {
         if (visualAcuityResult == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Visual acuity result cannot be null");
+                    HttpStatus.BAD_REQUEST, "Visual acuity result cannot be null");
         }
-        if (leftVisualAcuityResult < 20 || leftVisualAcuityResult > 200) {
+        if (visualAcuityResult < 20 || visualAcuityResult > 200) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Visual acuity result must be the value between 20 and 200.");
@@ -77,14 +75,11 @@ public class OphthalmologySurgery extends DomainObject {
 
     public void checkSphereValid(final Float sphere) {
         if (sphere == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,"Sphere cannot be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sphere cannot be null");
         }
-        BigDecimal sphereBigDecimal = new BigDecimal(sphere.toString());
-        if(!(sphereBigDecimal.scale() <= 2 && (sphereBigDecimal.abs().compareTo(BigDecimal.TEN) < 0))){
+        if (Math.abs(sphere) >= 100.0) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Sphere must be the floating point number up to two digits.");
+                    HttpStatus.BAD_REQUEST, "Sphere must be up to two digits.");
         }
     }
 
@@ -99,51 +94,44 @@ public class OphthalmologySurgery extends DomainObject {
     }
 
     public void checkCylinderValid(final Float cylinder, final Integer axis) {
-        if(leftCylinder != null) {
-            if (axis == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Axis cannot be null if Cylinder is not null."
-                );
-            }
-            BigDecimal cylinderBigDecimal = new BigDecimal(cylinder.toString());
-            if (!(cylinderBigDecimal.scale() <= 2 && (cylinderBigDecimal.abs().compareTo(BigDecimal.TEN) < 0))) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Sphere must be the floating point number up to two digits.");
-            }
+        if (cylinder == null) return;
+
+        if (axis == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Axis cannot be null if Cylinder is not null.");
+        }
+        if (Math.abs(cylinder) >= 100.0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Cylinder must be up to two digits.");
         }
     }
 
-    public void setLeftCylinder(final Float leftCylinder){
+    public void setLeftCylinder(final Float leftCylinder) {
         checkCylinderValid(leftCylinder, this.leftAxis);
         this.leftCylinder = leftCylinder;
     }
 
-    public void setRightCylinder(final Float rightCylinder){
+    public void setRightCylinder(final Float rightCylinder) {
         checkCylinderValid(rightCylinder, this.rightAxis);
         this.rightCylinder = rightCylinder;
     }
 
-    public void checkAxisValid(final Integer axis){
-        if(axis != null){
-            if(axis < 1 || axis > 180){
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Axis must be the value between 1 and 180.");
-            }
+    public void checkAxisValid(final Integer axis) {
+        if (axis == null) return;
+
+        if (axis < 1 || axis > 180) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Axis must be the value between 1 and 180.");
         }
     }
 
-    public void setLeftAxis(final Integer leftAxis){
+    public void setLeftAxis(final Integer leftAxis) {
         checkAxisValid(leftAxis);
         this.leftAxis = leftAxis;
     }
 
-    public void setRightAxis(final Integer rightAxis){
+    public void setRightAxis(final Integer rightAxis) {
         checkAxisValid(rightAxis);
         this.rightAxis = rightAxis;
     }
-
-
-
 }

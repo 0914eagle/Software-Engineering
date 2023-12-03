@@ -14,13 +14,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "[UC23] 이메일 전송 API")
 @RestController
@@ -48,8 +45,8 @@ public class APIEmailController extends APIController {
                 emailForm.getReceiver(),
                 emailForm.getSubject(),
                 emailForm.getMessageBody());
-
     }
+
     @Operation(summary = "환자가 발송한 메일 목록을 조회합니다.")
     @GetMapping("/Outbox")
     @PreAuthorize("hasRole('ROLE_PATIENT')")

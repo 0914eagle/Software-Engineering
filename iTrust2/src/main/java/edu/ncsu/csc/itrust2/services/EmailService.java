@@ -8,7 +8,6 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
@@ -51,7 +51,6 @@ public class EmailService extends Service {
         Email email = new Email(senderName, receiver, subject, messageBody);
 
         repository.save(email);
-        //getRepository().save(email);
     }
 
     @Override
