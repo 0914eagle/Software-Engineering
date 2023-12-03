@@ -47,17 +47,15 @@ public class APIEmailController extends APIController {
                 emailForm.getMessageBody());
     }
 
-    @Operation(summary = "환자가 발송한 메일 목록을 조회합니다.")
+    @Operation(summary = "자신이 발송한 메일 목록을 조회합니다.")
     @GetMapping("/Outbox")
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<Email> viewOutbox() {
         String currentUsername = loggerUtil.getCurrentUsername();
         return service.findBySender(currentUsername);
     }
 
-    @Operation(summary = "환자가 수신한 메일 목록을 조회합니다.")
+    @Operation(summary = "자신이 수신한 메일 목록을 조회합니다.")
     @GetMapping("/Inbox")
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
     public List<Email> viewInbox() {
         String currentUsername = loggerUtil.getCurrentUsername();
         User currentUser = userService.findByName(currentUsername);
