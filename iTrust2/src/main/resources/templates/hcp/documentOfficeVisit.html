@@ -242,42 +242,43 @@
                 }
 
                 /*Checks validity of eye health metrics*/
+                /*Checks validity of eye health metrics*/
                 function checkEyeHealthMetrics() {
-                    if (/^[0-9]{1,3}?$/.test(String($scope.visit.visualAcuityOS).replace(/^0+/, '')) === false) {
+                    if (/^[0-9]{1,3}?$/.test(String($scope.visit.leftVisualAcuityResult).replace(/^0+/, '')) === false) {
                         $scope.errorMsg += "Visual Acuity OS must be an integer value between 20 and 200 inclusive\n"
-                    } else if (parseInt($scope.visit.visualAcuityOS) < 20 || parseInt($scope.visit.visualAcuityOS) > 200) {
+                    } else if (parseInt($scope.visit.leftVisualAcuityResult) < 20 || parseInt($scope.visit.leftVisualAcuityResult) > 200) {
                         $scope.errorMsg += "Visual Acuity OS must be an integer value between 20 and 200 inclusive\n"
                     }
 
-                    if (/^[0-9]{1,3}?$/.test(String($scope.visit.visualAcuityOD).replace(/^0+/, '')) === false) {
+                    if (/^[0-9]{1,3}?$/.test(String($scope.visit.rightVisualAcuityResult).replace(/^0+/, '')) === false) {
                         $scope.errorMsg += "Visual Acuity OD must be an integer value between 20 and 200 inclusive\n"
-                    } else if (parseInt($scope.visit.visualAcuityOD) < 20 || parseInt($scope.visit.visualAcuityOD) > 200) {
+                    } else if (parseInt($scope.visit.rightVisualAcuityResult) < 20 || parseInt($scope.visit.rightVisualAcuityResult) > 200) {
                         $scope.errorMsg += "Visual Acuity OD must be an integer value between 20 and 200 inclusive\n"
                     }
 
-                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.sphereOS)) === false) {
+                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.leftSphere)) === false) {
                         $scope.errorMsg += "Sphere OS must be a floating point number up to two digits\n"
                     }
-                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.sphereOD)) === false) {
+                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.rightSphere)) === false) {
                         $scope.errorMsg += "Sphere OD must be a floating point number up to two digits\n"
                     }
 
-                    if ($scope.visit.cylinderOS !== undefined || $scope.visit.cylinderOD !== undefined) {
-                        if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.cylinderOS)) === false) {
+                    if ($scope.visit.leftCylinder !== undefined || $scope.visit.rightCylinder !== undefined) {
+                        if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.leftCylinder)) === false) {
                             $scope.errorMsg += "Cylinder OS must be a floating point number up to two digits\n"
                         }
-                        if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.cylinderOD)) === false) {
+                        if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.visit.rightCylinder)) === false) {
                             $scope.errorMsg += "Cylinder OD must be a floating point number up to two digits\n"
                         }
 
-                        if (/^[0-9]{1,3}?$/.test(String($scope.visit.axisOS).replace(/^0+/, '')) === false) {
+                        if (/^[0-9]{1,3}?$/.test(String($scope.visit.leftAxis).replace(/^0+/, '')) === false) {
                             $scope.errorMsg += "Axis OS must be an integer value between 1 and 180 inclusive\n"
-                        } else if (parseInt($scope.visit.axisOS) < 1 || parseInt($scope.visit.axisOS) > 180) {
+                        } else if (parseInt($scope.visit.leftAxis) < 1 || parseInt($scope.visit.leftAxis) > 180) {
                             $scope.errorMsg += "Axis OS must be an integer value between 1 and 180 inclusive\n"
                         }
-                        if (/^[0-9]{1,3}?$/.test(String($scope.visit.axisOD).replace(/^0+/, '')) === false) {
+                        if (/^[0-9]{1,3}?$/.test(String($scope.visit.rightAxis).replace(/^0+/, '')) === false) {
                             $scope.errorMsg += "Axis OD must be an integer value between 1 and 180 inclusive\n"
-                        } else if (parseInt($scope.visit.axisOD) < 1 || parseInt($scope.visit.axisOD) > 180) {
+                        } else if (parseInt($scope.visit.rightAxis) < 1 || parseInt($scope.visit.rightAxis) > 180) {
                             $scope.errorMsg += "Axis OD must be an integer value between 1 and 180 inclusive\n"
                         }
                     }
@@ -349,6 +350,7 @@
                     /*Submitting Office Visits by type*/
                     if ($scope.visit.type === 'GENERAL_CHECKUP') {
                         checkBasicHealthMetrics();
+                        checkEyeHealthMetrics();
                         if ($scope.errorMsg === "") {
                             $scope.visit.diagnoses = $scope.diagnoses;
                             $scope.visit.prescriptions = $scope.prescriptions;
@@ -370,7 +372,35 @@
                                 $scope.errorMsg = "Error occurred creating office visit";
                             })
                         }
-                    } else {
+                    }
+
+                    else if($scope.visit.type === 'OPHTHALMOLOGY_SURGERY'){
+                        checkBasicHealthMetrics();
+                        console.log($scope.visit.leftVisualAcuityResult);
+                        $scope.visit.leftVisualAcuityResult = parseInt($scope.visit.leftVisualAcuityResult);
+                        console.log($scope.visit.rightVisualAcuityResult);
+                        console.log($scope.visit.leftSphere);
+                        console.log($scope.visit.rightSphere);
+                        console.log($scope.visit.leftCylinder);
+                        console.log($scope.visit.rightCylinder);
+                        console.log($scope.visit.leftAxis);
+                        console.log($scope.visit.rightAxis);
+                        console.log($scope.visit);
+
+                        if ($scope.errorMsg === "") {
+                            $http.post("/iTrust2/api/v1/officevisits/ophthalmologySurgery",$scope.visit).then(
+                                function (response) {
+                                    $scope.errorMsg = "";
+                                    $scope.message = "Surgery visit created successfully";
+                                }, function (rejection) {
+                                    $scope.message = "";
+                                    $scope.errorMsg = "Error occurred creating surgery visit";
+                                })
+
+                        }
+                    }
+
+                    else {
                         $scope.message = "";
                         $scope.errorMsg = "Invalid office visit type";
                     }
@@ -877,6 +907,9 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- -->
+
                             </div>
 
                             <!-- Lab Procedures Panel -->
@@ -976,6 +1009,124 @@
                                 </div>
 
                             </div>
+
+                            <!-- Patient Information for OPH surgery-->
+                            <div ng-show="visit.type == 'OPHTHALMOLOGY_SURGERY'" class="col-md-4">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h4>Patient Information</h4>
+                                    </div>
+                                    <div class="panel-body">
+
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Visual Acuity Left (OS):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="VAL"
+                                                       ng-model="visit.leftVisualAcuityResult" required="true"
+                                                       type="number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Visual Acuity Right (OD):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="VAR"
+                                                       ng-model="visit.rightVisualAcuityResult" required="true"
+                                                       type="number">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Sphere Left (OS):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="SL"
+                                                       ng-model="visit.leftSphere" required="true" type="number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Sphere Right (OD):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="SR"
+                                                       ng-model="visit.rightSphere" required="true" type="number">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Cylinder Left (OS):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="CL"
+                                                       ng-model="visit.leftCylinder" required="true" type="number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Cylinder Right (OD):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="CR"
+                                                       ng-model="visit.rightCylinder" required="true" type="number">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Axis Left (OS):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="AL"
+                                                       ng-model="visit.leftAxis" required="true" type="number">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Axis Right (OD):</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <input class="form-control" name="AR"
+                                                       ng-model="visit.rightAxis" required="true" type="number">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Ophthalmology Surgery Panel -->
+                            <div ng-show="visit.type == 'OPHTHALMOLOGY_SURGERY'" class="col-md-4">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h4>Surgery Type</h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group row">
+                                            <div class="col-xs-6">
+                                                <label>Surgery Type:</label>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <select class="form-control" ng-model="visit.surgeryType" required>
+                                                    <option value="CATARACT_SURGERY">Cataract Surgery</option>
+                                                    <option value="LASER_SURGERY">Laser Surgery</option>
+                                                    <option value="REFRACTIVE_SURGERY">Refractive Surgery</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <!-- Notes and Error Messages -->
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -994,9 +1145,13 @@
                         <!-- was form -->
                         <div class="panel-footer text-right">
                             <!-- button may have to be inside form tag, or just a submit function for the form? -->
-                            <button class="btn btn-primary btn-lg" ng-click="submit()"
+                            <button ng-show="visit.type != 'OPHTHALMOLOGY_SURGERY'" class="btn btn-primary btn-lg" ng-click="submit()"
                                     name="submit">Submit Office Visit
                             </button>
+                            <button ng-show="visit.type == 'OPHTHALMOLOGY_SURGERY'" class="btn btn-primary btn-lg" ng-click="submit()"
+                                    name="submit">Submit Surgery Visit
+                            </button>
+
                         </div>
                     </div>
                 </div>
