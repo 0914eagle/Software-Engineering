@@ -23,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
@@ -34,7 +35,8 @@ public class OphthalmologyAppointmentRequestServiceTest {
 
     @Test
     public void testListByPatient() {
-        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+        final var currentYear = ZonedDateTime.now().getYear();
+        final var date = ZonedDateTime.of(currentYear + 1, 12, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
         final Patient patient = new Patient();
@@ -62,7 +64,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
         List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
         expectedFindByPatient.add(expectedOphAppointment);
 
-        given(appointmentRequestRepository.findByPatient(eq(patient)))
+        given(appointmentRequestRepository.findByPatientAndDateAfter(eq(patient), any()))
                 .willReturn(expectedFindByPatient);
 
         final List<AppointmentRequest> result = appointmentRequestService.findByPatient(patient);
@@ -72,7 +74,8 @@ public class OphthalmologyAppointmentRequestServiceTest {
 
     @Test
     public void testListByHCP() {
-        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+        final var currentYear = ZonedDateTime.now().getYear();
+        final var date = ZonedDateTime.of(currentYear + 1, 12, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
         final Patient patient = new Patient();
@@ -100,7 +103,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
         List<AppointmentRequest> expectedFindByPatient = new ArrayList<>();
         expectedFindByPatient.add(expectedOphAppointment);
 
-        given(appointmentRequestRepository.findByHcp(eq(ophUser)))
+        given(appointmentRequestRepository.findByHcpAndDateAfter(eq(ophUser), any()))
                 .willReturn(expectedFindByPatient);
 
         final List<AppointmentRequest> result = appointmentRequestService.findByHcp(ophUser);
@@ -110,7 +113,8 @@ public class OphthalmologyAppointmentRequestServiceTest {
 
     @Test
     public void testListByHcpAndPatient() {
-        final var date = ZonedDateTime.of(2023, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+        final var currentYear = ZonedDateTime.now().getYear();
+        final var date = ZonedDateTime.of(currentYear + 1, 12, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
         final Patient patient = new Patient();
@@ -150,7 +154,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
     @Test
     public void testBuild() {
         final var currentYear = ZonedDateTime.now().getYear();
-        final var date = ZonedDateTime.of(currentYear + 1, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+        final var date = ZonedDateTime.of(currentYear + 1, 12, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
         final Patient patient = new Patient();
@@ -189,7 +193,7 @@ public class OphthalmologyAppointmentRequestServiceTest {
     @Test
     public void testBuildNullStatusAndType() {
         final var currentYear = ZonedDateTime.now().getYear();
-        final var date = ZonedDateTime.of(currentYear + 1, 11, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
+        final var date = ZonedDateTime.of(currentYear + 1, 12, 30, 11, 30, 0, 0, ZoneId.of("UTC"));
 
         String patientName = "TestPatient";
         final Patient patient = new Patient();
