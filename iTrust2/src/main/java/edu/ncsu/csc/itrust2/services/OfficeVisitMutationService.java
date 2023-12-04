@@ -15,6 +15,7 @@ import edu.ncsu.csc.itrust2.repositories.OfficeVisitRepository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -105,6 +106,31 @@ public class OfficeVisitMutationService {
         return officeVisitRepository.save(ov);
     }
 
+    public OfficeVisit updateForOphthalmologySurgery(Long id, OphthalmologySurgeryForm osf) {
+
+        Optional<OfficeVisit> ovOptional = officeVisitRepository.findById(id);
+        if (ovOptional.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Office visit with the id " + id + " doesn't exist");
+        }
+
+        final OfficeVisit ov = ovOptional.get();
+        ov.setPatient(userService.findByName(osf.getPatient()));
+        ov.setHcp(userService.findByName(osf.getHcp()));
+        ov.setNotes(osf.getNotes());
+        ov.setDate(ZonedDateTime.parse(osf.getDate()));
+        ov.setAppointment(getAppointmentRequest(ov, osf.getPreScheduled()));
+        ov.setHospital(hospitalService.findByName(osf.getHospital()));
+        ov.setBasicHealthMetrics(getBasicHealthMetrics(osf));
+        ov.setDiagnoses(getDiagnoses(osf.getDiagnoses()));
+        ov.setPrescriptions(getPrescriptions(osf.getPrescriptions()));
+
+        ov.setType(AppointmentType.OPHTHALMOLOGY_SURGERY);
+        ov.setOphthalmologySurgery(updateOphthalmologySurgery(ov.getOphthalmologySurgery().getId(), osf));
+
+        return officeVisitRepository.save(ov);
+    }
+
     public Long assertNotExistsById(String idString) {
         if (idString == null) return null;
 
@@ -180,5 +206,9 @@ public class OfficeVisitMutationService {
 
     public OphthalmologySurgery getOphthalmologySurgery(final OphthalmologySurgeryForm ovf) {
         return ophthalmologySurgeryService.create(ovf);
+    }
+
+    public OphthalmologySurgery updateOphthalmologySurgery(final Long id, final OphthalmologySurgeryForm ovf) {
+        return ophthalmologySurgeryService.update(id, ovf);
     }
 }

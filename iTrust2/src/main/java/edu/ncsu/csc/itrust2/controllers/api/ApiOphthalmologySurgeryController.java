@@ -16,10 +16,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +39,18 @@ public class ApiOphthalmologySurgeryController extends APIController {
                     final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
 
         return officeVisitMutationService.createForOphthalmologySurgery(ophthalmologySurgeryForm);
+    }
+
+    @Operation(summary = "Ophthalmologist: 안과 수술 문서 수정")
+    @PatchMapping("/officevisits/ophthalmologySurgery/{id}")
+    @PreAuthorize("hasRole('ROLE_OPH')")
+    public OfficeVisit updateOphthalmologySurgery(
+            @Parameter(description = "수정할 Office Visit의 ID입니다.") @PathVariable final Long id,
+            @Parameter(description = "수정할 정보들입니다.") @RequestBody
+                    final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
+
+        return officeVisitMutationService.updateForOphthalmologySurgery(
+                id, ophthalmologySurgeryForm);
     }
 
     @GetMapping("/officevisits/ophthalmologySurgery/oph")

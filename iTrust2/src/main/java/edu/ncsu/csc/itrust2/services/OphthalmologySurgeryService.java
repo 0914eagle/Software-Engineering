@@ -7,9 +7,12 @@ import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.OphthalmologySurgeryRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
 @Service
@@ -49,6 +52,35 @@ public class OphthalmologySurgeryService {
         ophthalmologySurgery.setLeftCylinder(officeVisitForm.getLeftCylinder());
 
         ophthalmologySurgery.setSurgeryType(officeVisitForm.getSurgeryType());
+
+        return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
+    }
+
+    public OphthalmologySurgery update(final Long id, final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
+        Optional<OphthalmologySurgery> osOptional = ophthalmologySurgeryRepository.findById(id);
+        if (osOptional.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Ophthalmology surgery with the id " + id + " doesn't exist");
+        }
+        final OphthalmologySurgery ophthalmologySurgery = osOptional.get();
+
+        ophthalmologySurgery.setPatient(userService.findByName(ophthalmologySurgeryForm.getPatient()));
+        ophthalmologySurgery.setHcp(userService.findByName(ophthalmologySurgeryForm.getHcp()));
+
+        ophthalmologySurgery.setLeftVisualAcuityResult(ophthalmologySurgeryForm.getLeftVisualAcuityResult());
+        ophthalmologySurgery.setRightVisualAcuityResult(
+                ophthalmologySurgeryForm.getRightVisualAcuityResult());
+
+        ophthalmologySurgery.setRightSphere(ophthalmologySurgeryForm.getRightSphere());
+        ophthalmologySurgery.setLeftSphere(ophthalmologySurgeryForm.getLeftSphere());
+
+        ophthalmologySurgery.setRightAxis(ophthalmologySurgeryForm.getRightAxis());
+        ophthalmologySurgery.setLeftAxis(ophthalmologySurgeryForm.getLeftAxis());
+
+        ophthalmologySurgery.setRightCylinder(ophthalmologySurgeryForm.getRightCylinder());
+        ophthalmologySurgery.setLeftCylinder(ophthalmologySurgeryForm.getLeftCylinder());
+
+        ophthalmologySurgery.setSurgeryType(ophthalmologySurgeryForm.getSurgeryType());
 
         return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
     }
