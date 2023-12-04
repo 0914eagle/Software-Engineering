@@ -59,6 +59,8 @@ public class PersonalRepresentationService {
     }
 
     public boolean isRepresentative(String currentUsername, String patientName) {
-        return personalRepresentationRepository.isRepresentative(patientName, currentUsername);
+        final Patient currentUser = (Patient) patientService.findByName(currentUsername);
+        final Patient patient = (Patient) patientService.findByName(patientName);
+        return personalRepresentationRepository.isRepresentative(patient, currentUser);
     }
 }

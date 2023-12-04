@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotNull;
+
 @Repository
 public interface PersonalRepresentationRepository
         extends JpaRepository<PersonalRepresentation, Long> {
@@ -20,6 +22,5 @@ public interface PersonalRepresentationRepository
     PersonalRepresentation findByPatientAndPersonalRepresentative(
             Patient patient, Patient representative);
 
-    @Query("SELECT COUNT(pr) > 0 FROM PersonalRepresentation pr WHERE pr.patient.username = : currentUsername AND pr.personalRepresentative.username = :currentUsername")
-    boolean isRepresentative(@Param("username") String username, @Param("username") String currentUsername);
+    boolean isRepresentative(@NotNull Patient patient, @NotNull Patient personalRepresentative);
 }
