@@ -4,13 +4,10 @@ import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.PersonalRepresentation;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import javax.validation.constraints.NotNull;
 
 @Repository
 public interface PersonalRepresentationRepository
@@ -22,5 +19,6 @@ public interface PersonalRepresentationRepository
     PersonalRepresentation findByPatientAndPersonalRepresentative(
             Patient patient, Patient representative);
 
-    boolean isRepresentative(@NotNull Patient patient, @NotNull Patient personalRepresentative);
+    boolean existsByPatientAndPersonalRepresentative(
+            @NotNull Patient patient, @NotNull Patient personalRepresentative);
 }
