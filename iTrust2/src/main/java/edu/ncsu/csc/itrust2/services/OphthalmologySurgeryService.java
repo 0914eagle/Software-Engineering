@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
+import edu.ncsu.csc.itrust2.forms.UpdateOphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.models.OphthalmologySurgery;
 import edu.ncsu.csc.itrust2.models.Patient;
 import edu.ncsu.csc.itrust2.models.User;
@@ -56,7 +57,7 @@ public class OphthalmologySurgeryService {
         return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
     }
 
-    public OphthalmologySurgery update(final Long id, final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
+    public OphthalmologySurgery update(final Long id, final UpdateOphthalmologySurgeryForm ophthalmologySurgeryForm) {
         Optional<OphthalmologySurgery> osOptional = ophthalmologySurgeryRepository.findById(id);
         if (osOptional.isEmpty()) {
             throw new ResponseStatusException(
@@ -64,23 +65,33 @@ public class OphthalmologySurgeryService {
         }
         final OphthalmologySurgery ophthalmologySurgery = osOptional.get();
 
-        ophthalmologySurgery.setPatient(userService.findByName(ophthalmologySurgeryForm.getPatient()));
-        ophthalmologySurgery.setHcp(userService.findByName(ophthalmologySurgeryForm.getHcp()));
+        if (ophthalmologySurgeryForm.getPatient() != null)
+            ophthalmologySurgery.setPatient(ophthalmologySurgeryForm.getPatient());
+        if (ophthalmologySurgeryForm.getHcp() != null)
+            ophthalmologySurgery.setHcp(ophthalmologySurgeryForm.getHcp());
 
-        ophthalmologySurgery.setLeftVisualAcuityResult(ophthalmologySurgeryForm.getLeftVisualAcuityResult());
-        ophthalmologySurgery.setRightVisualAcuityResult(
-                ophthalmologySurgeryForm.getRightVisualAcuityResult());
+        if (ophthalmologySurgeryForm.getLeftVisualAcuityResult() != null)
+            ophthalmologySurgery.setLeftVisualAcuityResult(ophthalmologySurgeryForm.getLeftVisualAcuityResult());
+        if (ophthalmologySurgeryForm.getRightVisualAcuityResult() != null)
+            ophthalmologySurgery.setRightVisualAcuityResult(ophthalmologySurgeryForm.getRightVisualAcuityResult());
 
-        ophthalmologySurgery.setRightSphere(ophthalmologySurgeryForm.getRightSphere());
-        ophthalmologySurgery.setLeftSphere(ophthalmologySurgeryForm.getLeftSphere());
+        if (ophthalmologySurgeryForm.getRightSphere() != null)
+            ophthalmologySurgery.setRightSphere(ophthalmologySurgeryForm.getRightSphere());
+        if (ophthalmologySurgeryForm.getLeftSphere() != null)
+            ophthalmologySurgery.setLeftSphere(ophthalmologySurgeryForm.getLeftSphere());
 
-        ophthalmologySurgery.setRightAxis(ophthalmologySurgeryForm.getRightAxis());
-        ophthalmologySurgery.setLeftAxis(ophthalmologySurgeryForm.getLeftAxis());
+        if (ophthalmologySurgeryForm.getRightAxis() != null)
+            ophthalmologySurgery.setRightAxis(ophthalmologySurgeryForm.getRightAxis());
+        if (ophthalmologySurgeryForm.getLeftAxis() != null)
+            ophthalmologySurgery.setLeftAxis(ophthalmologySurgeryForm.getLeftAxis());
 
-        ophthalmologySurgery.setRightCylinder(ophthalmologySurgeryForm.getRightCylinder());
-        ophthalmologySurgery.setLeftCylinder(ophthalmologySurgeryForm.getLeftCylinder());
+        if (ophthalmologySurgeryForm.getRightCylinder() != null)
+            ophthalmologySurgery.setRightCylinder(ophthalmologySurgeryForm.getRightCylinder());
+        if (ophthalmologySurgeryForm.getLeftCylinder() != null)
+            ophthalmologySurgery.setLeftCylinder(ophthalmologySurgeryForm.getLeftCylinder());
 
-        ophthalmologySurgery.setSurgeryType(ophthalmologySurgeryForm.getSurgeryType());
+        if (ophthalmologySurgeryForm.getSurgeryType() != null)
+            ophthalmologySurgery.setSurgeryType(ophthalmologySurgeryForm.getSurgeryType());
 
         return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
     }

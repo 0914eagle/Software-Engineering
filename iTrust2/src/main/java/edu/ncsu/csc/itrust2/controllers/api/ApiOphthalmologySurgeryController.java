@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
 import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
+import edu.ncsu.csc.itrust2.forms.UpdateOphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.models.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.OphthalmologySurgery;
 import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
@@ -47,10 +48,10 @@ public class ApiOphthalmologySurgeryController extends APIController {
     public OfficeVisit updateOphthalmologySurgery(
             @Parameter(description = "수정할 Office Visit의 ID입니다.") @PathVariable final Long id,
             @Parameter(description = "수정할 정보들입니다.") @RequestBody
-                    final OphthalmologySurgeryForm ophthalmologySurgeryForm) {
+                    final UpdateOphthalmologySurgeryForm updateOphthalmologySurgeryForm) {
 
         return officeVisitMutationService.updateForOphthalmologySurgery(
-                id, ophthalmologySurgeryForm);
+                id, updateOphthalmologySurgeryForm);
     }
 
     @GetMapping("/officevisits/ophthalmologySurgery/oph")

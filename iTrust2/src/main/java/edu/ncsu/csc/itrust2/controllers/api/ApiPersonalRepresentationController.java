@@ -170,7 +170,6 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         Patient patient = (Patient) patientService.findByName(representingPatientUsername);
 
-
         if (!personalRepresentationService.isRepresentative(
                 currentUsername, representingPatientUsername)) {
             throw new ResponseStatusException(
