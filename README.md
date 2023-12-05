@@ -33,6 +33,10 @@
 - 유지보수 가능한 코드 및 운영 가능한 시스템 개발을 목표로 합니다.
 - 리더십 트레이닝: 팀장은 feature 코드를 직접 작성하지 않습니다.
 
+## 새 유즈케이스
+
+[UC23 Send Actual Emails](./new-uc23.md)
+
 ## 미팅 로그
 
 [미팅 로그](./meeting-logs/README.md)
