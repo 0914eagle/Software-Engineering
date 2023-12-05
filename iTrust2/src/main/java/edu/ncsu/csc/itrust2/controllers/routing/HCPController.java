@@ -120,4 +120,10 @@ public class HCPController {
     public String viewPersonalRepresentatives(final Model model) {
         return "hcp/personalRepresentatives";
     }
+
+    @GetMapping("/hcp/editOfficeVisit")
+    @PreAuthorize("hasRole('ROLE_OPH')")
+    public String viewEditOfficeVisit(final Model model) {
+        return "hcp/editOfficeVisit";
+    }
 }

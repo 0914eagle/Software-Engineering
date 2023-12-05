@@ -1,3 +1,4 @@
+
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:include="layout :: head(title=~{::title},links=~{::script})">
@@ -242,7 +243,6 @@
                 }
 
                 /*Checks validity of eye health metrics*/
-                /*Checks validity of eye health metrics*/
                 function checkEyeHealthMetrics() {
                     if (/^[0-9]{1,3}?$/.test(String($scope.visit.leftVisualAcuityResult).replace(/^0+/, '')) === false) {
                         $scope.errorMsg += "Visual Acuity OS must be an integer value between 20 and 200 inclusive\n"
@@ -316,6 +316,8 @@
                     $scope.message = "";
                     $scope.visit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
                     $scope.visit.status = "PENDING";
+                    console.log($scope.visit.date);
+                    console.log($scope.visit.time);
 
                     // Error checking
                     if (!$scope.visit.type) {
@@ -328,7 +330,7 @@
 
                     // Validate date and time
                     const date = new Date($scope.visitInputDate);
-                    if (!dateTimeService.isValidDate($scope.visitInputDate)) {
+                    if (!dateTimeService.isValidDate(date)) {
                         $scope.errorMsg += "Please input a valid date\n";
                     }
 
@@ -350,7 +352,6 @@
                     /*Submitting Office Visits by type*/
                     if ($scope.visit.type === 'GENERAL_CHECKUP') {
                         checkBasicHealthMetrics();
-                        checkEyeHealthMetrics();
                         if ($scope.errorMsg === "") {
                             $scope.visit.diagnoses = $scope.diagnoses;
                             $scope.visit.prescriptions = $scope.prescriptions;
@@ -376,6 +377,7 @@
 
                     else if($scope.visit.type === 'OPHTHALMOLOGY_SURGERY'){
                         checkBasicHealthMetrics();
+                        checkEyeHealthMetrics();
                         console.log($scope.visit.leftVisualAcuityResult);
                         $scope.visit.leftVisualAcuityResult = parseInt($scope.visit.leftVisualAcuityResult);
                         console.log($scope.visit.rightVisualAcuityResult);
@@ -1024,7 +1026,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="VAL"
-                                                       ng-model="visit.leftVisualAcuityResult" required="true"
+                                                       ng-model="visit.leftVisualAcuityResult"
                                                        type="number">
                                             </div>
                                         </div>
@@ -1034,7 +1036,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="VAR"
-                                                       ng-model="visit.rightVisualAcuityResult" required="true"
+                                                       ng-model="visit.rightVisualAcuityResult"
                                                        type="number">
                                             </div>
                                         </div>
@@ -1046,7 +1048,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="SL"
-                                                       ng-model="visit.leftSphere" required="true" type="number">
+                                                       ng-model="visit.leftSphere"  type="number">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -1055,7 +1057,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="SR"
-                                                       ng-model="visit.rightSphere" required="true" type="number">
+                                                       ng-model="visit.rightSphere"  type="number">
                                             </div>
                                         </div>
 
@@ -1066,7 +1068,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="CL"
-                                                       ng-model="visit.leftCylinder" required="true" type="number">
+                                                       ng-model="visit.leftCylinder"  type="number">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -1075,7 +1077,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="CR"
-                                                       ng-model="visit.rightCylinder" required="true" type="number">
+                                                       ng-model="visit.rightCylinder"  type="number">
                                             </div>
                                         </div>
 
@@ -1086,7 +1088,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="AL"
-                                                       ng-model="visit.leftAxis" required="true" type="number">
+                                                       ng-model="visit.leftAxis" type="number">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -1095,7 +1097,7 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <input class="form-control" name="AR"
-                                                       ng-model="visit.rightAxis" required="true" type="number">
+                                                       ng-model="visit.rightAxis"  type="number">
                                             </div>
                                         </div>
                                     </div>

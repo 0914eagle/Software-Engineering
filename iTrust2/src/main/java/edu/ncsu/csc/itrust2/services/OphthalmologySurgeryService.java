@@ -57,23 +57,22 @@ public class OphthalmologySurgeryService {
         return ophthalmologySurgeryRepository.save(ophthalmologySurgery);
     }
 
-    public OphthalmologySurgery update(final Long id, final UpdateOphthalmologySurgeryForm ophthalmologySurgeryForm) {
+    public OphthalmologySurgery update(
+            final Long id, final UpdateOphthalmologySurgeryForm ophthalmologySurgeryForm) {
         Optional<OphthalmologySurgery> osOptional = ophthalmologySurgeryRepository.findById(id);
         if (osOptional.isEmpty()) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Ophthalmology surgery with the id " + id + " doesn't exist");
+                    HttpStatus.NOT_FOUND,
+                    "Ophthalmology surgery with the id " + id + " doesn't exist");
         }
         final OphthalmologySurgery ophthalmologySurgery = osOptional.get();
 
-        if (ophthalmologySurgeryForm.getPatient() != null)
-            ophthalmologySurgery.setPatient(ophthalmologySurgeryForm.getPatient());
-        if (ophthalmologySurgeryForm.getHcp() != null)
-            ophthalmologySurgery.setHcp(ophthalmologySurgeryForm.getHcp());
-
         if (ophthalmologySurgeryForm.getLeftVisualAcuityResult() != null)
-            ophthalmologySurgery.setLeftVisualAcuityResult(ophthalmologySurgeryForm.getLeftVisualAcuityResult());
+            ophthalmologySurgery.setLeftVisualAcuityResult(
+                    ophthalmologySurgeryForm.getLeftVisualAcuityResult());
         if (ophthalmologySurgeryForm.getRightVisualAcuityResult() != null)
-            ophthalmologySurgery.setRightVisualAcuityResult(ophthalmologySurgeryForm.getRightVisualAcuityResult());
+            ophthalmologySurgery.setRightVisualAcuityResult(
+                    ophthalmologySurgeryForm.getRightVisualAcuityResult());
 
         if (ophthalmologySurgeryForm.getRightSphere() != null)
             ophthalmologySurgery.setRightSphere(ophthalmologySurgeryForm.getRightSphere());
