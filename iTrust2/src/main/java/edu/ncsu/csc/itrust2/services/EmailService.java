@@ -65,7 +65,7 @@ public class EmailService extends Service {
     public static boolean isEmail(String email) {
         boolean validation = false;
 
-        if (email.isEmpty()) {
+        if (email == null || email.isEmpty()) {
             return false;
         }
 
