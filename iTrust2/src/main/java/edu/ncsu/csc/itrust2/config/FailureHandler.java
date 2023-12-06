@@ -188,8 +188,8 @@ public class FailureHandler extends SimpleUrlAuthenticationFailureHandler {
         final User user = userService.findByName(username);
         if (null != user) {
             emailService.sendEmail(
-                    username,
                     "iTrust2 System",
+                    username,
                     "Your account has beeen locked out",
                     "Your iTrust2 account has been locked out due to too many failed log in"
                             + " attempts.");

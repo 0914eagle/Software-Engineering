@@ -85,7 +85,10 @@ public class OfficeVisit extends DomainObject {
     private Long id;
 
     /** The type of this office visit */
-    @Schema(description = "병원 방문의 이유입니다. General Checkup, General ophthalmology, Ophthalmology Surgery가 선택가능합니다.")
+    @Schema(
+            description =
+                    "병원 방문의 이유입니다. General Checkup, General ophthalmology, Ophthalmology Surgery가"
+                            + " 선택가능합니다.")
     @Setter
     @NotNull @Enumerated(EnumType.STRING)
     private AppointmentType type;
@@ -108,7 +111,8 @@ public class OfficeVisit extends DomainObject {
 
     /** The notes of this office visit */
     @Schema(description = "의사가 작성한 노트입니다.")
-    @Setter private String notes;
+    @Setter
+    private String notes;
 
     /** The appointment of this office visit */
     @Schema(description = "사전 예약된 방문인 경우 해당 예약의 id입니다.")

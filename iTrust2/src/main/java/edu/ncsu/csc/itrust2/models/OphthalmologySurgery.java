@@ -50,7 +50,8 @@ public class OphthalmologySurgery extends DomainObject {
     private Float rightCylinder;
 
     @Schema(description = "환자가 받은 수술의 종류입니다.")
-    @NotNull @Setter private OphthalmologySurgeryType surgeryType;
+    @NotNull @Setter
+    private OphthalmologySurgeryType surgeryType;
 
     @Schema(description = "수술을 받은 환자입니다.")
     @Setter

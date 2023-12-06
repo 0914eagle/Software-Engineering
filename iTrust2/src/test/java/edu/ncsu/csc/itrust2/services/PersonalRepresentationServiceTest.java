@@ -168,9 +168,7 @@ public class PersonalRepresentationServiceTest {
         mockpersonalRepresentationService.setPersonalRepresentation(
                 patientUsername, currentUsername);
 
-        given(
-                        mockpersonalRepresentationService.isRepresentative(
-                                currentUsername, patientUsername))
+        given(mockpersonalRepresentationService.isRepresentative(currentUsername, patientUsername))
                 .willReturn(true);
         given(basicHealthMetricsService.findByPatient(patient)).willReturn(expectedHealthMetrics);
 
@@ -180,9 +178,7 @@ public class PersonalRepresentationServiceTest {
 
         mockpersonalRepresentationService.cancelPersonalRepresentation(
                 patientUsername, currentUsername);
-        given(
-                        mockpersonalRepresentationService.isRepresentative(
-                                currentUsername, patientUsername))
+        given(mockpersonalRepresentationService.isRepresentative(currentUsername, patientUsername))
                 .willReturn(false);
         try {
             apiController.listPatientMedicalRecords(patientUsername);
@@ -213,22 +209,17 @@ public class PersonalRepresentationServiceTest {
                 patientUsername, currentUsername);
 
         given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
-        given(
-                        mockpersonalRepresentationService.isRepresentative(
-                                currentUsername, patientUsername))
+        given(mockpersonalRepresentationService.isRepresentative(currentUsername, patientUsername))
                 .willReturn(true);
 
         lenient().when(diagnosisService.findByPatient(patient)).thenReturn(expectedDiagnoses);
 
-        List<Diagnosis> actualDiagnoses =
-                apiController.listPatientDiagnoses(patientUsername);
+        List<Diagnosis> actualDiagnoses = apiController.listPatientDiagnoses(patientUsername);
         assertEquals(expectedDiagnoses, actualDiagnoses);
 
         mockpersonalRepresentationService.cancelPersonalRepresentation(
                 patientUsername, currentUsername);
-        given(
-                        mockpersonalRepresentationService.isRepresentative(
-                                currentUsername, patientUsername))
+        given(mockpersonalRepresentationService.isRepresentative(currentUsername, patientUsername))
                 .willReturn(false);
         try {
             apiController.listPatientDiagnoses(patientUsername);
