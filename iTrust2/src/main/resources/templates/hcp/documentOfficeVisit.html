@@ -81,9 +81,7 @@
                 $scope.threeAndUp = false;
                 $scope.twelveAndUp = false;
 
-                /**
-                 * Validates birthdate here when patient is selected.
-                 */
+
                 $scope.patientSelect = function (patient) {
                     if (!$scope.visit) {
                         return;
@@ -95,13 +93,11 @@
                         if ($scope.visit.actualPatient) {
                             patient = $scope.visit.actualPatient;
                         } else {
-                            // We don't have enough information to continue
                             return;
                         }
                     }
 
                     if (!patient.dateOfBirth) {
-                        // We don't know DoB so submit everything
                         $scope.three = true;
                         $scope.threeAndUp = true;
                         $scope.twelveAndUp = true;
@@ -170,7 +166,6 @@
                         $scope.tech = response.data;
                         const techLength = $scope.tech.length;
                         for (i = 0; i < techLength; i++) {
-                            //passing to inner loop taken from https://stackoverflow.com/questions/17244614/passing-variable-to-promise-in-a-loop
                             (function (i) {
                                 $http.get("/iTrust2/api/v1/labprocedures/byUser/" + $scope.tech[i].self.username).then(
                                     function (response) {
