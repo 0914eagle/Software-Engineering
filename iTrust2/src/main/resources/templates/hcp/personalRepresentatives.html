@@ -69,6 +69,7 @@
 
             $scope.checkPR = function (patient) {
                 $scope.curPatient = patient;
+                $scope.searchPatients = [];
                 $http.get('/iTrust2/api/v1/patients/' + patient + '/personalRepresentatives')
                     .then(function (response) {
                         $scope.personalRepresentatives = response.data;
@@ -125,6 +126,12 @@
                         // });
                     }
                 }
+            };
+
+            $scope.isAlready = function(patient) {
+                return $scope.personalRepresentatives.some(function(pr) {
+                    return pr.personalRepresentative.username === patient.username;
+                });
             };
 
             $scope.declareRepresentative = function (declarePR) {
@@ -190,7 +197,7 @@
                                             <button type="button" ng-click="search()">Search</button>
                                             <!-- Table of Patients -->
                                             <table ng-if="searchPatients.length > 0" style="margin-top: 10px; margin-left: 5px;">
-                                                <tr ng-repeat="patient in searchPatients">
+                                                <tr ng-repeat="patient in searchPatients" ng-if="patient.username !== curPatient && !isAlready(patient)">
                                                     <td style="padding-top: 3px">{{patient.username}}</td>
                                                     <td style="padding-top: 3px; padding-left: 30px">
                                                         <a ng-click="declareRepresentative(patient.username)">

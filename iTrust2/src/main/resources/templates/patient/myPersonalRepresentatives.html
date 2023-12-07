@@ -42,6 +42,21 @@
             $scope.myPRs = [];
             $scope.selectedTab = 'declareTab';
 
+            $scope.me = "";
+
+            $scope.getMyName = function() {
+                $http.get("/iTrust2/api/v1/patient").then(
+                    function (response) {
+                        $scope.me = response.data.username;
+                        console.log('my name is : ', $scope.me);
+                    }
+                ).catch( function (error) {
+                    console.log('error getting my username: ', error);
+                });
+            }
+
+            $scope.getMyName();
+
             $scope.getMyPersonalRepresentatives = function () {
                 $http.get("/iTrust2/api/v1/personalRepresentatives").then(
                     function (response) {
@@ -82,7 +97,6 @@
                                     $scope.message = 'No data found for the given search term.';
                                 } else {
                                     $scope.message = '';
-                                    alert("okay")
                                 }
                             });
                         // .catch(function (rejection) {
@@ -91,6 +105,12 @@
                         // });
                     }
                 }
+            };
+
+            $scope.isAlready = function(patient) {
+                return $scope.myPRs.some(function(pr) {
+                    return pr.personalRepresentative.username === patient.username;
+                });
             };
 
             $scope.getSelectedUsernames = function() {
@@ -160,7 +180,7 @@
                                         <button type="button" ng-click="search()">Search</button>
                                         <!-- Table of Patients -->
                                         <table ng-if="patients.length > 0" style="margin-top: 10px; margin-left: 5px;">
-                                            <tr ng-repeat="patient in patients">
+                                            <tr ng-repeat="patient in patients" ng-if="patient.username !== me && !isAlready(patient)">
                                                 <td style="padding-top: 3px">{{patient.username}}</td>
                                                 <td style="padding-top: 3px; padding-left: 30px">
                                                     <a ng-click="declareRepresentative(patient.username)">
