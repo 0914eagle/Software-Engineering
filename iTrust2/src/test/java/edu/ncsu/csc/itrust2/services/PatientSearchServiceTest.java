@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,11 +49,7 @@ public class PatientSearchServiceTest {
         List<Patient> expectedPatients = new ArrayList<>();
         expectedPatients.add(patient);
 
-        given(
-                        patientRepository
-                                .findAllByFirstNameContainsOrLastNameContainsOrUsernameContains(
-                                        eq(patientName), eq(patientName), eq(patientName)))
-                .willReturn(expectedPatients);
+        given(patientRepository.findAll()).willReturn(expectedPatients);
 
         List<Patient> result = patientSearchService.listByPatientName(patientName);
 

@@ -114,4 +114,16 @@ public class HCPController {
 
         return "hcp/hcp_details"; // Assuming the Thymeleaf template is in "er" directory
     }
+
+    @GetMapping("/hcp/personalRepresentatives")
+    @PreAuthorize("hasRole('ROLE_HCP')")
+    public String viewPersonalRepresentatives(final Model model) {
+        return "hcp/personalRepresentatives";
+    }
+
+    @GetMapping("/hcp/editOfficeVisit")
+    @PreAuthorize("hasRole('ROLE_OPH')")
+    public String viewEditOfficeVisit(final Model model) {
+        return "hcp/editOfficeVisit";
+    }
 }

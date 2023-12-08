@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{::script})">
+    <title>Personal Representatives</title>
+    <script th:src="@{/js/dateTimeService.js}" src="../js/dateTimeService.js"></script>
+    <style>
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+    <script th:inline="javascript">
+        const pattern = new RegExp('[a-zA-Z0-9-]*');
+
+    </script>
+    <script th:inline="javascript">
+
+        const app = angular.module("manageRepresentingPatientsApp", []);
+
+        app.filter('humanize', function () {
+            return function (input) {
+                return input.toLowerCase().split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+                    .join(' ');
+            }
+        });
+
+        // Function to check if a value is not empty
+        function isNotEmpty(value) {
+            return value !== undefined && value !== null && value.trim() !== '';
+        }
+
+        app.controller('manageRepresentingPatientsCtrl', function ($scope, $http) {
+            $scope.myRepresentingPatients = [];
+            $scope.selectedTab = 'logTab';
+            $scope.curPatient = ''
+
+            $scope.getRepresentingPatients = function () {
+                $http.get("/iTrust2/api/v1/representingPatients").then(
+                    function (response) {
+                        $scope.myRepresentingPatients = response.data;
+                        if ($scope.myRepresentingPatients.length === 0) {
+                            $scope.message = 'No data found for the given search term.'
+                        } else {
+                            $scope.message = '';
+                        }
+                    }
+                );
+            }
+
+            $scope.getRepresentingPatients();
+
+            $scope.setPatient = function (patient) {
+                $scope.curPatient = patient;
+                $scope.getAccessLogs();
+                $scope.getMedicalRecords();
+                $scope.getDiagnoses();
+                $scope.getAppointments();
+            }
+
+            $scope.unDeclareRepresentative = function (unDeclarePR) {
+                $http.delete('/iTrust2/api/v1/representingPatients/' + unDeclarePR)
+                    .then(function (response) {
+                        console.log('UnDeclare PR: ', unDeclarePR);
+                        $scope.getRepresentingPatients();
+                    })
+                    .catch(function (error) {
+                        console.error('Error declaring PR: ', error);
+                    });
+            }
+
+            $scope.log = [];
+            $scope.isPatient = false;
+
+            $scope.getAccessLogs = function () {
+                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/logs").then(function (response) {
+                    $scope.logs = response.data;
+                    if ($scope.logs.length > 0) {
+                        $scope.isPatient = $scope.logs[0].isPatient;
+                    }
+                }).catch(function (error) {
+                    console.error('Error get representingPatient logs: ', error);
+                });
+            }
+
+            $scope.medicalRecords = [];
+
+            $scope.getMedicalRecords = function () {
+                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/basic-medicalRecords").then(function (response) {
+                    $scope.medicalRecords = response.data;
+                }).catch(function (error) {
+                    console.error('Error get representingPatient medicalRecords: ', error);
+                });
+            }
+
+            $scope.diagnoses = [];
+
+            $scope.getDiagnoses = function () {
+                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/diagnoses").then(function (response) {
+                    $scope.diagnoses = response.data;
+                }).catch(function (error) {
+                    console.error('Error get representingPatient diagnoses: ', error);
+                });
+            }
+
+            $scope.appointments = [];
+
+            $scope.getAppointments = function () {
+                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/appointments").then(function (response) {
+                    $scope.appointments = response.data;
+                }).catch(function (error) {
+                    console.error('Error get representingPatient appointments: ', error);
+                });
+            }
+        });
+
+
+    </script>
+
+    <div ng-app="manageRepresentingPatientsApp" ng-controller="manageRepresentingPatientsCtrl">
+        <div class="container">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h2>My Representing Patients</h2>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="col-md-2">
+                    <table ng-if="myRepresentingPatients.length > 0" style="margin-top: 4px; margin-left: 15px">
+                        <tr ng-repeat="rp in myRepresentingPatients">
+                            <td style="padding-top: 3px">
+                                <a ng-click="setPatient(rp.patient.username)" ng-style="{'color': rp.patient.username === curPatient ? 'blue' : 'black'}">
+                                    {{rp.patient.username}}
+                                </a>
+                            </td>
+                            <td style="padding-top: 3px; padding-left: 30px">
+                                <a ng-click="unDeclareRepresentative(rp.patient.username)">
+                                    Undeclare
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-10" style="border-left: 1px solid #5e5e5e; height: 500px; padding-top: 5px">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <ul class="nav nav-tabs">
+                                <li ng-class="{ 'active': selectedTab === 'logTab' }">
+                                    <a href="#" ng-click="selectedTab = 'logTab'; getAccessLog();" >Access Logs</a>
+                                </li>
+                                <li ng-class="{ 'active': selectedTab === 'recordTab' }">
+                                    <a href="#" ng-click="selectedTab = 'recordTab'; getMedicalRecords();">Medical Records</a>
+                                </li>
+                                <li ng-class="{ 'active': selectedTab === 'diagnosesTab' }">
+                                    <a href="#" ng-click="selectedTab = 'diagnosesTab'; getDiagnoses();">Diagnoses</a>
+                                </li>
+                                <li ng-class="{ 'active': selectedTab === 'appointmentsTab' }">
+                                    <a href="#" ng-click="selectedTab = 'appointmentsTab'; getAppointments()">Appointments</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-body">
+                            <div id="logTab" class="tab" ng-show="selectedTab === 'logTab'">
+                                <form name="log">
+                                    <table ng-if="logs.length > 0" class="table table-bordered" name="log_table">
+                                        <thead>
+                                        <tr>
+                                            <th>Transaction Type</th>
+                                            <th>Primary User</th>
+                                            <th>Secondary User</th>
+                                            <th>Date & Time</th>
+                                            <th ng-if="ctrl.isPatient">Role</th>
+                                        </tr>
+                                        </thead>
+
+                                        <!-- log entry for every row, ordered by date -->
+                                        <tbody>
+                                        <tr name="logTableRow" ng-repeat="l in logs">
+                                            <td name="transactionTypeCell">{{l.logCode}}</td>
+                                            <td name="primaryUserCell">{{l.primaryUser}}</td>
+                                            <td name="secondaryUserCell">{{l.secondaryUser}}</td>
+                                            <td name="dateCell">{{l.time | date : 'EEE MMM dd
+                                                h:mm:ss a yyyy'}}
+                                            </td>
+                                            <td ng-if="ctrl.isPatient" name="roleCell">{{l.role}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                            <div id="recordTab" class="tab" ng-show="selectedTab === 'recordTab'">
+                                <form name="record">
+                                    <table ng-if="medicalRecords.length > 0" class="table table-bordered" name="record_table">
+                                        <thead>
+                                        <tr>
+                                            <th>Height/Length</th>
+                                            <th>Weight</th>
+                                            <th>Head Circumference</th>
+                                            <th>Diastolic</th>
+                                            <th>HDL</th>
+                                            <th>LDL</th>
+                                            <th>Triglycerides</th>
+                                            <th>Household Smoking Status</th>
+                                            <th>Patient Smoking Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr name="recordTableRow" ng-repeat="mr in medicalRecords">
+                                            <td>{{mr.height}}</td>
+                                            <td>{{mr.weight}}</td>
+                                            <td>{{mr.headCircumference}}</td>
+                                            <td>{{mr.diastolic}}</td>
+                                            <td>{{mr.hdl}}</td>
+                                            <td>{{mr.ldl}}</td>
+                                            <td>{{mr.tri}}</td>
+                                            <td>{{mr.houseSmokingStatus}}</td>
+                                            <td>{{mr.patientSmokingStatus}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                            <div id="diagnosesTab" class="tab" ng-show="selectedTab === 'diagnosesTab'">
+                                <form name="diagnoses">
+                                    <table ng-if="diagnoses.length > 0" class="table table-bordered" name="diagnose_table">
+                                        <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>HCP</th>
+                                            <th>ICD-10 Code</th>
+                                            <th>Description</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr name="diagnoseTableRow" ng-repeat="d in diagnoses">
+                                            <td name="date">{{getDate(d.visit.date)}}</td>
+                                            <td name="hcp">{{d.visit.hcp.username}}</td>
+                                            <td name="code">{{d.code.code}}</td>
+                                            <td name="description">{{d.code.description}}</td>
+                                            <td name="note">{{d.note}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                            <div id="appointmentsTab" class="tab" ng-show="selectedTab === 'appointmentsTab'">
+                                <form name="appointments">
+                                    <table ng-if="appointments.length > 0" class="table table-bordered" name="appointments_table">
+                                        <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>Time</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr name="appointmentTableRow" ng-repeat="appt in appointments">
+                                            <td name="typeCell">{{appt.type | humanize}}</td>
+                                            <td name="dateCell">{{appt.date | date : 'MM/dd/yyyy'}}</td>
+                                            <td name="timeCell">{{appt.date | date : 'shortTime'}}</td>
+                                            <td name="statusCell">{{appt.status | humanize}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title}, links=~{})">
+  <title>Emergency Responder Home</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+  <script th:inline="javascript">
+    var app = angular.module('emergencyResponderApp', []);
+
+    app.controller('emergencyResponderController', function ($scope, $http) {
+      $scope.searchTerm = '';
+      $scope.patients = [];
+      $scope.message = 'Welcome';
+      $scope.showPatientDetails = false;
+
+      $scope.search = function () {
+        var searchTermRegex = /^[A-Za-z\-\'\s]{1,30}$/;
+        if (!searchTermRegex.test($scope.searchTerm.trim())) {
+          $scope.message = 'Wrong Format. Please enter a valid search term.';
+          $scope.patients = [];
+        }
+        else {
+          if (!$scope.searchTerm.trim()) {
+            $scope.message = 'No data found. Please enter a search term.';
+            $scope.patients = [];
+          } else {
+            $http.get('/iTrust2/api/v1/patientSearch', {params: {nameQuery: $scope.searchTerm}})
+                    .then(function (response) {
+                      $scope.patients = response.data; //filterPatients(response.data, $scope.searchTerm);
+                      if ($scope.patients.length === 0) {
+                        $scope.message = 'No data found for the given search term.';
+                      } else {
+                        $scope.message = '';
+                      }
+                    })
+                    .catch(function (rejection) {
+                      $scope.message = 'Unable to get the patient data.';
+                      $scope.patients = [];
+                    });
+          }
+        }
+      };
+
+      $scope.navigateToPatientDetail = function (patient) {
+        window.location.href = '/iTrust2/er/patient_detail/' + patient.username;
+      };
+
+      function filterPatients(data, searchTerm) {
+        return data.filter(function (patient) {
+          return patient.username.includes(searchTerm) || patient.patientname.includes(searchTerm);
+        });
+      }
+    });
+  </script>
+
+  <div ng-app="emergencyResponderApp" ng-controller="emergencyResponderController">
+    <h1>Welcome to iTrust2 - Emergency Responder</h1>
+
+    <!-- Search bar and button -->
+    <form>
+      <input type="text" ng-model="searchTerm" placeholder="Enter your search term"/>
+      <button type="button" ng-click="search()">Search</button>
+    </form>
+
+    <!-- Page states -->
+    <p style="color: black">{{message}}</p>
+
+    <!-- Table of Patients -->
+    <table ng-if="patients.length > 0">
+      <tr>
+        <th>Username</th>
+        <th>Patient Name</th>
+        <th>Select</th>
+      </tr>
+      <tr ng-repeat="patient in patients">
+        <td>{{patient.username}}</td>
+        <td>{{patient.firstName + " " + patient.lastName}}</td>
+        <td>
+          <a ng-click="navigateToPatientDetail(patient)">
+            Select
+          </a>
+        </td>
+      </tr>
+    </table>
+
+
+  </div>
+</div>
+</body>
+</html>

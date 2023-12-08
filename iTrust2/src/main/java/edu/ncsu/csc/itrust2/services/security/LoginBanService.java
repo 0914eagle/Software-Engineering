@@ -4,11 +4,10 @@ import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.security.LoginBanRepository;
 import edu.ncsu.csc.itrust2.services.Service;
 
-import javax.transaction.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional

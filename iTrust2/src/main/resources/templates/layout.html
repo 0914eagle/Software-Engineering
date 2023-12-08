@@ -180,6 +180,8 @@
                                id="viewFoodDiary-hcp">Food Diary</a></li>
                         <li><a href="/iTrust2/hcp/search_hcp"
                                id="search-hcp">Search Patient</a></li> <!--link for search patient in hcp-->
+                        <li><a href="/iTrust2/hcp/personalRepresentatives"
+                               id="personalRepresentatives">Personal Representatives</a></li>
                     </ul>
                 </li>
                 <li class="dropdown"><a class="dropdown-toggle"
@@ -195,6 +197,20 @@
                 </li>
             </ul>
 
+            <!--ER dropdown-->
+            <ul th:if="${#httpServletRequest.requestURI == '/iTrust2/er/index'}" id="er-dropdown" class="nav navbar-nav">
+                <li class="dropdown"><a class="dropdown-toggle"
+                                        data-toggle="dropdown" href="#" id="erPatientDropDown">Patient<span
+                        class="caret"></span></a>
+                    <ul class="dropdown-menu">
+
+                        <li><a href="/iTrust2/er/search_er"
+                               id="search-er">Search Patient</a></li> <!--link for search patient in hcp-->
+
+                    </ul>
+                </li>
+            </ul>
+
 
             <!-- Patient dropdown -->
             <ul id="patient-dropdown" class="nav navbar-nav">
@@ -203,6 +219,10 @@
                     <ul class="dropdown-menu">
                         <li><a href="/iTrust2/patient/foodDiary"
                                id="viewFoodDiary">Food Diary</a></li>
+                        <li><a href="/iTrust2/patient/myPersonalRepresentatives"
+                               id="viewMyPR">My Personal Representatives</a></li>
+                        <li><a href="/iTrust2/patient/myRepresentingPatients"
+                               id="viewMyPatient">My Representing Patients</a></li>
                     </ul>
                 </li>
                 <li class="dropdown"><a class="dropdown-toggle"
@@ -234,6 +254,7 @@
                 <li><a
                         href="https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8">View
                     Source</a></li>
+                <li><a href="/iTrust2/viewEmails">Email</a></li>
             </ul>
             <div th:if="${#httpServletRequest.remoteUser != null}">
                 <form class="navbar-form navbar-right" th:action="@{/logout}"

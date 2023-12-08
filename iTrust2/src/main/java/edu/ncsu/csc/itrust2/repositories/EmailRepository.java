@@ -11,4 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EmailRepository extends JpaRepository<Email, Long> {
 
     List<Email> findByReceiver(@NotNull User receiver);
+
+    List<Email> findBySender(@NotNull String sender);
 }

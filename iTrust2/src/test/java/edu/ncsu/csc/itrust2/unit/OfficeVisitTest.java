@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-import javax.transaction.Transactional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
@@ -95,11 +95,11 @@ public class OfficeVisitTest {
 
         basicHealthMetricsService.save(bhm);
 
-        visit.setBasicHealthMetrics(bhm);
         visit.setType(AppointmentType.GENERAL_CHECKUP);
         visit.setHospital(hosp);
         visit.setPatient(userService.findByName("AliceThirteen"));
         visit.setHcp(userService.findByName("AliceThirteen"));
+        visit.setBasicHealthMetrics(bhm);
         visit.setDate(ZonedDateTime.now());
         officeVisitService.save(visit);
 

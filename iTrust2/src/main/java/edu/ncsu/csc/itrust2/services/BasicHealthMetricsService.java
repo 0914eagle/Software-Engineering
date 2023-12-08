@@ -2,13 +2,15 @@ package edu.ncsu.csc.itrust2.services;
 
 import edu.ncsu.csc.itrust2.forms.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.BasicHealthMetrics;
+import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.repositories.BasicHealthMetricsRepository;
 
-import javax.transaction.Transactional;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
@@ -40,5 +42,9 @@ public class BasicHealthMetricsService extends Service {
         bhm.setWeight(ovf.getWeight());
 
         return bhm;
+    }
+
+    public List<BasicHealthMetrics> findByPatient(User patient) {
+        return basicHealthMetricsRepository.findByPatient(patient);
     }
 }

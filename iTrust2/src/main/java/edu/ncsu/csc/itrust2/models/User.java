@@ -13,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -49,7 +50,7 @@ public class User extends DomainObject {
      * @param username Username
      * @param password The _already encoded_ password of the user.
      * @param role Role of the user
-     * @param enabled 1 if the user is enabled 0 if not
+     * @param enabled 1 if the user is enabled 0 if not (uc23-optional) email length = 100
      */
     protected User(
             final String username, final String password, final Role role, final Integer enabled) {
@@ -75,6 +76,19 @@ public class User extends DomainObject {
         setRoles(form.getRoles().stream().map(Role::valueOf).collect(Collectors.toSet()));
     }
 
+    protected User(
+            final String username,
+            final String password,
+            final Role role,
+            final Integer enabled,
+            final String email) {
+        setUsername(username);
+        setPassword(password);
+        addRole(role);
+        setEnabled(enabled);
+        setEmail(email);
+    }
+
     /** The username of the user */
     @Setter // TODO: remove
     @Id
@@ -94,6 +108,12 @@ public class User extends DomainObject {
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    /** uc23: The email of the user* */
+    @Setter
+    @Email
+    @Column(length = 100, nullable = true)
+    private String email;
 
     /**
      * Set the roles of this user. Throws an exception if the Set of roles provided contains either

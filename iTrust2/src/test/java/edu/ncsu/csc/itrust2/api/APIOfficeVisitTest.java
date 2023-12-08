@@ -22,12 +22,12 @@ import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.BasicHealthMetricsService;
 import edu.ncsu.csc.itrust2.services.HospitalService;
+import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
 import edu.ncsu.csc.itrust2.services.OfficeVisitService;
 import edu.ncsu.csc.itrust2.services.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
-import javax.transaction.Transactional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,6 +41,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertEquals;
@@ -75,6 +76,8 @@ public class APIOfficeVisitTest {
     @Autowired private HospitalService hospitalService;
 
     @Autowired private BasicHealthMetricsService bhmService;
+
+    @Autowired private OfficeVisitMutationService officeVisitMutationService;
 
     /** Sets up test */
     @Before
@@ -216,7 +219,7 @@ public class APIOfficeVisitTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
 
         /* Test getForHCP and getForHCPAndPatient */
-        OfficeVisit v = officeVisitService.build(visit);
+        OfficeVisit v = officeVisitMutationService.create(visit);
         List<OfficeVisit> vList = officeVisitService.findByHcp(v.getHcp());
         assertEquals(vList.get(0).getHcp(), v.getHcp());
         vList = officeVisitService.findByHcpAndPatient(v.getHcp(), v.getPatient());
@@ -233,7 +236,7 @@ public class APIOfficeVisitTest {
         visit.setSystolic(102);
         visit.setTri(150);
         visit.setWeight(175.2f);
-        v = officeVisitService.build(visit);
+        v = officeVisitMutationService.create(visit);
 
         /* Test that all fields have been filled successfully */
         assertNotNull(v);
@@ -369,7 +372,7 @@ public class APIOfficeVisitTest {
         userService.save(patient2);
         patient2.setDateOfBirth(LocalDate.of(2040, 6, 15));
         visit.setPatient(patient2.getUsername());
-        v = officeVisitService.build(visit);
+        v = officeVisitMutationService.create(visit);
         assertNotNull(v);
 
         /* Create appointment with patient younger than 3 years old */
@@ -378,7 +381,7 @@ public class APIOfficeVisitTest {
         userService.save(patient3);
         visit.setHeadCircumference(20.0f);
         visit.setPatient(patient3.getUsername());
-        v = officeVisitService.build(visit);
+        v = officeVisitMutationService.create(visit);
         assertNotNull(v);
 
         /*

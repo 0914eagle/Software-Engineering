@@ -5,6 +5,7 @@ import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.security.LoginAttempt;
 import edu.ncsu.csc.itrust2.models.security.LoginBan;
 import edu.ncsu.csc.itrust2.models.security.LoginLockout;
+import edu.ncsu.csc.itrust2.services.EmailService;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.services.security.LoginAttemptService;
 import edu.ncsu.csc.itrust2.services.security.LoginBanService;
@@ -47,6 +48,8 @@ public class FailureHandler extends SimpleUrlAuthenticationFailureHandler {
     private final LoginAttemptService loginAttemptService;
 
     private final UserService userService;
+
+    private final EmailService emailService;
 
     @Override
     public void onAuthenticationFailure(
@@ -184,9 +187,13 @@ public class FailureHandler extends SimpleUrlAuthenticationFailureHandler {
     private void sendEmail(final String username) {
         final User user = userService.findByName(username);
         if (null != user) {
-            emailUtil.sendEmail(
-                    user,
-                    "iTrust2: Your account has beeen locked out",
+            loggerUtil.log(
+                    TransactionType.ACC_LOCKOUT_EMAIL_NOTICE,
+                    loggerUtil.getCurrentUsername());
+            emailService.sendEmail(
+                    "iTrust2 System",
+                    username,
+                    "Your account has beeen locked out",
                     "Your iTrust2 account has been locked out due to too many failed log in"
                             + " attempts.");
             loggerUtil.log(TransactionType.CREATE_LOCKOUT_EMAIL, username);

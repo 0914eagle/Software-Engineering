@@ -201,16 +201,18 @@ public enum TransactionType {
     /** OPH viewed upcoming appointment */
     OPH_VIEW_UPCOMING_APPOINTMENT(2001, "OPH viewed upcoming appointment", true),
     /** Patient requests ophthalmology appointment */
-    PATIENT_REQ_OPH_APPT(2010, "Patient requests ophthalmology appointment", false),
-    /** OPH viewed upcoming appointment */
-    OPH_VIEWS_APPT_REQ(2011, "OPH viewed upcoming appointment", true),
+    PATIENT_REQ_OPH_APPT(2010, "Patient requests ophthalmology appointment", true),
+    /** OPH viewed pending ophthalmology appointment */
+    OPH_VIEWS_APPT_REQ(2011, "HCP viewed pending ophthalmology appointment", true),
+    /** Patient viewed pending ophthalmology appointment */
+    PATIENT_VIEWS_APPT_REQ(2011, "Patient viewed pending ophthalmology appointment", true),
     /** Patient deletes ophthalmology appointment request */
     PATIENT_DELETES_OPH_APPT_REQUEST(
-            2012, "Patient deletes ophthalmology appointment request", false),
+            2012, "Patient deletes ophthalmology appointment request", true),
     /** Patient requests ophthalmology appointment */
-    PATIENT_REQ_OPH_SURG(2013, "Patient requests ophthalmology surgery", false),
+    PATIENT_REQ_OPH_SURG(2010, "Patient requests ophthalmology surgery", true),
     /** Patient deletes ophthalmology surgery */
-    PATIENT_DELETES_OPH_SURG(2013, "Patient deletes ophthalmology surgery", false),
+    PATIENT_DELETES_OPH_SURG(2012, "Patient deletes ophthalmology surgery", true),
     /** OPH approves appointment request */
     OPH_APPT_REQ_APPROVED(2020, "OPH approves appointment request", true),
     /** OPH denies appointment request */
@@ -245,6 +247,14 @@ public enum TransactionType {
 
     /** ophthalmology surgery is deleted */
     OPHTHALMOLOGY_SURGERY_DELETE(2211, "ophthalmology surgery deleted", true),
+
+    /** UC23 Email **/
+    PATIENT_VIEWS_EMAIL_ENTITY(2301, "Patient views his/her email entity", true),
+    APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE(2302, "Appointment/Surgery request email notification sent", true),
+    ACC_LOCKOUT_EMAIL_NOTICE(2303, "Account Lockout email notification sent", true),
+    PR_EMAIL_NOTICE(2304, "Personal representative email notification sent", true),
+    USER_TO_USER_EMAIL(2305, "User sends an email to another user", true),
+
     /** Blood Sugar Diary entry is created */
     CREATE_BLOOD_SUGAR_DIARY(2501, "Blood Sugar Diary Entry Created", true),
     /** Patient views their blood sugar diary entries */

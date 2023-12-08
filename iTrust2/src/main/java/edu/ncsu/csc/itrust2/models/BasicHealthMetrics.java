@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import lombok.Setter;
  * @author Matthew Gray
  * @author Kai Presler-Marshall
  */
+@Schema(description = "환자의 기본적인 건강 정보입니다.")
 @NoArgsConstructor
 @Getter
 @Entity
@@ -31,6 +33,7 @@ import lombok.Setter;
 public class BasicHealthMetrics extends DomainObject {
 
     /** ID of the AppointmentRequest */
+    @Schema(description = "고유 아이디입니다.")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,48 +42,62 @@ public class BasicHealthMetrics extends DomainObject {
      * Height or length of the person. Up to a 3-digit number and potentially one digit of decimal
      * precision. > 0
      */
+    @Schema(description = "환자의 신장입니다.")
     private Float height;
 
     /**
      * Weight of the person. Up to a 3-digit number and potentially one digit of decimal precision.
      * > 0
      */
+    @Schema(description = "환자의 몸무게입니다.")
     private Float weight;
 
     /**
      * Head circumference of the person. Up to a 3-digit number and potentially one digit of decimal
      * precision. > 0
      */
+    @Schema(description = "환자의 머리 둘레입니다.")
     private Float headCircumference;
 
     /** Systolic blood pressure. 3-digit positive number. */
+    @Schema(description = "수축기 혈압입니다.")
     private Integer systolic;
 
     /** Diastolic blood pressure. 3-digit positive number. */
+    @Schema(description = "확장기 혈압입니다.")
     private Integer diastolic;
 
     /** HDL cholesterol. Between 0 and 90 inclusive. */
+    @Schema(description = "HDL 콜레스테롤 수치입니다.")
     private Integer hdl;
 
     /** LDL cholesterol. Between 0 and 600 inclusive. */
+    @Schema(description = "LDL 콜레스테롤 수치입니다.")
     private Integer ldl;
 
     /** Triglycerides cholesterol. Between 100 and 600 inclusive. */
+    @Schema(description = "Triglycerides 콜레스테롤 수치입니다.")
     private Integer tri;
 
     /** Smoking status of the patient's household. */
-    @Setter private HouseholdSmokingStatus houseSmokingStatus;
+    @Schema(description = "가정 내 흡연 상태입니다.")
+    @Setter
+    private HouseholdSmokingStatus houseSmokingStatus;
 
     /** Smoking status of the patient. */
-    @Setter private PatientSmokingStatus patientSmokingStatus;
+    @Schema(description = "환자 흡연 상태입니다.")
+    @Setter
+    private PatientSmokingStatus patientSmokingStatus;
 
     /** The Patient who is associated with this AppointmentRequest */
+    @Schema(description = "본 요청과 연관된 환자입니다.")
     @Setter
     @NotNull @ManyToOne
     @JoinColumn(name = "patient_id", columnDefinition = "varchar(100)")
     private User patient;
 
     /** The HCP who is associated with this AppointmentRequest */
+    @Schema(description = "본 요청과 연관된 의료진입니다.")
     @Setter
     @NotNull @ManyToOne
     @JoinColumn(name = "hcp_id", columnDefinition = "varchar(100)")
@@ -209,6 +226,51 @@ public class BasicHealthMetrics extends DomainObject {
                     "Triglycerides must be between 100 and 600 inclusive.");
         }
         this.tri = tri;
+    }
+
+    /**
+     * Validates an office visit form for containing correct fields for patients 12 and over.
+     * Expects the basic health metrics to already be set by the OfficeVisit constructor.
+     */
+    public void validate12AndOver() {
+        // should already be set in office visit constructor
+        if (getDiastolic() == null
+                || getHdl() == null
+                || getHeight() == null
+                || getHouseSmokingStatus() == null
+                || getLdl() == null
+                || getPatientSmokingStatus() == null
+                || getSystolic() == null
+                || getTri() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
+    }
+
+    /** Validates an office visit form for containing correct fields for patients 12 and under. */
+    public void validateUnder12() {
+        // should already be set in office visit constructor
+        if (getDiastolic() == null
+                || getHeight() == null
+                || getHouseSmokingStatus() == null
+                || getSystolic() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
+    }
+
+    /** Validates an office visit form for containing correct fields for patients 3 and under. */
+    public void validateUnder3() {
+        // should already be set in office visit constructor
+        if (getHeight() == null
+                || getHeadCircumference() == null
+                || getHouseSmokingStatus() == null
+                || getWeight() == null) {
+            throw new IllegalArgumentException(
+                    "Not all necessary fields for basic health metrics were submitted.");
+        }
     }
 
     @Override

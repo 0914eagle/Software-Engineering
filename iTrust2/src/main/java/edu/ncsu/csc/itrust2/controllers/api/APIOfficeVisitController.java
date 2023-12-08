@@ -4,6 +4,7 @@ import edu.ncsu.csc.itrust2.forms.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.User;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
+import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
 import edu.ncsu.csc.itrust2.services.OfficeVisitService;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class APIOfficeVisitController extends APIController {
 
     private final OfficeVisitService officeVisitService;
+
+    private final OfficeVisitMutationService officeVisitMutationService;
 
     private final UserService userService;
 
@@ -97,30 +100,13 @@ public class APIOfficeVisitController extends APIController {
     @PostMapping("/officevisits")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public ResponseEntity createOfficeVisit(@RequestBody final OfficeVisitForm visitForm) {
-        try {
-            final OfficeVisit visit = officeVisitService.build(visitForm);
+        final OfficeVisit visit = officeVisitMutationService.create(visitForm);
 
-            if (null != visit.getId() && officeVisitService.existsById(visit.getId())) {
-                return new ResponseEntity(
-                        errorResponse(
-                                "Office visit with the id " + visit.getId() + " already exists"),
-                        HttpStatus.CONFLICT);
-            }
-            officeVisitService.save(visit);
-            loggerUtil.log(
-                    TransactionType.GENERAL_CHECKUP_CREATE,
-                    loggerUtil.getCurrentUsername(),
-                    visit.getPatient().getUsername());
-            return new ResponseEntity(visit, HttpStatus.OK);
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity(
-                    errorResponse(
-                            "Could not validate or save the OfficeVisit provided due to "
-                                    + e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
+        loggerUtil.log(
+                TransactionType.GENERAL_CHECKUP_CREATE,
+                loggerUtil.getCurrentUsername(),
+                visit.getPatient().getUsername());
+        return new ResponseEntity(visit, HttpStatus.OK);
     }
 
     /**
@@ -133,30 +119,14 @@ public class APIOfficeVisitController extends APIController {
     @PutMapping("/officevisits/{id}")
     @PreAuthorize("hasRole('ROLE_HCP')")
     public ResponseEntity updateOfficeVisit(
+            // TODO: what is this never used `id`?
             @PathVariable final Long id, @RequestBody final OfficeVisitForm visitForm) {
-        try {
-            final OfficeVisit visit = officeVisitService.build(visitForm);
+        final OfficeVisit visit = officeVisitMutationService.update(visitForm);
 
-            if (null == visit.getId() || !officeVisitService.existsById(visit.getId())) {
-                return new ResponseEntity(
-                        errorResponse(
-                                "Office visit with the id " + visit.getId() + " doesn't exist"),
-                        HttpStatus.NOT_FOUND);
-            }
-            officeVisitService.save(visit);
-            loggerUtil.log(
-                    TransactionType.GENERAL_CHECKUP_EDIT,
-                    loggerUtil.getCurrentUsername(),
-                    visit.getPatient().getUsername());
-            return new ResponseEntity(visit, HttpStatus.OK);
-
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity(
-                    errorResponse(
-                            "Could not validate or save the OfficeVisit provided due to "
-                                    + e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
+        loggerUtil.log(
+                TransactionType.GENERAL_CHECKUP_EDIT,
+                loggerUtil.getCurrentUsername(),
+                visit.getPatient().getUsername());
+        return new ResponseEntity(visit, HttpStatus.OK);
     }
 }

@@ -50,6 +50,8 @@ dependencies {
     implementation("com.paulhammant:ngwebdriver:1.0")
     implementation("io.github.bonigarcia:webdrivermanager:3.6.2")
 
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+
     testImplementation("io.cucumber:cucumber-java:6.9.0")
     testImplementation("io.cucumber:cucumber-junit:6.9.0")
     testImplementation("io.cucumber:cucumber-spring:6.9.0")

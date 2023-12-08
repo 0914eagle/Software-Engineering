@@ -18,13 +18,13 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.services.DiagnosisService;
 import edu.ncsu.csc.itrust2.services.HospitalService;
 import edu.ncsu.csc.itrust2.services.ICDCodeService;
+import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
 import edu.ncsu.csc.itrust2.services.OfficeVisitService;
 import edu.ncsu.csc.itrust2.services.UserService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.transaction.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +41,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertTrue;
@@ -64,6 +65,8 @@ public class APIDiagnosisTest {
     @Autowired private ICDCodeService icdCodeService;
 
     @Autowired private OfficeVisitService officeVisitService;
+
+    @Autowired private OfficeVisitMutationService officeVisitMutationService;
 
     /** Sets up test */
     @Before
@@ -131,9 +134,7 @@ public class APIDiagnosisTest {
 
         form.setDiagnoses(list.stream().map(DiagnosisForm::new).toList());
 
-        final OfficeVisit visit = officeVisitService.build(form);
-
-        officeVisitService.save(visit);
+        final OfficeVisit visit = officeVisitMutationService.create(form);
 
         final OfficeVisit retrieved = (OfficeVisit) officeVisitService.findAll().get(0);
 

@@ -9,11 +9,12 @@ import edu.ncsu.csc.itrust2.repositories.AppointmentRequestRepository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.transaction.Transactional;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
@@ -30,19 +31,24 @@ public class AppointmentRequestService extends Service {
     }
 
     public List<AppointmentRequest> findByPatient(final User patient) {
-        return appointmentRequestRepository.findByPatient(patient);
+        return appointmentRequestRepository.findByPatientAndDateAfter(patient, ZonedDateTime.now());
     }
 
     public List<AppointmentRequest> findByHcp(final User hcp) {
-        return appointmentRequestRepository.findByHcp(hcp);
+        return appointmentRequestRepository.findByHcpAndDateAfter(hcp, ZonedDateTime.now());
     }
 
-    public List<AppointmentRequest> findByHcpAndPatient(final User hcp, final User patient) {
-        return appointmentRequestRepository.findByHcpAndPatient(hcp, patient);
+    public Optional<AppointmentRequest> findByHcpAndPatientAndDate(
+            final User hcp, final User patient, final ZonedDateTime date) {
+        return appointmentRequestRepository.findByHcpAndPatientAndDate(hcp, patient, date);
     }
 
     public AppointmentRequest build(final AppointmentRequestForm raf) {
         final AppointmentRequest ar = new AppointmentRequest();
+
+        if (raf.getId() != null) {
+            ar.setId(Long.parseLong(raf.getId()));
+        }
 
         ar.setPatient(userService.findByName(raf.getPatient()));
         ar.setHcp(userService.findByName(raf.getHcp()));

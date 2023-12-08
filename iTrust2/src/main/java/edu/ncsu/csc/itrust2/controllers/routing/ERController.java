@@ -61,4 +61,10 @@ public class ERController {
 
         return "er/patient_detail"; // Assuming the Thymeleaf template is in "er" directory
     }
+
+    @RequestMapping(value = "er/search_er")
+    @PreAuthorize("hasRole('ROLE_ER')")
+    public String viewERPatients(final Model model) {
+        return "er/search_er";
+    }
 }

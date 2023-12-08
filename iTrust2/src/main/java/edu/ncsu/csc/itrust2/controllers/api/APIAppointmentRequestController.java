@@ -3,14 +3,18 @@ package edu.ncsu.csc.itrust2.controllers.api;
 import edu.ncsu.csc.itrust2.forms.AppointmentRequestForm;
 import edu.ncsu.csc.itrust2.models.AppointmentRequest;
 import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
+import edu.ncsu.csc.itrust2.services.EmailService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,6 +51,8 @@ public class APIAppointmentRequestController extends APIController {
 
     private final UserService userService;
 
+    private final EmailService emailService;
+
     /**
      * Retrieves a list of all AppointmentRequests in the database
      *
@@ -55,19 +61,7 @@ public class APIAppointmentRequestController extends APIController {
     @GetMapping("/appointmentrequests")
     @PreAuthorize("hasAnyRole('ROLE_HCP')")
     public List<AppointmentRequest> getAppointmentRequests() {
-        final List<AppointmentRequest> requests = (List<AppointmentRequest>) service.findAll();
-
-        requests.stream()
-                .map(AppointmentRequest::getPatient)
-                .distinct()
-                .forEach(
-                        e ->
-                                loggerUtil.log(
-                                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                                        loggerUtil.getCurrentUsername(),
-                                        e.getUsername()));
-
-        return requests;
+        return (List<AppointmentRequest>) service.findAll();
     }
 
     /**
@@ -79,9 +73,43 @@ public class APIAppointmentRequestController extends APIController {
     @PreAuthorize("hasAnyRole('ROLE_PATIENT')")
     public List<AppointmentRequest> getAppointmentRequestsForPatient() {
         final User patient = userService.findByName(loggerUtil.getCurrentUsername());
-        return service.findByPatient(patient).stream()
-                .filter(e -> e.getStatus().equals(Status.PENDING))
-                .toList();
+        final List<AppointmentRequest> requests = service.findByPatient(patient);
+
+        requests.stream()
+                .map(AppointmentRequest::getHcp)
+                .distinct()
+                .forEach(
+                        hcp -> {
+                            List<AppointmentRequest> patientRequests =
+                                    requests.stream()
+                                            .filter(request -> request.getHcp().equals(hcp))
+                                            .toList();
+                            Set<String> logged = new HashSet<>();
+                            patientRequests.stream()
+                                    .map(AppointmentRequest::getType)
+                                    .distinct()
+                                    .forEach(
+                                            Type -> {
+                                                if (Type == AppointmentType.GENERAL_CHECKUP) {
+                                                    loggerUtil.log(
+                                                            TransactionType
+                                                                    .APPOINTMENT_REQUEST_VIEWED,
+                                                            patient,
+                                                            hcp);
+                                                } else {
+                                                    if (!logged.contains("oph")) {
+                                                        logged.add("oph");
+                                                        loggerUtil.log(
+                                                                TransactionType
+                                                                        .PATIENT_VIEWS_APPT_REQ,
+                                                                patient,
+                                                                hcp);
+                                                    }
+                                                }
+                                            });
+                        });
+
+        return requests.stream().filter(e -> e.getStatus().equals(Status.PENDING)).toList();
     }
 
     /**
@@ -112,10 +140,15 @@ public class APIAppointmentRequestController extends APIController {
     public ResponseEntity getAppointmentRequest(@PathVariable("id") final Long id) {
         final AppointmentRequest request = (AppointmentRequest) service.findById(id);
         if (null != request) {
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                    request.getPatient(),
-                    request.getHcp());
+            if (request.getType().equals(AppointmentType.GENERAL_CHECKUP)) {
+                loggerUtil.log(
+                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
+                        request.getPatient(),
+                        request.getHcp());
+            } else {
+                loggerUtil.log(
+                        TransactionType.OPH_VIEWS_APPT_REQ, request.getPatient(), request.getHcp());
+            }
 
             /* Patient can't look at anyone else's requests */
             final User self = userService.findByName(loggerUtil.getCurrentUsername());
@@ -158,10 +191,28 @@ public class APIAppointmentRequestController extends APIController {
                         HttpStatus.CONFLICT);
             }
             service.save(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_SUBMITTED,
-                    request.getPatient(),
-                    request.getHcp());
+            switch (request.getType()) {
+                case GENERAL_CHECKUP:
+                    loggerUtil.log(
+                            TransactionType.APPOINTMENT_REQUEST_SUBMITTED,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+
+                case GENERAL_OPHTHALMOLOGY:
+                    loggerUtil.log(
+                            TransactionType.PATIENT_REQ_OPH_APPT,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+
+                case OPHTHALMOLOGY_SURGERY:
+                    loggerUtil.log(
+                            TransactionType.PATIENT_REQ_OPH_SURG,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+            }
             return new ResponseEntity(request, HttpStatus.OK);
         } catch (final Exception e) {
             return new ResponseEntity(
@@ -198,10 +249,28 @@ public class APIAppointmentRequestController extends APIController {
         }
         try {
             service.delete(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_DELETED,
-                    request.getPatient(),
-                    request.getHcp());
+            switch (request.getType()) {
+                case GENERAL_CHECKUP:
+                    loggerUtil.log(
+                            TransactionType.APPOINTMENT_REQUEST_DELETED,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+
+                case GENERAL_OPHTHALMOLOGY:
+                    loggerUtil.log(
+                            TransactionType.PATIENT_DELETES_OPH_APPT_REQUEST,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+
+                case OPHTHALMOLOGY_SURGERY:
+                    loggerUtil.log(
+                            TransactionType.PATIENT_DELETES_OPH_SURG,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+            }
             return new ResponseEntity(id, HttpStatus.OK);
         } catch (final Exception e) {
             return new ResponseEntity(
@@ -249,20 +318,118 @@ public class APIAppointmentRequestController extends APIController {
             }
 
             service.save(request);
-            loggerUtil.log(
-                    TransactionType.APPOINTMENT_REQUEST_UPDATED,
-                    request.getPatient(),
-                    request.getHcp());
+
+            switch (request.getType()) {
+                case GENERAL_CHECKUP:
+                    loggerUtil.log(
+                            TransactionType.APPOINTMENT_REQUEST_UPDATED,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+
+                case GENERAL_OPHTHALMOLOGY:
+                case OPHTHALMOLOGY_SURGERY:
+                    loggerUtil.log(
+                            TransactionType.OPH_APPT_REQ_UPDATED,
+                            request.getPatient(),
+                            request.getHcp());
+                    break;
+            }
+
             if (request.getStatus().getCode() == Status.APPROVED.getCode()) {
-                loggerUtil.log(
-                        TransactionType.APPOINTMENT_REQUEST_APPROVED,
-                        request.getPatient(),
-                        request.getHcp());
+                switch (request.getType()) {
+                    case GENERAL_CHECKUP:
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_REQUEST_APPROVED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your appointment request has been approved",
+                                "Your appointment request has been approved. Please log in to iTrust2 to view the approval.");
+                        break;
+
+                    case GENERAL_OPHTHALMOLOGY:
+                        loggerUtil.log(
+                                TransactionType.OPH_APPT_REQ_APPROVED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your general ophthalmology request has been approved",
+                                "Your general ophthalmology request has been approved. Please log in to iTrust2 to view the approval.");
+                        break;
+
+                    case OPHTHALMOLOGY_SURGERY:
+                        loggerUtil.log(
+                                TransactionType.OPH_SURG_REQ_APPROVED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your ophthalmology surgery request has been approved",
+                                "Your ophthalmology surgery request has been approved. Please log in to iTrust2 to view the approval.");
+                        break;
+                }
             } else {
-                loggerUtil.log(
-                        TransactionType.APPOINTMENT_REQUEST_DENIED,
-                        request.getPatient(),
-                        request.getHcp());
+                switch (request.getType()) {
+                    case GENERAL_CHECKUP:
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_REQUEST_DENIED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your appointment request has been rejected",
+                                "Your appointment request has been rejected.");
+                        break;
+
+                    case GENERAL_OPHTHALMOLOGY:
+                        loggerUtil.log(
+                                TransactionType.OPH_APPT_REQ_DENIED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your general ophthalmology request has been rejected",
+                                "Your general ophthalmology request has been rejected.");
+                        break;
+
+                    case OPHTHALMOLOGY_SURGERY:
+                        loggerUtil.log(
+                                TransactionType.OPH_SURG_REQ_DENIED,
+                                request.getPatient(),
+                                request.getHcp());
+                        loggerUtil.log(
+                                TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
+                                loggerUtil.getCurrentUsername());
+                        emailService.sendEmail(
+                                "iTrust2 System",
+                                request.getPatient().getUsername(),
+                                "Your ophthalmology surgery request has been rejected",
+                                "Your ophthalmology surgery request has been rejected.");
+                        break;
+                }
             }
 
             return new ResponseEntity(request, HttpStatus.OK);
@@ -293,15 +460,23 @@ public class APIAppointmentRequestController extends APIController {
                         .filter(e -> e.getStatus().equals(Status.APPROVED))
                         .toList();
         /* Log the event */
-        appointment.stream()
-                .map(AppointmentRequest::getPatient)
-                .distinct()
-                .forEach(
-                        e ->
-                                loggerUtil.log(
-                                        TransactionType.APPOINTMENT_REQUEST_VIEWED,
-                                        loggerUtil.getCurrentUsername(),
-                                        e.getUsername()));
+        if (hcp.getRoles().contains(Role.ROLE_OPH) || hcp.getRoles().contains(Role.ROLE_OD)) {
+            appointment.stream()
+                    .map(AppointmentRequest::getPatient)
+                    .distinct()
+                    .forEach(
+                            e ->
+                                    loggerUtil.log(
+                                            TransactionType.OPH_VIEW_UPCOMING_APPOINTMENT, hcp, e));
+        } else {
+            appointment.stream()
+                    .map(AppointmentRequest::getPatient)
+                    .distinct()
+                    .forEach(
+                            e ->
+                                    loggerUtil.log(
+                                            TransactionType.APPOINTMENT_REQUEST_VIEWED, hcp, e));
+        }
         return appointment;
     }
 }

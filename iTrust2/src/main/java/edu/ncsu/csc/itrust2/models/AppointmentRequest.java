@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import com.google.gson.annotations.JsonAdapter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,7 @@ import lombok.Setter;
  */
 @Schema(description = "환자가 보낸 예약 요청입니다.")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "appointment_request")

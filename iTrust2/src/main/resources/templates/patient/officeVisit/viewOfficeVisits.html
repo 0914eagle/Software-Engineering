@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="myApp">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+    <title>View Office Visits</title>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+    <div class="container">
+
+        <script th:inline="javascript">
+            var app = angular.module('myApp', []);
+
+            app.filter('humanize', function () {
+                return function (input) {
+                    return !input ? input : input.toLowerCase().split('_')
+                        .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+                        .join(' ');
+                }
+            });
+
+            app.controller('viewOfficeVisitCtrl', function ($scope, $http) {
+                $http.get("/iTrust2/api/v1/officevisits/myofficevisits").then(
+                    function (response) {
+                        $scope.visits = response.data;
+                        console.log(response.data);
+                    }
+                );
+
+            });
+        </script>
+
+
+
+        <div ng-controller="viewOfficeVisitCtrl">
+
+            <!--      <label for="visitType">Select Visit Type:</label>-->
+            <!--      <select id="visitType" ng-model="selectedVisit">-->
+            <!--        <option value="GENERAL_CHECKUP">General Checkup</option>-->
+            <!--        <option value="OPHTHALMOLOGY_SURGERY">Ophthalmology Surgery</option>-->
+            <!--      </select>-->
+
+            <!--      <P>{{selectedVisit}}</P>-->
+
+            <!-- General Checkup Information -->
+            <div class="container">
+                <div class="row" style="margin-top: 1em">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Visits Information</h4>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>HCP</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Notes</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="visit in visits">
+                                        <td >{{ visit.patient.username }}</td>
+                                        <td >{{ visit.hcp.username }}</td>
+                                        <td >{{ visit.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
+                                        <td >{{ visit.type }}</td>
+                                        <td >{{ visit.notes }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailsModal{{ visit.id }}">
+                                                View
+                                            </button>
+                                        </td>
+                                        <!-- Add more fields as needed -->
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modals for each visit -->
+            <div ng-repeat="visit in visits">
+                <div class="modal fade" id="detailsModal{{ visit.id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel{{ visit.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="detailsModalLabel{{ visit.id }}">Details - {{ visit.patient.username }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Display detailed information here -->
+                                <p><strong>Patient:</strong> {{ visit.patient.username }}</p>
+                                <p><strong>HCP:</strong> {{ visit.hcp.username }}</p>
+                                <p><strong>Date:</strong> {{ visit.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</p>
+                                <p><strong>Type:</strong> {{ visit.type }}</p>
+                                <p><strong>Notes:</strong> {{ visit.notes }}</p>
+
+                                <!-- Basic Health Metrics -->
+                                <p><strong>Height:</strong> {{ visit.basicHealthMetrics.height }}</p>
+                                <p><strong>Weight:</strong> {{ visit.basicHealthMetrics.weight }}</p>
+                                <!-- Add other basic health metrics -->
+
+                                <!-- Ophthalmology Surgery -->
+                                <div ng-if="visit.type === 'OPHTHALMOLOGY_SURGERY'">
+                                    <p><strong>Left Visual Acuity Result:</strong> {{ visit.ophthalmologySurgery.leftVisualAcuityResult }}</p>
+                                    <p><strong>Right Visual Acuity Result:</strong> {{ visit.ophthalmologySurgery.rightVisualAcuityResult }}</p>
+                                    <p><strong>Left Sphere:</strong> {{ visit.ophthalmologySurgery.leftSphere }}</p>
+                                    <p><strong>Right Sphere:</strong> {{ visit.ophthalmologySurgery.rightSphere }}</p>
+                                    <p><strong>Left Axis:</strong> {{ visit.ophthalmologySurgery.leftAxis }}</p>
+                                    <p><strong>Right Axis:</strong> {{ visit.ophthalmologySurgery.rightAxis }}</p>
+                                    <p><strong>Left Cylinder:</strong> {{ visit.ophthalmologySurgery.leftCylinder }}</p>
+                                    <p><strong>Right Cylinder:</strong> {{ visit.ophthalmologySurgery.rightCylinder }}</p>
+                                    <p><strong>Surgery Type:</strong> {{ visit.ophthalmologySurgery.surgeryType }}</p>
+                                </div>
+                                <!-- Add other surgery details -->
+
+                                <!-- Hospital -->
+                                <p><strong>Hospital Name:</strong> {{ visit.hospital.name }}</p>
+                                <p><strong>Hospital Address:</strong> {{ visit.hospital.address }}</p>
+                                <p><strong>Hospital Zip:</strong> {{ visit.hospital.zip }}</p>
+                                <p><strong>Hospital State:</strong> {{ visit.hospital.state }}</p>
+
+
+                                <!-- Example: Display ophthalmology surgery details if present -->
+                                <div ng-if="visit.type === 'OPHTHALMOLOGY_SURGERY'">
+                                    <p><strong>Left Visual Acuity Result:</strong> {{ visit.ophthalmologySurgery.leftVisualAcuityResult }}</p>
+                                    <!-- Add other surgery details -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+</body>
+
+</html>

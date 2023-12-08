@@ -1,0 +1,545 @@
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="layout :: head(title=~{::title},links=~{})">
+  <title>Edit Office Visit</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+
+<body th:include="layout :: body" th:with="content=~{::content}">
+<div th:fragment="content">
+  <div class="container">
+
+    <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+
+      var app = angular.module('myApp', []);
+      app.controller(
+              'editOfficeVisitCtrl',
+              function ($scope, $http) {
+
+                var isDate = function(input) {
+                  if (!input) {
+                    return false;
+                  }
+                  var match = /^(\d?\d)\/(\d?\d)\/(\d{4})$/.exec(input);
+                  if (!match) {
+                    return false;
+                  }
+                  var parsedDate = {
+                    year: +match[3],
+                    month: +match[1] - 1,
+                    day: +match[2]
+                  };
+                  var date = new Date(parsedDate.year, parsedDate.month, parsedDate.day);
+                  return date.getFullYear() === parsedDate.year && date.getMonth() === parsedDate.month && date.getDate() === parsedDate.day;
+                };
+
+                function checkEyeHealthMetrics() {
+                  if (/^[0-9]{1,3}?$/.test(String($scope.selectedVisit.ophthalmologySurgery.leftVisualAcuityResult).replace(/^0+/, '')) === false) {
+                    $scope.errorMsg += "Visual Acuity OS must be an integer value between 20 and 200 inclusive\n"
+                  } else if (parseInt($scope.selectedVisit.ophthalmologySurgery.leftVisualAcuityResult) < 20 || parseInt($scope.selectedVisit.ophthalmologySurgery.leftVisualAcuityResult) > 200) {
+                    $scope.errorMsg += "Visual Acuity OS must be an integer value between 20 and 200 inclusive\n"
+                  }
+
+                  if (/^[0-9]{1,3}?$/.test(String($scope.selectedVisit.ophthalmologySurgery.rightVisualAcuityResult).replace(/^0+/, '')) === false) {
+                    $scope.errorMsg += "Visual Acuity OD must be an integer value between 20 and 200 inclusive\n"
+                  } else if (parseInt($scope.selectedVisit.ophthalmologySurgery.rightVisualAcuityResult) < 20 || parseInt($scope.selectedVisit.ophthalmologySurgery.rightVisualAcuityResult) > 200) {
+                    $scope.errorMsg += "Visual Acuity OD must be an integer value between 20 and 200 inclusive\n"
+                  }
+
+                  if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.selectedVisit.ophthalmologySurgery.leftSphere)) === false) {
+                    $scope.errorMsg += "Sphere OS must be a floating point number up to two digits\n"
+                  }
+                  if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.selectedVisit.ophthalmologySurgery.rightSphere)) === false) {
+                    $scope.errorMsg += "Sphere OD must be a floating point number up to two digits\n"
+                  }
+
+                  if ($scope.selectedVisit.ophthalmologySurgery.leftCylinder !== undefined || $scope.selectedVisit.ophthalmologySurgery.rightCylinder !== undefined) {
+                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.selectedVisit.ophthalmologySurgery.leftCylinder)) === false) {
+                      $scope.errorMsg += "Cylinder OS must be a floating point number up to two digits\n"
+                    }
+                    if (/^[\-\+]?(?=.*\d)\d*(?:\.\d\d?)?$/.test(String($scope.selectedVisit.ophthalmologySurgery.rightCylinder)) === false) {
+                      $scope.errorMsg += "Cylinder OD must be a floating point number up to two digits\n"
+                    }
+
+                    if (/^[0-9]{1,3}?$/.test(String($scope.selectedVisit.ophthalmologySurgery.leftAxis).replace(/^0+/, '')) === false) {
+                      $scope.errorMsg += "Axis OS must be an integer value between 1 and 180 inclusive\n"
+                    } else if (parseInt($scope.selectedVisit.ophthalmologySurgery.leftAxis) < 1 || parseInt($scope.selectedVisit.ophthalmologySurgery.leftAxis) > 180) {
+                      $scope.errorMsg += "Axis OS must be an integer value between 1 and 180 inclusive\n"
+                    }
+                    if (/^[0-9]{1,3}?$/.test(String($scope.selectedVisit.ophthalmologySurgery.rightAxis).replace(/^0+/, '')) === false) {
+                      $scope.errorMsg += "Axis OD must be an integer value between 1 and 180 inclusive\n"
+                    } else if (parseInt($scope.selectedVisit.ophthalmologySurgery.rightAxis) < 1 || parseInt($scope.selectedVisit.ophthalmologySurgery.rightAxis) > 180) {
+                      $scope.errorMsg += "Axis OD must be an integer value between 1 and 180 inclusive\n"
+                    }
+                  }
+
+                  if ($scope.selectedVisit.type === "OPHTHALMOLOGY_SURGERY" && !$scope.selectedVisit.ophthalmologySurgery.surgeryType) {
+                    $scope.errorMsg += "Please select one of the listed surgery types\n";
+                  }
+                }
+
+
+                $scope.noVisitSelected = true;
+                $scope.loadingVisits = true;
+                $scope.visitslength = 0;
+                $http.get("/iTrust2/api/v1/officevisits").then(
+                        function (response) {
+                          $scope.noVisitSelected = true;
+                          $scope.loadingVisits = false;
+                          $scope.visits = response.data;
+                          console.log($scope.visits);
+                          visitslength = $scope.visits.length;
+
+                        });
+
+                $http.get("/iTrust2/api/v1/appointmenttype")
+                        .then(function (response) {
+                          $scope.types = response.data;
+                        });
+
+
+                $scope.selectedVisitID = null;
+                $scope.selectedVisit = {};
+                $scope.datePart = null;
+                $scope.timePart = null;
+                $scope.newdatePart = null;
+                $scope.newtimePart = null;
+
+                $scope.combineDateAndTime = function(datePart, timePart) {
+                  // Extract date components
+                  var year = datePart.getFullYear();
+                  var month = (datePart.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                  var day = datePart.getDate().toString().padStart(2, '0');
+
+                  // Extract time components
+                  var hours = timePart.getHours().toString().padStart(2, '0');
+                  var minutes = timePart.getMinutes().toString().padStart(2, '0');
+                  var seconds = timePart.getSeconds().toString().padStart(2, '0');
+                  var timezoneOffset = -timePart.getTimezoneOffset(); // Get timezone offset in minutes
+
+                  // Combine date and time components
+                  var combinedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffset >= 0 ? '+' : '-'}${Math.abs(timezoneOffset / 60).toString().padStart(2, '0')}:00`;
+
+                  // Return the combined date-time object
+                  $scope.selectedVisit.date = combinedDateTime;
+                };
+
+                $scope.chooseVisit = function(id) {
+                  // Find the visit with the specified ID
+                  var selectedVisit = $scope.visits.find(function(visit) {
+                    return visit.id === id;
+                  });
+
+                  // Check if the visit was found
+                  if (selectedVisit) {
+                    $scope.selectedVisit = selectedVisit;
+                    console.log("Selected visit:", $scope.selectedVisit);
+
+//                     // Assuming selectedVisit.date has the value "2023-12-15T15:48:00+09:00"
+                    var dateTimeString = selectedVisit.date;
+
+// Parse the date-time string
+                    var dateTime = new Date(dateTimeString);
+
+// Extract date and time parts
+                    $scope.datePart = dateTime.toISOString().split('T')[0]; // "2023-12-15"
+                    $scope.timePart = dateTime.toTimeString().split(' ')[0]; // "15:48:00"
+
+// Assign the separated parts back to your model
+                    $scope.selectedVisit.date = datePart;
+                    $scope.selectedVisit.time = timePart;
+                    console.log("Selected visit date:", $scope.selectedVisit.date);
+                    console.log("Selected visit time:", $scope.selectedVisit.time);
+
+                  } else {
+                    console.log("Visit with ID", id, "not found.");
+                  }
+                };
+
+
+
+
+                // $scope.populateVisit = function () {
+                //   $scope.prescriptions = [];
+                //   $scope.diagnoses = [];
+                //   var visitsLength = $scope.visits.length;
+                //   $scope.noVisitSelected = false;
+                //   for (var i = 0; i < visitsLength; i++) {
+                //     if ($scope.visits[i].id == $scope.selectedVisitID) {
+                //       $http({
+                //         method: 'POST',
+                //         url: '/iTrust2/api/v1/officevisits/hcp/view/' + $scope.selectedVisitID,
+                //         data: $scope.selectedVisit
+                //       });
+                //       $scope.selectedVisit.patient = $scope.visits[i].patient.username;
+                //       $scope.selectedVisit.hcp = $scope.visits[i].hcp.username;
+                //       $scope.selectedVisit.notes = $scope.visits[i].notes;
+                //       $scope.selectedVisit.type = $scope.visits[i].type;
+                //       $scope.selectedVisit.hospital = $scope.visits[i].hospital.name;
+                //       $scope.selectedVisit.time = $scope.getTime($scope.visits[i].date);
+                //       $scope.selectedVisit.date = $scope.getDate($scope.visits[i].date);
+                //       $scope.selectedVisit.id = $scope.visits[i].id;
+                //       $scope.selectedVisit.height = $scope.visits[i].basicHealthMetrics.height;
+                //       $scope.selectedVisit.weight = $scope.visits[i].basicHealthMetrics.weight;
+                //       $scope.selectedVisit.headCircumference = $scope.visits[i].basicHealthMetrics.headCircumference;
+                //       $scope.selectedVisit.systolic = $scope.visits[i].basicHealthMetrics.systolic;
+                //       $scope.selectedVisit.diastolic = $scope.visits[i].basicHealthMetrics.diastolic;
+                //       $scope.selectedVisit.hdl = $scope.visits[i].basicHealthMetrics.hdl;
+                //       $scope.selectedVisit.ldl = $scope.visits[i].basicHealthMetrics.ldl;
+                //       $scope.selectedVisit.tri = $scope.visits[i].basicHealthMetrics.tri;
+                //       $scope.selectedVisit.houseSmokingStatus = $scope.visits[i].basicHealthMetrics.houseSmokingStatus;
+                //       $scope.selectedVisit.patientSmokingStatus = $scope.visits[i].basicHealthMetrics.patientSmokingStatus;
+                //
+                //       $http.get("/iTrust2/api/v1/diagnosesforvisit/" + $scope.selectedVisitID).then(
+                //               function (response) {
+                //                 $scope.diagnosesResponse = response.data;
+                //                 var dLength = $scope.diagnosesResponse.length;
+                //                 for( var i = 0; i < dLength; i++){
+                //                   $scope.diagnoses.push({
+                //                     note: $scope.diagnosesResponse[i].note,
+                //                     code: $scope.diagnosesResponse[i].code
+                //                   });
+                //                 }
+                //               });
+                //
+                //       // prescriptions
+                //       var pLength = $scope.visits[i].prescriptions.length;
+                //       for( var j = 0; j < pLength; j++){
+                //         var myStart = $scope.getDate($scope.visits[i].prescriptions[j].startDate);
+                //         var myEnd = $scope.getDate($scope.visits[i].prescriptions[j].endDate);
+                //         $scope.prescriptions.push({
+                //           drug: $scope.visits[i].prescriptions[j].drug.code,
+                //           dosage: $scope.visits[i].prescriptions[j].dosage,
+                //           startDate: myStart,
+                //           endDate: myEnd,
+                //           renewals: $scope.visits[i].prescriptions[j].renewals
+                //         });
+                //       }
+                //
+                //       break;
+                //     }
+                //   }
+                // }
+
+                $scope.submit = function () {
+                  $scope.selectedVisit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
+                  $scope.errorMsg = "";
+                  $scope.selectedVisit.status = "PENDING";
+
+                  console.log($scope.selectedVisit);
+                  console.log($scope.selectedVisit.date);
+                  console.log($scope.selectedVisit.time);
+
+                  if ($scope.selectedVisit.type == null) {
+                    $scope.errorMsg += "Please select a visit type\n";
+                  }
+
+                  // Validate date and time
+                  // const date = new Date($scope.selectedVisit.date);
+                  // if (!dateTimeService.isValidDate($scope.selectedVisit.date)) {
+                  //   $scope.errorMsg += "Please input a valid date\n";
+                  // }
+                  //
+                  // const time = new Date($scope.selectedVisit.time);
+                  // if (!dateTimeService.isValidDate(time)) {
+                  //   $scope.errorMsg += "Please input a valid time\n";
+                  // }
+                  //
+                  // date.setHours(time.getHours());
+                  // date.setMinutes(time.getMinutes());
+                  //
+                  // // Check valid date and time combination
+                  // if (!dateTimeService.isValidDate(date)) {
+                  //   $scope.errorMsg += "Please input a valid date and time\n";
+                  // } else {
+                  //   $scope.selectedVisit.date = date.toISOString();
+                  // }
+
+
+                  $http({
+                    method: 'PATCH',
+                    url: '/iTrust2/api/v1/officevisits/ophthalmologySurgery/' + $scope.selectedVisitID,
+                    data: $scope.selectedVisit
+                  }).then(function (response) {
+                    $scope.errorMsg = "";
+                    $scope.message = "Office visit edited successfully";
+                  }, function (rejection) {
+                    $scope.message = "";
+                    $scope.errorMsg = "Error occurred editing office visit";
+                  })
+                }
+
+
+
+
+              });
+
+      /*]]>*/
+    </script>
+
+
+
+    <div ng-app="myApp" ng-controller="editOfficeVisitCtrl">
+
+      <div class="row">
+
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4>Select an Office Visit to Edit</h4>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>Select</th>
+                      <th>Patient Username</th>
+                      <th>Visit Type</th>
+                      <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="visit in visits">
+                      <td>
+                        <input type="radio" ng-model="$parent.selectedVisitID" ng-click="chooseVisit(visit.id)" name="{{visit.id}}" value="{{visit.id}}" required="true" />
+                      </td>
+                      <td>{{visit.patient.username}}</td>
+                      <td>{{visit.type}}</td>
+                      <td>{{visit.date | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3>{{selectedVisit.patient.username}}'s {{selectedVisit.type}} {{selectedVisit.id}}</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="form-group col-md-2">
+                      <label>Original Date:</label>
+                      <p>{{datePart}}</p>
+                      <label>Change Date:</label>
+                      <input class="form-control" type="date" id="date" name="date" ng-model="newdatePart" ng-change="combineDateAndTime(newdatePart, newtimePart)" required="true" />
+                    </div>
+                    <div class="form-group col-md-2">
+                      <label>Original Time:</label>
+                      <p>{{timePart}}</p>
+                      <label>Change Time:</label>
+                      <input class="form-control" type="time" id="time" name="time" ng-model="newtimePart" ng-change="combineDateAndTime(newdatePart, newtimePart)" required="true" />
+                    </div>
+                    <div class="form-group col-md-2 text-right">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="preScheduled" class="checkbox" ng-model="selectedVisit.prescheduled">Prescheduled?
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label>Patient:</label>
+
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="form-check">
+                            {{selectedVisit.patient.username}}
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label>Type of Visit:</label>
+
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="form-check">
+                            <ul style="max-height:15%;overflow:auto;list-style: none;">
+                              <li ng-repeat="type in types">
+                                <label>
+                                  <input type="radio" ng-model="$parent.selectedVisit.type" name="type" value="{{type}}" required="true" />{{type}}
+                                </label>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+
+
+                    <!-- Patient Information for OPH surgery-->
+                    <div ng-show="selectedVisit.type == 'OPHTHALMOLOGY_SURGERY'" class="col-md-4">
+                      <div class="panel panel-info">
+                        <div class="panel-heading">
+                          <h4>Patient Information</h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Visual Acuity Left (OS):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="VAL"
+                                     ng-model="selectedVisit.ophthalmologySurgery.leftVisualAcuityResult"
+                                     type="number">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Visual Acuity Right (OD):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="VAR"
+                                     ng-model="selectedVisit.ophthalmologySurgery.rightVisualAcuityResult"
+                                     type="number">
+                            </div>
+                          </div>
+
+
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Sphere Left (OS):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="SL"
+                                     ng-model="selectedVisit.ophthalmologySurgery.leftSphere"  type="number">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Sphere Right (OD):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="SR"
+                                     ng-model="selectedVisit.ophthalmologySurgery.rightSphere"  type="number">
+                            </div>
+                          </div>
+
+
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Cylinder Left (OS):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="CL"
+                                     ng-model="selectedVisit.ophthalmologySurgery.leftCylinder"  type="number">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Cylinder Right (OD):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="CR"
+                                     ng-model="selectedVisit.ophthalmologySurgery.rightCylinder"  type="number">
+                            </div>
+                          </div>
+
+
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Axis Left (OS):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="AL"
+                                     ng-model="selectedVisit.ophthalmologySurgery.leftAxis" type="number">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Axis Right (OD):</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input class="form-control" name="AR"
+                                     ng-model="selectedVisit.ophthalmologySurgery.rightAxis"  type="number">
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <!-- Ophthalmology Surgery Panel -->
+                    <div ng-show="selectedVisit.type == 'OPHTHALMOLOGY_SURGERY'" class="col-md-4">
+                      <div class="panel panel-info">
+                        <div class="panel-heading">
+                          <h4>Surgery Type</h4>
+                        </div>
+                        <div class="panel-body">
+                          <div class="form-group row">
+                            <div class="col-xs-6">
+                              <label>Surgery Type:</label>
+                            </div>
+                            <div class="col-xs-6">
+                              <select class="form-control" ng-model="selectedVisit.ophthalmologySurgery.surgeryType" required>
+                                <option value="CATARACT_SURGERY">Cataract Surgery</option>
+                                <option value="LASER_SURGERY">Laser Surgery</option>
+                                <option value="REFRACTIVE_SURGERY">Refractive Surgery</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Notes and Error Messages -->
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      <label>Notes:</label>
+                      <textarea name="time" ng-model="selectedVisit.notes" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-12 text-right">
+                      <div>
+                        <div name="errorMsg" class="text-success">
+                          {{message}}
+                        </div>
+                        <div name="success" class="text-danger">
+                          {{errorMsg}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel-footer text-right">
+                  <button class="btn btn-primary btn-lg" ng-click="submit()" name="submit">Update Office Visit</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
+</body>
+
+</html>
