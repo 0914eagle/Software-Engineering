@@ -3,6 +3,7 @@ package edu.ncsu.csc.itrust2.controllers.api;
 import edu.ncsu.csc.itrust2.forms.EmailForm;
 import edu.ncsu.csc.itrust2.models.Email;
 import edu.ncsu.csc.itrust2.models.User;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.services.EmailService;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
@@ -45,6 +46,7 @@ public class APIEmailController extends APIController {
                 emailForm.getReceiver(),
                 emailForm.getSubject(),
                 emailForm.getMessageBody());
+        loggerUtil.log(TransactionType.USER_TO_USER_EMAIL, senderName, emailForm.getReceiver());
     }
 
     @Operation(summary = "자신이 발송한 메일 목록을 조회합니다.")

@@ -78,6 +78,10 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.setPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
+
+        loggerUtil.log(
+                TransactionType.PR_EMAIL_NOTICE,
+                loggerUtil.getCurrentUsername());
         emailService.sendEmail(
                 "iTrust2 System",
                 personalRepresentativeUsername,
@@ -98,12 +102,14 @@ public class ApiPersonalRepresentationController {
         personalRepresentationService.setPersonalRepresentation(
                 patientUsername, personalRepresentativeUsername);
 
+        loggerUtil.log( TransactionType.PR_EMAIL_NOTICE, loggerUtil.getCurrentUsername());
         emailService.sendEmail(
                 "iTrust2 System",
                 personalRepresentativeUsername,
                 "HCP has set you as a personal representative",
                 "You have been set as a personal representative for " + patientUsername + " by HCP.");
 
+        loggerUtil.log( TransactionType.PR_EMAIL_NOTICE, loggerUtil.getCurrentUsername());
         emailService.sendEmail(
                 "iTrust2 System",
                 patientUsername,
@@ -123,6 +129,8 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
+
+        loggerUtil.log( TransactionType.PR_EMAIL_NOTICE, loggerUtil.getCurrentUsername());
         emailService.sendEmail(
                 "iTrust2 System",
                 personalRepresentativeUsername,
@@ -140,6 +148,8 @@ public class ApiPersonalRepresentationController {
         String currentUsername = loggerUtil.getCurrentUsername();
         personalRepresentationService.cancelPersonalRepresentation(
                 representingPatientUsername, currentUsername);
+
+        loggerUtil.log( TransactionType.PR_EMAIL_NOTICE, loggerUtil.getCurrentUsername());
         emailService.sendEmail(
                 "iTrust2 System",
                 representingPatientUsername,

@@ -187,6 +187,9 @@ public class FailureHandler extends SimpleUrlAuthenticationFailureHandler {
     private void sendEmail(final String username) {
         final User user = userService.findByName(username);
         if (null != user) {
+            loggerUtil.log(
+                    TransactionType.ACC_LOCKOUT_EMAIL_NOTICE,
+                    loggerUtil.getCurrentUsername());
             emailService.sendEmail(
                     "iTrust2 System",
                     username,
