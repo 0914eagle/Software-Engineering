@@ -49,7 +49,12 @@
 
 [협업 도구](./collaboration-tools.md)
 
+## Overall schedule
+
+![overall-schedule](./overall-schedule.png)
+
 ## Demonstrations
 
 - [Iteration 1 Demonstration](./presentation/1031-iteration-1/README.md)
 - [Iteration 2 Demonstration](./presentation/1123-iteration-2/README.md)
+- [Iteration 3 Demonstration](./presentation/1212-iteration-3/README.md)
