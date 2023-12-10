@@ -196,7 +196,7 @@ public class OfficeVisitMutationService {
         return prescriptions;
     }
 
-    public OphthalmologySurgery getOphthalmologySurgery(final OphthalmologySurgeryForm ovf) {
-        return ophthalmologySurgeryService.create(ovf);
+    public OphthalmologySurgery getOphthalmologySurgery(final OphthalmologySurgeryForm osf) {
+        return ophthalmologySurgeryService.create(osf);
     }
 }
