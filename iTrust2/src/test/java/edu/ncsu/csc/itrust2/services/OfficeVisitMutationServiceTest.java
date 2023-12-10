@@ -231,7 +231,7 @@ public class OfficeVisitMutationServiceTest {
         List<Prescription> prescriptions = Arrays.asList(prescription1);
 
         OfficeVisitForm ovf = new OfficeVisitForm();
-        ovf.setId("1");
+        ovf.setId("124516123");
         ovf.setPatient(patientName);
         ovf.setHcp(hcpName);
         ovf.setNotes(testStr);
@@ -394,13 +394,14 @@ public class OfficeVisitMutationServiceTest {
         updateOfficeVisitForm.setOphthalmologySurgery(updateOsf);
         updateOfficeVisitForm.setNotes("Updated Notes");
 
+        final var id = 124_516_123L;
         OfficeVisit existingOfficeVisit = new OfficeVisit();
         OphthalmologySurgery existingOs = new OphthalmologySurgery();
         existingOs.setLeftVisualAcuityResult(123);
         existingOs.setRightVisualAcuityResult(123);
         existingOs.setLeftSphere(23f);
         existingOs.setRightSphere(23f);
-        existingOs.setId(124_516_123L);
+        existingOs.setId(id);
         existingOs.setSurgeryType(OphthalmologySurgeryType.CATARACT_SURGERY);
 
         existingOfficeVisit.setId(1L);
@@ -411,9 +412,7 @@ public class OfficeVisitMutationServiceTest {
 
         given(officeVisitRepository.findById(officeVisitId))
                 .willReturn(Optional.of(existingOfficeVisit));
-        given(ophthalmologySurgeryService.update(eq(2L), eq(updateOsf))).willReturn(existingOs);
-
-        final var id = 124_516_123L;
+        given(ophthalmologySurgeryService.update(eq(id), eq(updateOsf))).willReturn(existingOs);
 
         given(officeVisitRepository.save(any()))
                 .will(
