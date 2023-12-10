@@ -8,9 +8,9 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.services.AppointmentRequestService;
+import edu.ncsu.csc.itrust2.services.EmailService;
 import edu.ncsu.csc.itrust2.services.UserService;
 import edu.ncsu.csc.itrust2.utils.LoggerUtil;
-import edu.ncsu.csc.itrust2.services.EmailService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -345,12 +345,13 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),
                                 "Your appointment request has been approved",
-                                "Your appointment request has been approved. Please log in to iTrust2 to view the approval.");
+                                "Your appointment request has been approved. Please log in to"
+                                        + " iTrust2 to view the approval.");
                         break;
 
                     case GENERAL_OPHTHALMOLOGY:
@@ -360,12 +361,13 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),
                                 "Your general ophthalmology request has been approved",
-                                "Your general ophthalmology request has been approved. Please log in to iTrust2 to view the approval.");
+                                "Your general ophthalmology request has been approved. Please log"
+                                        + " in to iTrust2 to view the approval.");
                         break;
 
                     case OPHTHALMOLOGY_SURGERY:
@@ -375,12 +377,13 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),
                                 "Your ophthalmology surgery request has been approved",
-                                "Your ophthalmology surgery request has been approved. Please log in to iTrust2 to view the approval.");
+                                "Your ophthalmology surgery request has been approved. Please log"
+                                        + " in to iTrust2 to view the approval.");
                         break;
                 }
             } else {
@@ -392,7 +395,7 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),
@@ -407,7 +410,7 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),
@@ -422,7 +425,7 @@ public class APIAppointmentRequestController extends APIController {
                                 request.getHcp());
                         loggerUtil.log(
                                 TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE,
-                                loggerUtil.getCurrentUsername());
+                                request.getPatient());
                         emailService.sendEmail(
                                 "iTrust2 System",
                                 request.getPatient().getUsername(),

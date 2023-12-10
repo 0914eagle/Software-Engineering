@@ -248,9 +248,10 @@ public enum TransactionType {
     /** ophthalmology surgery is deleted */
     OPHTHALMOLOGY_SURGERY_DELETE(2211, "ophthalmology surgery deleted", true),
 
-    /** UC23 Email **/
-    PATIENT_VIEWS_EMAIL_ENTITY(2301, "Patient views his/her email entity", true),
-    APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE(2302, "Appointment/Surgery request email notification sent", true),
+    /** UC23 Email * */
+    PATIENT_VIEWS_EMAIL_ENTITY(2301, "User views his/her email entity", true),
+    APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE(
+            2302, "Patient's Appointment/Surgery change email notification sent", true),
     ACC_LOCKOUT_EMAIL_NOTICE(2303, "Account Lockout email notification sent", true),
     PR_EMAIL_NOTICE(2304, "Personal representative email notification sent", true),
     USER_TO_USER_EMAIL(2305, "User sends an email to another user", true),
