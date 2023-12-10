@@ -44,6 +44,8 @@ public class ApiOphthalmologySurgeryController extends APIController {
         OfficeVisit temp =
                 officeVisitMutationService.createForOphthalmologySurgery(ophthalmologySurgeryForm);
         String patientName = temp.getPatient().getUsername();
+        String currentUserName = loggerUtil.getCurrentUsername();
+        loggerUtil.log(TransactionType.OPHTHALMOLOGY_ADD_SURGERY, currentUserName, patientName);
         loggerUtil.log(TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE, patientName);
         emailService.sendEmail(
                 "iTrust2 System",
@@ -64,6 +66,8 @@ public class ApiOphthalmologySurgeryController extends APIController {
         OfficeVisit temp =
                 officeVisitMutationService.updateForOphthalmologySurgery(id, updateOfficeVisitForm);
         String patientName = temp.getPatient().getUsername();
+        String currentUserName = loggerUtil.getCurrentUsername();
+        loggerUtil.log(TransactionType.OPHTHALMOLOGY_EDIT_SURGERY, currentUserName, patientName);
         loggerUtil.log(TransactionType.APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE, patientName);
         emailService.sendEmail(
                 "iTrust2 System",

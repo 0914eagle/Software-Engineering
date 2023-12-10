@@ -44,6 +44,7 @@ public class APIOfficeVisitController extends APIController {
     @PreAuthorize("hasRole('ROLE_HCP')")
     public List<OfficeVisit> getOfficeVisits() {
         loggerUtil.log(TransactionType.VIEW_ALL_OFFICE_VISITS, loggerUtil.getCurrentUsername());
+        loggerUtil.log(TransactionType.OPHTHALMOLOGY_VIEW_SURGERY, loggerUtil.getCurrentUsername());
         return (List<OfficeVisit>) officeVisitService.findAll();
     }
 
@@ -70,6 +71,7 @@ public class APIOfficeVisitController extends APIController {
     public List<OfficeVisit> getMyOfficeVisits() {
         final User self = userService.findByName(loggerUtil.getCurrentUsername());
         loggerUtil.log(TransactionType.VIEW_ALL_OFFICE_VISITS, self);
+        loggerUtil.log(TransactionType.PATIENT_VIEW_SURGERY, self);
         return officeVisitService.findByPatient(self);
     }
 
