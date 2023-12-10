@@ -53,6 +53,12 @@
 
 ![overall-schedule](./overall-schedule.png)
 
+## Test coverage
+
+비즈니스 로직에 대한 unit test의 instruction coverage는 97%입니다.
+
+![test-coverage-report](./test-coverage-report.png)
+
 ## Demonstrations
 
 - [Iteration 1 Demonstration](./presentation/1031-iteration-1/README.md)
