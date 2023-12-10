@@ -59,4 +59,16 @@ public class EmailServiceTest {
         assertNotNull(actualEmail);
         assertEquals(expectedEmails, actualEmail);
     }
+
+    @Test
+    public void testFindBySender() {
+        final var sender = "sender";
+
+        final var expected = List.of(new Email());
+        given(emailRepository.findBySender(sender)).willReturn(expected);
+
+        final var actual = emailService.findBySender(sender);
+
+        assertEquals(expected, actual);
+    }
 }
