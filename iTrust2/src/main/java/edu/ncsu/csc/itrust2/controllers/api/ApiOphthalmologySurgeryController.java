@@ -3,8 +3,6 @@ package edu.ncsu.csc.itrust2.controllers.api;
 import edu.ncsu.csc.itrust2.forms.OphthalmologySurgeryForm;
 import edu.ncsu.csc.itrust2.forms.UpdateOfficeVisitForm;
 import edu.ncsu.csc.itrust2.models.OfficeVisit;
-
-import edu.ncsu.csc.itrust2.models.OphthalmologySurgery;
 import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.services.EmailService;
 import edu.ncsu.csc.itrust2.services.OfficeVisitMutationService;
@@ -18,9 +16,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

@@ -79,18 +79,13 @@ public class ApiPersonalRepresentationController {
         personalRepresentationService.setPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
 
-        loggerUtil.log(
-                TransactionType.PR_EMAIL_NOTICE,
-                personalRepresentativeUsername);
+        loggerUtil.log(TransactionType.PR_EMAIL_NOTICE, personalRepresentativeUsername);
         emailService.sendEmail(
                 "iTrust2 System",
                 personalRepresentativeUsername,
                 "You have been set as a personal representative",
                 "You have been set as a personal representative for " + currentUsername + ".");
-        loggerUtil.log(
-                TransactionType.DECLARE_PR,
-                currentUsername,
-                personalRepresentativeUsername);
+        loggerUtil.log(TransactionType.DECLARE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "HCP: 특정 환자의 대리인 지정")
@@ -112,6 +107,7 @@ public class ApiPersonalRepresentationController {
                 "You have been set as a personal representative for "
                         + patientUsername
                         + " by HCP.");
+
         emailService.sendEmail(
                 "iTrust2 System",
                 patientUsername,
@@ -119,15 +115,15 @@ public class ApiPersonalRepresentationController {
                 "You have been set as a representing of "
                         + personalRepresentativeUsername
                         + " by HCP.");
-        loggerUtil.log(
-                TransactionType.PR_EMAIL_NOTICE, patientUsername);
-        loggerUtil.log(
-                TransactionType.PR_EMAIL_NOTICE, personalRepresentativeUsername);
+
         String currentUsername = loggerUtil.getCurrentUsername();
         loggerUtil.log(
-                TransactionType.HCP_DECLARE_PR, currentUsername, personalRepresentativeUsername, patientUsername);
+                TransactionType.HCP_DECLARE_PR,
+                currentUsername,
+                personalRepresentativeUsername,
+                patientUsername);
         loggerUtil.log(
-                TransactionType.HCP_DECLARE_PR,currentUsername, personalRepresentativeUsername);
+                TransactionType.HCP_DECLARE_PR, currentUsername, personalRepresentativeUsername);
     }
 
     @Operation(summary = "Patient: 자신의 대리인 지정 해제")
@@ -140,8 +136,7 @@ public class ApiPersonalRepresentationController {
         personalRepresentationService.cancelPersonalRepresentation(
                 currentUsername, personalRepresentativeUsername);
 
-        loggerUtil.log(
-                TransactionType.PR_EMAIL_NOTICE,personalRepresentativeUsername);
+        loggerUtil.log(TransactionType.PR_EMAIL_NOTICE, personalRepresentativeUsername);
         emailService.sendEmail(
                 "iTrust2 System",
                 personalRepresentativeUsername,

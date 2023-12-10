@@ -89,7 +89,7 @@ public class ApiEmailControllerTest {
 
         Email testEmail1 = new Email("sender1Username", receiver1, "Subject1", "Body1");
         Email testEmail2 = new Email("sender1Username", receiver2, "Subject2", "Body2");
-        List<Email> expectedEmails = Arrays.asList(testEmail1,testEmail2);
+        List<Email> expectedEmails = Arrays.asList(testEmail1, testEmail2);
 
         emailService.sendEmail("sender1Username", receiver1Username, "Subject1", "Body1");
         emailService.sendEmail("sender1Username", receiver2Username, "Subject2", "Body2");
