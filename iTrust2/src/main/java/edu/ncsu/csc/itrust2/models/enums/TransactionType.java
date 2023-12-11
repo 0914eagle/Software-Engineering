@@ -86,8 +86,8 @@ public enum TransactionType {
     GENERAL_CHECKUP_PATIENT_VIEW(810, "View office visit by Patient", true),
     /** Patient deleted all office visits */
     DELETE_ALL_OFFICE_VISITS(899, "Patient deleted all office visits", false),
-    /** Patient view all office visits */
-    VIEW_ALL_OFFICE_VISITS(898, "Patient viewed all office visits", false),
+    /** User view all office visits */
+    VIEW_ALL_OFFICE_VISITS(898, "User viewed all office visits", false),
 
     /** Office visit is deleted */
     GENERAL_CHECKUP_DELETE(811, "Office visit deleted", true),
@@ -238,19 +238,25 @@ public enum TransactionType {
 
     /** Create basic health metrics */
     OPHTHALMOLOGY_SURGERY_CREATE(2200, "Create ophthalmology surgery for patient", true),
-    /** HCP views basic health metrics */
-    OPHTHALMOLOGY_SURGERY_HCP_VIEW(2201, "View ophthalmology surgery by HCP", true),
-    /** HCP edits basic health metrics */
-    OPHTHALMOLOGY_SURGERY_EDIT(2202, "HCP edits basic health metrics", true),
+
+    /** Ophthalmologist adds surgery */
+    OPHTHALMOLOGY_ADD_SURGERY(2201, "Ophthalmologist adds surgery", true),
+    /** Ophthalmologist edits surgery */
+    OPHTHALMOLOGY_EDIT_SURGERY(2202, "Ophthalmologist edits surgery", true),
+    /** Ophthalmologist views surgery */
+    OPHTHALMOLOGY_VIEW_SURGERY(2203, "Ophthalmologist views surgery", true),
+    /** Patient views surgery */
+    PATIENT_VIEW_SURGERY(2204, "Patient views surgery", true),
     /** Patient views basic health metrics for an ophthalmology surgery */
     OPHTHALMOLOGY_SURGERY_PATIENT_VIEW(2210, "View ophthalmology surgery by Patient", true),
 
     /** ophthalmology surgery is deleted */
     OPHTHALMOLOGY_SURGERY_DELETE(2211, "ophthalmology surgery deleted", true),
 
-    /** UC23 Email **/
-    PATIENT_VIEWS_EMAIL_ENTITY(2301, "Patient views his/her email entity", true),
-    APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE(2302, "Appointment/Surgery request email notification sent", true),
+    /** UC23 Email * */
+    PATIENT_VIEWS_EMAIL_ENTITY(2301, "User views his/her email entity", true),
+    APPOINTMENT_AND_SURGERY_REQUEST_EMAIL_NOTICE(
+            2302, "Patient's Appointment/Surgery change email notification sent", true),
     ACC_LOCKOUT_EMAIL_NOTICE(2303, "Account Lockout email notification sent", true),
     PR_EMAIL_NOTICE(2304, "Personal representative email notification sent", true),
     USER_TO_USER_EMAIL(2305, "User sends an email to another user", true),

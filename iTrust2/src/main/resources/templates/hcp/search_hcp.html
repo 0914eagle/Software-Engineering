@@ -20,7 +20,7 @@
             $scope.showPatientDetails = false;
 
             $scope.search = function () {
-                var searchTermRegex = /^[A-Za-z\-\'\s]{1,30}$/;
+                var searchTermRegex = /^[A-Za-z\d\-\'\s]{1,30}$/;
                 if (!searchTermRegex.test($scope.searchTerm.trim())) {
                     $scope.message = 'Wrong Format. Please enter a valid search term.';
                     $scope.patients = [];

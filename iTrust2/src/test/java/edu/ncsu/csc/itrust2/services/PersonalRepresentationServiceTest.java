@@ -25,13 +25,15 @@ import org.springframework.web.server.ResponseStatusException;
 import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersonalRepresentationServiceTest {
-    @Mock private PersonalRepresentationRepository PersonalRepresentationRepository;
+    @Mock private PersonalRepresentationRepository personalRepresentationRepository;
     @Mock private DiagnosisRepository diagnosisRepository;
     @Mock private PatientService patientService;
     @Mock private AppointmentRequestService appointmentRequestService;
@@ -57,13 +59,13 @@ public class PersonalRepresentationServiceTest {
 
         given(patientRepository.findByUsername(patient)).willReturn(patientUser);
         given(patientRepository.findByUsername(representative)).willReturn(representativeUser);
-        given(PersonalRepresentationRepository.save(any(PersonalRepresentation.class)))
+        given(personalRepresentationRepository.save(any(PersonalRepresentation.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
         final PersonalRepresentation result =
                 personalRepresentationService.setPersonalRepresentation(patient, representative);
 
-        verify(PersonalRepresentationRepository).save(any(PersonalRepresentation.class));
+        verify(personalRepresentationRepository).save(any(PersonalRepresentation.class));
         assertEquals(patientUser, result.getPatient());
         assertEquals(representativeUser, result.getPersonalRepresentative());
     }
@@ -77,7 +79,7 @@ public class PersonalRepresentationServiceTest {
         List<PersonalRepresentation> personalRepresentations =
                 new ArrayList<PersonalRepresentation>();
         given(patientService.findByName(any(String.class))).willReturn(patient1User);
-        given(PersonalRepresentationRepository.findAllByPatient(patient1User))
+        given(personalRepresentationRepository.findAllByPatient(patient1User))
                 .willReturn(personalRepresentations);
 
         final List<PersonalRepresentation> result =
@@ -95,7 +97,7 @@ public class PersonalRepresentationServiceTest {
         List<PersonalRepresentation> personalRepresentations =
                 new ArrayList<PersonalRepresentation>();
         given(patientService.findByName(any(String.class))).willReturn(patient1User);
-        given(PersonalRepresentationRepository.findAllByPersonalRepresentative(patient1User))
+        given(personalRepresentationRepository.findAllByPersonalRepresentative(patient1User))
                 .willReturn(personalRepresentations);
 
         final List<PersonalRepresentation> result =
@@ -126,7 +128,7 @@ public class PersonalRepresentationServiceTest {
         given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
 
         PersonalRepresentation representation = new PersonalRepresentation();
-        PersonalRepresentationRepository.save(representation);
+        personalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
                 representingPatientUsername, currentUsername);
 
@@ -164,7 +166,7 @@ public class PersonalRepresentationServiceTest {
         given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
 
         PersonalRepresentation representation = new PersonalRepresentation();
-        PersonalRepresentationRepository.save(representation);
+        personalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
                 patientUsername, currentUsername);
 
@@ -204,7 +206,7 @@ public class PersonalRepresentationServiceTest {
         }
 
         PersonalRepresentation representation = new PersonalRepresentation();
-        PersonalRepresentationRepository.save(representation);
+        personalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
                 patientUsername, currentUsername);
 
@@ -244,7 +246,7 @@ public class PersonalRepresentationServiceTest {
         given(loggerUtil.getCurrentUsername()).willReturn(currentUsername);
         PersonalRepresentation representation = new PersonalRepresentation();
 
-        PersonalRepresentationRepository.save(representation);
+        personalRepresentationRepository.save(representation);
         mockpersonalRepresentationService.setPersonalRepresentation(
                 representingPatientUsername, currentUsername);
 
@@ -289,12 +291,61 @@ public class PersonalRepresentationServiceTest {
         given(patientRepository.findByUsername(representative)).willReturn(representativeUser);
 
         given(
-                        PersonalRepresentationRepository.findByPatientAndPersonalRepresentative(
+                        personalRepresentationRepository.findByPatientAndPersonalRepresentative(
                                 patientUser, representativeUser))
                 .willReturn(personalRepresentation);
 
         personalRepresentationService.cancelPersonalRepresentation(patient, representative);
 
-        verify(PersonalRepresentationRepository).delete(personalRepresentation);
+        verify(personalRepresentationRepository).delete(personalRepresentation);
+    }
+
+    @Test
+    public void testIsRepresentativeTrue() {
+        final String representativeUsername = "representative";
+        final UserForm representativeUserForm =
+                new UserForm(representativeUsername, "67890", Role.ROLE_PATIENT, 1);
+        final Patient representativeUser = new Patient(representativeUserForm);
+
+        final String patientUsername = "patient";
+        final UserForm patientUserForm =
+                new UserForm(patientUsername, "12345", Role.ROLE_PATIENT, 1);
+        final Patient patientUser = new Patient(patientUserForm);
+
+        given(patientService.findByName(representativeUsername)).willReturn(representativeUser);
+        given(patientService.findByName(patientUsername)).willReturn(patientUser);
+
+        given(
+                        personalRepresentationRepository.existsByPatientAndPersonalRepresentative(
+                                eq(patientUser), eq(representativeUser)))
+                .willReturn(true);
+
+        final var actual =
+                personalRepresentationService.isRepresentative(
+                        representativeUsername, patientUsername);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testIsRepresentativeFalse() {
+        final String representativeUsername = "representative";
+        final UserForm representativeUserForm =
+                new UserForm(representativeUsername, "67890", Role.ROLE_PATIENT, 1);
+        final Patient representativeUser = new Patient(representativeUserForm);
+
+        final String patientUsername = "patient";
+        final UserForm patientUserForm =
+                new UserForm(patientUsername, "12345", Role.ROLE_PATIENT, 1);
+        final Patient patientUser = new Patient(patientUserForm);
+
+        given(patientService.findByName(representativeUsername)).willReturn(representativeUser);
+        given(patientService.findByName(patientUsername)).willReturn(patientUser);
+
+        final var actual =
+                personalRepresentationService.isRepresentative(
+                        patientUsername, representativeUsername);
+
+        assertFalse(actual);
     }
 }
