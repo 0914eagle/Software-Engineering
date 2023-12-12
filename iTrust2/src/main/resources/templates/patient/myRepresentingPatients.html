@@ -71,54 +71,73 @@
                     .then(function (response) {
                         console.log('UnDeclare PR: ', unDeclarePR);
                         $scope.getRepresentingPatients();
+                        if (unDeclarePR === $scope.curPatient) {
+                            $scope.setPatient('');
+                        }
                     })
                     .catch(function (error) {
                         console.error('Error declaring PR: ', error);
                     });
             }
 
-            $scope.log = [];
+            $scope.logs = [];
             $scope.isPatient = false;
 
             $scope.getAccessLogs = function () {
-                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/logs").then(function (response) {
-                    $scope.logs = response.data;
-                    if ($scope.logs.length > 0) {
-                        $scope.isPatient = $scope.logs[0].isPatient;
-                    }
-                }).catch(function (error) {
-                    console.error('Error get representingPatient logs: ', error);
-                });
+                if ($scope.curPatient !== '') {
+                    $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/logs").then(function (response) {
+                        $scope.logs = response.data;
+                        if ($scope.logs.length > 0) {
+                            $scope.isPatient = $scope.logs[0].isPatient;
+                        }
+                    }).catch(function (error) {
+                        console.error('Error get representingPatient logs: ', error);
+                    });
+                } else {
+                    $scope.logs = [];
+                }
             }
 
             $scope.medicalRecords = [];
 
             $scope.getMedicalRecords = function () {
-                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/basic-medicalRecords").then(function (response) {
-                    $scope.medicalRecords = response.data;
-                }).catch(function (error) {
-                    console.error('Error get representingPatient medicalRecords: ', error);
-                });
+                if ($scope.curPatient !== '') {
+                    $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/basic-medicalRecords").then(function (response) {
+                        $scope.medicalRecords = response.data;
+                    }).catch(function (error) {
+                        console.error('Error get representingPatient medicalRecords: ', error);
+                    });
+                } else {
+                    $scope.medicalRecords = [];
+                }
             }
 
             $scope.diagnoses = [];
 
             $scope.getDiagnoses = function () {
-                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/diagnoses").then(function (response) {
-                    $scope.diagnoses = response.data;
-                }).catch(function (error) {
-                    console.error('Error get representingPatient diagnoses: ', error);
-                });
+                if ($scope.curPatient !== '') {
+                    $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/diagnoses").then(function (response) {
+                        $scope.diagnoses = response.data;
+                    }).catch(function (error) {
+                        console.error('Error get representingPatient diagnoses: ', error);
+                    });
+                } else {
+                    $scope.diagnoses = [];
+                }
             }
 
             $scope.appointments = [];
 
             $scope.getAppointments = function () {
-                $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/appointments").then(function (response) {
-                    $scope.appointments = response.data;
-                }).catch(function (error) {
-                    console.error('Error get representingPatient appointments: ', error);
-                });
+                if ($scope.curPatient !== '') {
+                    $http.get("/iTrust2/api/v1/representingPatients/" + $scope.curPatient + "/appointments").then(function (response) {
+                        $scope.appointments = response.data;
+                    }).catch(function (error) {
+                        console.error('Error get representingPatient appointments: ', error);
+                    });
+                } else {
+                    $scope.appointments = [];
+                }
             }
         });
 

@@ -99,7 +99,11 @@
 
             $scope.search = function () {
                 console.log('start search');
+<<<<<<< iTrust2/src/main/resources/templates/hcp/personalRepresentatives.html
+                var searchTermRegex = /^[A-Za-z\d\-\'\s_]{1,30}$/;
+=======
                 var searchTermRegex = /^[A-Za-z\d\-\'\s]{1,30}$/;
+>>>>>>> iTrust2/src/main/resources/templates/hcp/personalRepresentatives.html
                 if (!searchTermRegex.test($scope.searchTerm.trim())) {
                     $scope.message = 'Wrong Format. Please enter a valid search term.';
                     $scope.searchPatients = [];
